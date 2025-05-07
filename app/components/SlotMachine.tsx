@@ -8,7 +8,6 @@ interface SlotMachineProps {
   duration?: number;
 }
 
-// Função para gerar uma cor baseada no texto do tema
 export const generateColorFromText = (text: string): string => {
   let hash = 0;
   for (let i = 0; i < text.length; i++) {
@@ -18,150 +17,117 @@ export const generateColorFromText = (text: string): string => {
   return `hsl(${h}, 80%, 65%)`;
 };
 
-const SlotMachine: React.FC<SlotMachineProps> = ({ themes, onSelect, duration = 5000 }) => {
+const SlotMachine: React.FC<SlotMachineProps> = ({ themes, onSelect, duration = 3000 }) => { // Reduzi a duração padrão para 3s
   const [spinning, setSpinning] = useState(false);
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
-  const [finalIndex, setFinalIndex] = useState<number | null>(null);
   const slotRef = useRef<HTMLDivElement>(null);
-  const [slotHeight, setSlotHeight] = useState(0);
-  const [itemHeight, setItemHeight] = useState(0);
+  const itemHeight = 80;
   const animationRef = useRef<number | null>(null);
   
-  // Garante que temos temas disponíveis
   const safeThemes = themes.length > 0 ? themes : ['Carregando temas...'];
+  const multiplyFactor = 10;
+  const repeatedThemes = [...Array(multiplyFactor)].flatMap(() => safeThemes);
   
-  // Cria uma longa lista de temas repetidos para o efeito de slot machine
-  // Duplica o array de temas várias vezes para garantir continuidade na animação
-  const repeatedThemes = [...Array(30)].flatMap(() => safeThemes);
-
-  // Inicializa a altura dos itens e do slot
   useEffect(() => {
-    if (slotRef.current) {
-      const height = slotRef.current.clientHeight;
-      setSlotHeight(height);
-      setItemHeight(80); // Define a altura fixa de cada item
-    }
+    const timer = setTimeout(() => {
+      if (!spinning && selectedIndex === null) {
+        startSpin();
+      }
+    }, 500);
+    
+    return () => clearTimeout(timer);
   }, []);
 
-  // Inicia o sorteio automaticamente quando o componente é montado
-  useEffect(() => {
-    if (slotHeight > 0 && itemHeight > 0 && !spinning && selectedIndex === null) {
-      startSpin();
-    }
-  }, [slotHeight, itemHeight]);
-
-  // Função para iniciar o sorteio
   const startSpin = () => {
-    // Sorteia um tema aleatório
     const randomIndex = Math.floor(Math.random() * safeThemes.length);
-    setFinalIndex(randomIndex);
     setSpinning(true);
     
     if (slotRef.current) {
-      // Inicializa a posição de partida
-      slotRef.current.style.transition = 'none';
-      slotRef.current.style.transform = 'translateY(0)';
-      
-      // Força um reflow para garantir que a transição funcione
       void slotRef.current.offsetHeight;
+      startAnimation(randomIndex);
       
-      // Inicia a animação
-      startAnimation();
-      
-      // Define um timeout para parar o sorteio
       setTimeout(() => {
-        setSpinning(false);
         setSelectedIndex(randomIndex);
         onSelect(safeThemes[randomIndex]);
-        
-        // Cancela qualquer animação restante
-        if (animationRef.current !== null) {
-          cancelAnimationFrame(animationRef.current);
-        }
       }, duration);
     }
   };
 
-  // Função de animação da roleta
-  const startAnimation = () => {
+  const startAnimation = (targetIndex: number) => {
     if (!slotRef.current) return;
     
-    const totalItems = repeatedThemes.length;
-    const multiplier = safeThemes.length * 2; // Quantas vezes queremos que a roleta dê voltas completas
-    const totalScrollDistance = itemHeight * safeThemes.length * multiplier;
+    // Configuração inicial - começa mais acima para dar mais rotação
+    const initialOffset = -(itemHeight * safeThemes.length * 5); // Aumentei para mais rotação
+    slotRef.current.style.transition = 'none';
+    slotRef.current.style.transform = `translateY(${initialOffset}px)`;
+    void slotRef.current.offsetHeight;
     
     let startTime: number | null = null;
-    let previousTimestamp: number | null = null;
-    let currentPosition = 0;
+    const cycleHeight = itemHeight * safeThemes.length;
     
-    // Funções de easing para controle da velocidade
-    const easeOutQuart = (x: number) => 1 - Math.pow(1 - x, 4);
-    const easeOutElastic = (x: number) => {
-      const c4 = (2 * Math.PI) / 3;
-      return x === 0
-        ? 0
-        : x === 1
-        ? 1
-        : Math.pow(2, -10 * x) * Math.sin((x * 10 - 0.75) * c4) + 1;
-    };
+    // Calcula a posição final para centralizar exatamente o tema alvo
+    // Considerando que o meio da tela é onde está o selectionIndicator
+    const slotWindow = slotRef.current?.parentElement;
+    if (!slotWindow) return;
+    
+    const slotWindowHeight = slotWindow.clientHeight;
+    const centerOffset = (slotWindowHeight / 2) - (itemHeight / 2);
+    const targetPosition = -((cycleHeight * 2) + (targetIndex * itemHeight) - centerOffset);
+        
+    // Função de easing para começar rápido e desacelerar suavemente
+    const easeOutExpo = (t: number) => t === 1 ? 1 : 1 - Math.pow(2, -10 * t);
     
     const animate = (timestamp: number) => {
       if (!slotRef.current) return;
       
       if (!startTime) startTime = timestamp;
       const elapsedTime = timestamp - startTime;
+      const progress = Math.min(elapsedTime / duration, 1);
       
-      // Calcula o progresso da animação (0 a 1)
-      const rawProgress = Math.min(elapsedTime / duration, 1);
+      // Aplica curva de aceleração/desaceleração
+      const easedProgress = easeOutExpo(progress);
       
-      // Primeiro 60% da animação: velocidade alta e constante
-      // Últimos 40%: desaceleração com efeito elástico
-      if (rawProgress < 0.6) {
-        // Fase inicial: rolagem rápida e constante
-        const speedFactor = 5; // Controla a velocidade inicial
-        currentPosition = (elapsedTime * speedFactor) % (itemHeight * safeThemes.length);
-      } else {
-        // Fase final: desaceleração com efeito elástico
-        const slowDownProgress = (rawProgress - 0.6) / 0.4;
-        const easedProgress = easeOutElastic(slowDownProgress);
-        
-        // Cálculo da posição final para alinhar com o tema selecionado
-        const initialPosition = (0.6 * duration * 5) % (itemHeight * safeThemes.length);
-        const finalPosition = (finalIndex !== null ? 
-          (finalIndex * itemHeight) + ((totalItems / 2) - (safeThemes.length / 2)) * itemHeight :
-          0);
-        
-        // A posição final é modulada para garantir que ela fique visível na janela
-        const modulatedFinalPosition = finalPosition % (itemHeight * safeThemes.length);
-        
-        // Interpola entre a posição atual e a posição final
-        currentPosition = initialPosition - (initialPosition - modulatedFinalPosition) * easedProgress;
-      }
+      // Calcula a posição atual com desaceleração
+      const currentPosition = initialOffset + (targetPosition - initialOffset) * easedProgress;
       
-      // Ajusta a posição para garantir que sempre temos conteúdo visível
-      const adjustedPosition = -(currentPosition % (itemHeight * safeThemes.length));
-      slotRef.current.style.transform = `translateY(${adjustedPosition}px)`;
+      // Aplica a transformação
+      slotRef.current.style.transform = `translateY(${currentPosition}px)`;
       
-      // Continua a animação enquanto estiver girando
-      if (spinning) {
+      if (progress < 1) {
         animationRef.current = requestAnimationFrame(animate);
-      } else if (finalIndex !== null) {
-        // Garante que o tema final esteja centralizado
-        const finalPosition = -(finalIndex * itemHeight + 
-          ((totalItems / 2) - (safeThemes.length / 2)) * itemHeight) % 
-          (itemHeight * safeThemes.length);
-        
-        slotRef.current.style.transition = 'transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275)';
-        slotRef.current.style.transform = `translateY(${finalPosition}px)`;
+      } else {
+        finalizeAnimation(targetPosition);
       }
-      
-      previousTimestamp = timestamp;
+    };
+    
+    const finalizeAnimation = (finalPosition: number) => {
+      if (!slotRef.current) return;
+    
+      // Efeito elástico: passa um pouco e volta
+      const overshoot = 15; // em px - pode ajustar para mais ou menos "toquinho"
+      const overshootPosition = finalPosition + overshoot;
+    
+      slotRef.current.style.transition = 'transform 0.2s ease-out';
+      slotRef.current.style.transform = `translateY(${overshootPosition}px)`;
+    
+      void slotRef.current.offsetHeight;
+    
+      setTimeout(() => {
+        if (!slotRef.current) return;
+    
+        slotRef.current.style.transition = 'transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1)';
+        slotRef.current.style.transform = `translateY(${finalPosition}px)`;
+        void slotRef.current.offsetHeight;
+    
+        setTimeout(() => {
+          setSpinning(false);
+        }, 400); // tempo do segundo movimento
+      }, 200); // tempo do overshoot
     };
     
     animationRef.current = requestAnimationFrame(animate);
   };
 
-  // Limpa a animação quando o componente é desmontado
   useEffect(() => {
     return () => {
       if (animationRef.current !== null) {
@@ -169,6 +135,13 @@ const SlotMachine: React.FC<SlotMachineProps> = ({ themes, onSelect, duration = 
       }
     };
   }, []);
+
+  const getSlotItemClass = (index: number) => {
+    if (selectedIndex !== null && index % safeThemes.length === selectedIndex) {
+      return `${styles.slotItem} ${styles.selectedItem}`;
+    }
+    return styles.slotItem;
+  };
 
   return (
     <div className={styles.slotMachineContainer}>
@@ -185,7 +158,7 @@ const SlotMachine: React.FC<SlotMachineProps> = ({ themes, onSelect, duration = 
             {repeatedThemes.map((theme, index) => (
               <div
                 key={index}
-                className={`${styles.slotItem} ${selectedIndex !== null && index % safeThemes.length === selectedIndex ? styles.selectedItem : ''}`}
+                className={getSlotItemClass(index)}
                 style={{ backgroundColor: generateColorFromText(theme) }}
               >
                 {theme}
