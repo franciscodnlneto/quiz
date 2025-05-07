@@ -55,79 +55,79 @@ const SlotMachine: React.FC<SlotMachineProps> = ({ themes, onSelect, duration = 
 
   const startAnimation = (targetIndex: number) => {
     if (!slotRef.current) return;
-    
-    // Configuração inicial - começa mais acima para dar mais rotação
-    const initialOffset = -(itemHeight * safeThemes.length * 5); // Aumentei para mais rotação
+  
+    const initialOffset = -(itemHeight * safeThemes.length * 5);
     slotRef.current.style.transition = 'none';
     slotRef.current.style.transform = `translateY(${initialOffset}px)`;
     void slotRef.current.offsetHeight;
-    
+  
     let startTime: number | null = null;
     const cycleHeight = itemHeight * safeThemes.length;
-    
-    // Calcula a posição final para centralizar exatamente o tema alvo
-    // Considerando que o meio da tela é onde está o selectionIndicator
+  
     const slotWindow = slotRef.current?.parentElement;
     if (!slotWindow) return;
-    
+  
     const slotWindowHeight = slotWindow.clientHeight;
     const centerOffset = (slotWindowHeight / 2) - (itemHeight / 2);
-    const targetPosition = -((cycleHeight * 2) + (targetIndex * itemHeight) - centerOffset);
-        
-    // Função de easing para começar rápido e desacelerar suavemente
+    const finalPosition = -((cycleHeight * 2) + (targetIndex * itemHeight) - centerOffset);
+  
     const easeOutExpo = (t: number) => t === 1 ? 1 : 1 - Math.pow(2, -10 * t);
-    
+  
+    const mainDuration = duration * 0.8; // 80% para rolagem suave
+    const finalTrembleTime = duration - mainDuration;
+  
     const animate = (timestamp: number) => {
       if (!slotRef.current) return;
-      
+  
       if (!startTime) startTime = timestamp;
       const elapsedTime = timestamp - startTime;
-      const progress = Math.min(elapsedTime / duration, 1);
-      
-      // Aplica curva de aceleração/desaceleração
+      const progress = Math.min(elapsedTime / mainDuration, 1);
       const easedProgress = easeOutExpo(progress);
-      
-      // Calcula a posição atual com desaceleração
-      const currentPosition = initialOffset + (targetPosition - initialOffset) * easedProgress;
-      
-      // Aplica a transformação
+      const currentPosition = initialOffset + (finalPosition - initialOffset) * easedProgress;
+  
       slotRef.current.style.transform = `translateY(${currentPosition}px)`;
-      
+  
       if (progress < 1) {
         animationRef.current = requestAnimationFrame(animate);
       } else {
-        finalizeAnimation(targetPosition);
+        // Últimos toquezinhos com aleatoriedade
+        finalizeWithEmotion(finalPosition, finalTrembleTime);
       }
     };
-    
-    const finalizeAnimation = (finalPosition: number) => {
-      if (!slotRef.current) return;
-    
-      // Efeito elástico: passa um pouco e volta
-      const overshoot = 15; // em px - pode ajustar para mais ou menos "toquinho"
-      const overshootPosition = finalPosition + overshoot;
-    
-      slotRef.current.style.transition = 'transform 0.2s ease-out';
-      slotRef.current.style.transform = `translateY(${overshootPosition}px)`;
-    
-      void slotRef.current.offsetHeight;
-    
-      setTimeout(() => {
-        if (!slotRef.current) return;
-    
-        slotRef.current.style.transition = 'transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1)';
-        slotRef.current.style.transform = `translateY(${finalPosition}px)`;
-        void slotRef.current.offsetHeight;
-    
-        setTimeout(() => {
-          setSpinning(false);
-        }, 400); // tempo do segundo movimento
-      }, 200); // tempo do overshoot
-    };
-    
+  
     animationRef.current = requestAnimationFrame(animate);
   };
-
+  
+  const finalizeWithEmotion = (finalPosition: number, durationLeft: number) => {
+    if (!slotRef.current) return;
+  
+    const trembles = [0, -8, +4, -6, +3, 0]; // pode randomizar se quiser
+    const interval = durationLeft / trembles.length;
+  
+    let step = 0;
+  
+    const doTremble = () => {
+      if (!slotRef.current) return;
+  
+      const offset = trembles[step] ?? 0;
+      slotRef.current.style.transition = 'transform 0.12s ease-out';
+      slotRef.current.style.transform = `translateY(${finalPosition + offset}px)`;
+      void slotRef.current.offsetHeight;
+  
+      step++;
+  
+      if (step < trembles.length) {
+        setTimeout(doTremble, interval);
+      } else {
+        // Fixa no final exato
+        slotRef.current.style.transition = 'transform 0.3s ease-in-out';
+        slotRef.current.style.transform = `translateY(${finalPosition}px)`;
+        setTimeout(() => setSpinning(false), 300);
+      }
+    };
+  
+    doTremble();
+  };  
   useEffect(() => {
     return () => {
       if (animationRef.current !== null) {
