@@ -2,7 +2,7 @@
   width: 100%;
   background: linear-gradient(145deg, #2c3e50, #34495e);
   border-radius: 15px;
-  padding: 20px;
+  padding: 15px;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
   color: white;
   text-align: center;
@@ -17,9 +17,9 @@
 }
 
 .phaseText {
-  font-size: 1.3rem;
+  font-size: 1.1rem;
   font-weight: bold;
-  margin-bottom: 15px;
+  margin-bottom: 10px;
   text-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
 }
 
@@ -27,11 +27,11 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin-bottom: 15px;
+  margin-bottom: 10px;
 }
 
 .number {
-  font-size: 4rem;
+  font-size: 3.5rem;
   font-weight: bold;
   line-height: 1;
   text-shadow: 0 0 15px rgba(255, 255, 255, 0.5);
@@ -50,18 +50,18 @@
 }
 
 .unit {
-  font-size: 1rem;
+  font-size: 0.9rem;
   opacity: 0.8;
   margin-top: 5px;
 }
 
 .progressBarContainer {
   width: 100%;
-  height: 10px;
+  height: 8px;
   background-color: rgba(0, 0, 0, 0.3);
   border-radius: 5px;
   overflow: hidden;
-  margin-top: 15px;
+  margin-top: 10px;
 }
 
 .progressBar {
@@ -153,38 +153,38 @@
 /* Responsividade */
 @media (max-width: 768px) {
   .phaseText {
-    font-size: 1.1rem;
+    font-size: 1rem;
   }
   
   .number {
-    font-size: 3rem;
+    font-size: 2.8rem;
   }
   
   .progressBarContainer {
-    height: 8px;
+    height: 6px;
   }
 }
 
 @media (max-width: 480px) {
   .countdownContainer {
-    padding: 15px;
+    padding: 12px;
   }
   
   .phaseText {
-    font-size: 1rem;
-    margin-bottom: 10px;
+    font-size: 0.9rem;
+    margin-bottom: 8px;
   }
   
   .number {
-    font-size: 2.5rem;
+    font-size: 2.3rem;
   }
   
   .unit {
-    font-size: 0.9rem;
+    font-size: 0.8rem;
   }
   
   .progressBarContainer {
-    height: 6px;
-    margin-top: 10px;
+    height: 5px;
+    margin-top: 8px;
   }
 }

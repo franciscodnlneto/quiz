@@ -3,7 +3,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 1.5rem;
+  gap: 1rem;
 }
 
 /* Estado inicial */
@@ -11,7 +11,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 1rem;
+  gap: 0.7rem;
   width: 100%;
 }
 
@@ -20,8 +20,8 @@
   color: white;
   border: none;
   border-radius: 50px;
-  padding: 1rem 2rem;
-  font-size: 1.2rem;
+  padding: 0.8rem 1.5rem;
+  font-size: 1.1rem;
   font-weight: bold;
   display: flex;
   align-items: center;
@@ -30,12 +30,12 @@
   transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
   box-shadow: 0 8px 25px rgba(154, 195, 60, 0.4);
   width: 80%;
-  max-width: 250px;
+  max-width: 220px;
   justify-content: center;
 }
 
 .buttonIcon {
-  font-size: 1.5rem;
+  font-size: 1.4rem;
 }
 
 .spinButton:hover {
@@ -67,7 +67,7 @@
 
 .helpText {
   color: #666;
-  font-size: 0.9rem;
+  font-size: 0.85rem;
   text-align: center;
 }
 
@@ -76,7 +76,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 0.8rem;
+  gap: 0.6rem;
   width: 100%;
   animation: fadeIn 0.5s;
 }
@@ -94,18 +94,18 @@
 
 .themeHeader {
   color: #B02A78;
-  font-size: 1.1rem;
+  font-size: 1rem;
   margin: 0;
   text-align: center;
 }
 
 .themeCard {
   width: 100%;
-  padding: 1.2rem;
+  padding: 1rem;
   border-radius: 12px;
   text-align: center;
   color: white;
-  font-size: 1.5rem;
+  font-size: 1.3rem;
   font-weight: bold;
   text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
@@ -159,13 +159,13 @@
   color: white;
   border: none;
   border-radius: 30px;
-  padding: 0.7rem 1.5rem;
+  padding: 0.5rem 1.2rem;
   font-size: 0.9rem;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
   box-shadow: 0 4px 10px rgba(176, 42, 120, 0.3);
-  margin-top: 0.5rem;
+  margin-top: 0.3rem;
 }
 
 .newThemeButton:hover {
@@ -182,33 +182,7 @@
 /* Responsividade */
 @media (max-width: 768px) {
   .spinButton {
-    padding: 0.8rem 1.5rem;
-    font-size: 1.1rem;
-  }
-  
-  .themeCard {
-    padding: 1rem;
-    font-size: 1.3rem;
-  }
-  
-  .newThemeButton {
-    padding: 0.6rem 1.2rem;
-    font-size: 0.85rem;
-  }
-}
-
-@media (max-width: 480px) {
-  .spinButton {
-    padding: 0.7rem 1.2rem;
-    font-size: 1rem;
-    width: 90%;
-  }
-  
-  .buttonIcon {
-    font-size: 1.2rem;
-  }
-  
-  .themeHeader {
+    padding: 0.7rem 1.3rem;
     font-size: 1rem;
   }
   
@@ -219,6 +193,32 @@
   
   .newThemeButton {
     padding: 0.5rem 1rem;
+    font-size: 0.8rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .spinButton {
+    padding: 0.6rem 1rem;
+    font-size: 0.9rem;
+    width: 90%;
+  }
+  
+  .buttonIcon {
+    font-size: 1.1rem;
+  }
+  
+  .themeHeader {
+    font-size: 0.9rem;
+  }
+  
+  .themeCard {
+    padding: 0.7rem;
+    font-size: 1.1rem;
+  }
+  
+  .newThemeButton {
+    padding: 0.4rem 0.8rem;
     font-size: 0.8rem;
   }
 }

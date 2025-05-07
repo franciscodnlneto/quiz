@@ -79,6 +79,18 @@ const QuizQuestion: React.FC<QuizQuestionProps> = ({ question, onNextQuestion })
     }, 500);
   };
 
+  // Compacta o enunciado se for muito longo
+  const formatQuestionTitle = (text: string) => {
+    if (text.length > 100) {
+      return (
+        <h2 className={styles.questionTitle} style={{ fontSize: '1.2rem', lineHeight: '1.25' }}>
+          {text}
+        </h2>
+      );
+    }
+    return <h2 className={styles.questionTitle}>{text}</h2>;
+  };
+
   return (
     <div className={`${styles.questionContainer} ${fadeIn ? styles.fadeIn : ''} ${fadeOut ? styles.fadeOut : ''} ${selectedAnswer !== null ? styles.answered : ''}`}>
       <div className={styles.questionHeader}>
@@ -94,7 +106,8 @@ const QuizQuestion: React.FC<QuizQuestionProps> = ({ question, onNextQuestion })
           <span className={styles.themeGlow}></span>
         </div>
       </div>
-      <h2 className={styles.questionTitle}>{question.Enunciado}</h2>
+      
+      {formatQuestionTitle(question.Enunciado)}
 
       <div className={styles.alternatives}>
         {alternativas.map((alternativa, index) => (

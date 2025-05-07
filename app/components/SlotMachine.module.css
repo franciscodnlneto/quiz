@@ -5,32 +5,31 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  overflow: hidden;
   position: relative;
   margin: 0;
   padding: 0;
-  min-height: 450px;
-  /* Garante que ocupe todo o espaço disponível */
+  /* Garantir que ocupe o espaço disponível sem ser cortado */
   position: absolute;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
+  overflow: visible;
 }
 
 .parentContainer {
   position: relative;
   width: 100%;
-  height: 100vh; /* ou 100% se o pai já tiver altura definida */
+  height: 100%;
   margin: 0;
   padding: 0;
 }
 
 .slotMachineBody {
-  width: 90%;
-  max-width: 600px;
-  height: 90%;
-  min-height: 380px;
+  width: 85%;
+  max-width: 550px;
+  height: auto;
+  aspect-ratio: 1/1.4;
   background: linear-gradient(to bottom, #B02A78, #8a2260); /* Magenta/roxo do CPC */
   border-radius: 20px;
   box-shadow: 
@@ -43,12 +42,14 @@
   padding: 15px;
   position: relative;
   z-index: 1;
+  /* Garantir que não ultrapasse a área disponível */
+  max-height: 95%;
 }
 
 .slotWindow {
   flex: 1;
   background: #000;
-  margin: 15px 20px;
+  margin: 10px 15px;
   border-radius: 10px;
   position: relative;
   overflow: hidden;
@@ -104,14 +105,14 @@
 }
 
 .slotItem {
-  height: 80px; /* IMPORTANTE: Esta altura deve ser exata e consistente */
+  height: 70px; /* Reduzido de 80px para economizar espaço */
   width: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 0 20px;
   color: white;
-  font-size: 1.8rem;
+  font-size: 1.6rem;
   font-weight: bold;
   text-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
   text-align: center;
@@ -173,7 +174,7 @@
   top: 50%;
   transform: translateY(-50%);
   width: 100%;
-  height: 80px; /* IMPORTANTE: A altura DEVE ser igual à altura do item */
+  height: 70px; /* IMPORTANTE: A altura DEVE ser igual à altura do item */
   box-shadow: 
     inset 0 4px 10px rgba(255, 255, 255, 0.5),
     inset 0 -4px 10px rgba(255, 255, 255, 0.5);
@@ -219,13 +220,13 @@
   display: flex;
   justify-content: space-around;
   width: 100%;
-  height: 20px;
+  height: 15px;
   padding: 0 10px;
 }
 
 .light {
-  width: 20px;
-  height: 20px;
+  width: 15px;
+  height: 15px;
   border-radius: 50%;
   background: radial-gradient(circle at 40% 40%, #9AC33C, #7a9e30); /* Verde lima do CPC */
   box-shadow: 0 0 10px rgba(154, 195, 60, 0.8);
@@ -271,9 +272,9 @@
 
 .selectedThemeMessage {
   color: white;
-  font-size: 2rem;
+  font-size: 1.8rem;
   font-weight: bold;
-  padding: 1rem 2rem;
+  padding: 0.8rem 1.5rem;
   border-radius: 10px;
   box-shadow: 0 0 30px rgba(255, 255, 255, 0.5);
   animation: announceWinner 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
@@ -297,42 +298,40 @@
 /* Responsividade */
 @media (max-width: 768px) {
   .slotMachineBody {
-    width: 95%;
-    height: 85%;
+    width: 90%;
   }
   
   .slotItem {
-    height: 70px;
-    font-size: 1.5rem;
+    height: 60px;
+    font-size: 1.4rem;
   }
   
   .selectionIndicator {
-    height: 70px;
+    height: 60px;
   }
   
   .selectedThemeMessage {
-    font-size: 1.6rem;
-    padding: 0.8rem 1.5rem;
+    font-size: 1.5rem;
+    padding: 0.7rem 1.2rem;
   }
 }
 
 @media (max-width: 480px) {
   .slotMachineBody {
-    width: 100%;
-    height: 80%;
+    width: 95%;
   }
   
   .slotItem {
-    height: 60px;
-    font-size: 1.2rem;
+    height: 50px;
+    font-size: 1.1rem;
   }
   
   .selectionIndicator {
-    height: 60px;
+    height: 50px;
   }
   
   .selectedThemeMessage {
-    font-size: 1.4rem;
-    padding: 0.7rem 1.2rem;
+    font-size: 1.3rem;
+    padding: 0.6rem 1rem;
   }
 }

@@ -70,7 +70,7 @@ const SlotMachine: React.FC<SlotMachineProps> = ({ themes, onSelect, duration = 
   const [spinning, setSpinning] = useState(false);
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
   const slotRef = useRef<HTMLDivElement>(null);
-  const itemHeight = 80;
+  const itemHeight = 70; // Atualizado para 70px para corresponder ao CSS
   const animationRef = useRef<number | null>(null);
   
   const safeThemes = themes.length > 0 ? themes : ['Carregando temas...'];
