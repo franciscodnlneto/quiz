@@ -57,13 +57,7 @@ const SlotMachine: React.FC<SlotMachineProps> = ({ themes, onSelect, duration = 
     if (!slotRef.current) return;
   
     const initialOffset = -(itemHeight * safeThemes.length * 5);
-    slotRef.current.style.transition = 'none';
-    slotRef.current.style.transform = `translateY(${initialOffset}px)`;
-    void slotRef.current.offsetHeight;
-  
-    let startTime: number | null = null;
     const cycleHeight = itemHeight * safeThemes.length;
-  
     const slotWindow = slotRef.current?.parentElement;
     if (!slotWindow) return;
   
@@ -71,33 +65,73 @@ const SlotMachine: React.FC<SlotMachineProps> = ({ themes, onSelect, duration = 
     const centerOffset = (slotWindowHeight / 2) - (itemHeight / 2);
     const finalPosition = -((cycleHeight * 2) + (targetIndex * itemHeight) - centerOffset);
   
-    const easeOutExpo = (t: number) => t === 1 ? 1 : 1 - Math.pow(2, -10 * t);
+    const totalDuration = duration;
+    const trembleDuration = totalDuration * 0.2;
+    const spinDuration = totalDuration - trembleDuration;
   
-    const mainDuration = duration * 0.8; // 80% para rolagem suave
-    const finalTrembleTime = duration - mainDuration;
+    const weightedRandom = () => {
+      const weights = [0.05, 0.05, 0.1, 0.15, 0.2, 0.15, 0.1, 0.1, 0.05, 0.05]; // soma = 1
+      const rnd = Math.random();
+      let sum = 0;
+      for (let i = 0; i < weights.length; i++) {
+        sum += weights[i];
+        if (rnd < sum) return i + 1;
+      }
+      return 10;
+    };
+    
+    const pulseCount = weightedRandom();
+
+    
+    const pulseDurations = Array.from({ length: pulseCount }, (_, i) => spinDuration / pulseCount);
   
-    const animate = (timestamp: number) => {
+    let currentPulse = 0;
+    let pulseStartTime: number | null = null;
+  
+    let startOffset = initialOffset;
+  
+    const easeInOut = (t: number) => t < 0.5
+      ? 4 * t * t * t
+      : 1 - Math.pow(-2 * t + 2, 3) / 2;
+  
+    const runPulse = (timestamp: number) => {
       if (!slotRef.current) return;
+      if (pulseStartTime === null) pulseStartTime = timestamp;
   
-      if (!startTime) startTime = timestamp;
-      const elapsedTime = timestamp - startTime;
-      const progress = Math.min(elapsedTime / mainDuration, 1);
-      const easedProgress = easeOutExpo(progress);
-      const currentPosition = initialOffset + (finalPosition - initialOffset) * easedProgress;
+      const pulseElapsed = timestamp - pulseStartTime;
+      const pulseDuration = pulseDurations[currentPulse];
+      const progress = Math.min(pulseElapsed / pulseDuration, 1);
+      const eased = easeInOut(progress);
   
-      slotRef.current.style.transform = `translateY(${currentPosition}px)`;
+      // Cálculo da posição parcial para esta etapa
+      const pulseTarget = initialOffset + ((finalPosition - initialOffset) * ((currentPulse + 1) / pulseCount));
+      const position = startOffset + (pulseTarget - startOffset) * eased;
+  
+      slotRef.current.style.transition = 'none';
+      slotRef.current.style.transform = `translateY(${position}px)`;
   
       if (progress < 1) {
-        animationRef.current = requestAnimationFrame(animate);
+        animationRef.current = requestAnimationFrame(runPulse);
       } else {
-        // Últimos toquezinhos com aleatoriedade
-        finalizeWithEmotion(finalPosition, finalTrembleTime);
+        currentPulse++;
+        startOffset = position;
+        pulseStartTime = null;
+  
+        if (currentPulse < pulseCount) {
+          animationRef.current = requestAnimationFrame(runPulse);
+        } else {
+          finalizeWithEmotion(finalPosition, trembleDuration);
+        }
       }
     };
   
-    animationRef.current = requestAnimationFrame(animate);
-  };
+    slotRef.current.style.transition = 'none';
+    slotRef.current.style.transform = `translateY(${initialOffset}px)`;
+    void slotRef.current.offsetHeight;
   
+    animationRef.current = requestAnimationFrame(runPulse);
+  };
+    
   const finalizeWithEmotion = (finalPosition: number, durationLeft: number) => {
     if (!slotRef.current) return;
   
@@ -128,6 +162,8 @@ const SlotMachine: React.FC<SlotMachineProps> = ({ themes, onSelect, duration = 
   
     doTremble();
   };  
+
+
   useEffect(() => {
     return () => {
       if (animationRef.current !== null) {
