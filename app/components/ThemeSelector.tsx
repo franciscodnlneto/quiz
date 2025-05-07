@@ -1,6 +1,7 @@
 "use client";
 import { useState } from 'react';
 import styles from './ThemeSelector.module.css';
+import { generateColorFromText } from './SlotMachine'; // Importa a função de cor do SlotMachine
 
 interface ThemeSelectorProps {
   themes: string[];
@@ -8,15 +9,6 @@ interface ThemeSelectorProps {
   selectedTheme: string | null;
   onSorteioStart: () => void;
 }
-
-const generateColorFromText = (text: string): string => {
-  let hash = 0;
-  for (let i = 0; i < text.length; i++) {
-    hash = text.charCodeAt(i) + ((hash << 5) - hash);
-  }
-  const h = Math.abs(hash) % 360;
-  return `hsl(${h}, 80%, 65%)`;
-};
 
 const ThemeSelector: React.FC<ThemeSelectorProps> = ({ 
   themes, 
@@ -35,6 +27,12 @@ const ThemeSelector: React.FC<ThemeSelectorProps> = ({
       setIsAnimating(false);
       onSorteioStart();
     }, 300);
+  };
+  
+  // Obtém a cor do tema selecionado
+  const getThemeColor = () => {
+    if (!selectedTheme) return '';
+    return generateColorFromText(selectedTheme);
   };
   
   return (
@@ -57,9 +55,10 @@ const ThemeSelector: React.FC<ThemeSelectorProps> = ({
           <h3 className={styles.themeHeader}>Tema do Quiz</h3>
           <div 
             className={styles.themeCard}
-            style={{ backgroundColor: generateColorFromText(selectedTheme) }}
+            style={{ backgroundColor: getThemeColor() }}
           >
             <span className={styles.themeName}>{selectedTheme}</span>
+            <div className={styles.themeGlow}></div>
           </div>
           <button 
             className={styles.newThemeButton}

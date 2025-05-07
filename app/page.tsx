@@ -40,7 +40,12 @@ export default function Home() {
           complete: (results) => {
             const parsedQuestions = results.data as Question[];
             setQuestions(parsedQuestions);
-            const uniqueThemes = Array.from(new Set(parsedQuestions.map(q => q.Tema)));
+            
+            // Extrair todos os temas únicos do CSV
+            const uniqueThemes = Array.from(new Set(parsedQuestions.map(q => q.Tema)))
+              .filter(theme => theme && theme.trim() !== ''); // Filtrar temas vazios
+              
+            console.log('Temas carregados:', uniqueThemes);
             setThemes(uniqueThemes);
             setLoading(false);
           },
@@ -57,9 +62,12 @@ export default function Home() {
   }, []);
 
   useEffect(() => {
-    if (selectedTheme && !isSorteando) {
+    if (selectedTheme && !isSorteando && questions.length > 0) {
+      // Filtrar perguntas do tema selecionado
       const themeQuestions = questions.filter(q => q.Tema === selectedTheme);
+      
       if (themeQuestions.length > 0) {
+        // Selecionar uma pergunta aleatória
         const randomIndex = Math.floor(Math.random() * themeQuestions.length);
         setCurrentQuestion(themeQuestions[randomIndex]);
       } else {
@@ -81,13 +89,27 @@ export default function Home() {
   const handleNextQuestion = () => {
     if (selectedTheme) {
       const themeQuestions = questions.filter(q => q.Tema === selectedTheme);
-      if (themeQuestions.length > 1) {
+      
+      if (themeQuestions.length > 0) {
+        // Sempre selecionar uma pergunta diferente se possível
         let randomIndex;
         let newQuestion;
-        do {
-          randomIndex = Math.floor(Math.random() * themeQuestions.length);
-          newQuestion = themeQuestions[randomIndex];
-        } while (newQuestion === currentQuestion && themeQuestions.length > 1);
+        
+        if (themeQuestions.length === 1) {
+          // Se houver apenas uma pergunta, use-a
+          newQuestion = themeQuestions[0];
+        } else {
+          // Continue tentando até encontrar uma pergunta diferente da atual
+          do {
+            randomIndex = Math.floor(Math.random() * themeQuestions.length);
+            newQuestion = themeQuestions[randomIndex];
+          } while (
+            currentQuestion && 
+            newQuestion.Enunciado === currentQuestion.Enunciado && 
+            themeQuestions.length > 1
+          );
+        }
+        
         setCurrentQuestion(newQuestion);
       }
     }

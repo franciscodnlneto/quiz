@@ -2,6 +2,7 @@
 "use client";
 import { useState, useEffect } from 'react';
 import styles from './QuizQuestion.module.css';
+import { generateColorFromText } from './SlotMachine'; // Importa a função de cor do SlotMachine
 
 interface Question {
   Tema: string;
@@ -25,10 +26,13 @@ const QuizQuestion: React.FC<QuizQuestionProps> = ({ question, onNextQuestion })
   const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
   const [fadeIn, setFadeIn] = useState(false);
   const [fadeOut, setFadeOut] = useState(false);
+  const [themeColor, setThemeColor] = useState("");
 
   // Efeito para animar a entrada ao montar o componente
   useEffect(() => {
     setFadeIn(true);
+    setThemeColor(generateColorFromText(question.Tema));
+    
     const timer = setTimeout(() => {
       setFadeIn(false);
     }, 500);
@@ -78,7 +82,17 @@ const QuizQuestion: React.FC<QuizQuestionProps> = ({ question, onNextQuestion })
   return (
     <div className={`${styles.questionContainer} ${fadeIn ? styles.fadeIn : ''} ${fadeOut ? styles.fadeOut : ''} ${selectedAnswer !== null ? styles.answered : ''}`}>
       <div className={styles.questionHeader}>
-        <h3 className={styles.theme}>{question.Tema}</h3>
+        <div 
+          className={styles.theme}
+          style={{ 
+            backgroundColor: themeColor,
+            color: 'white',
+            boxShadow: `0 4px 10px ${themeColor}80` // Adiciona transparência à sombra
+          }}
+        >
+          <span className={styles.themeName}>{question.Tema}</span>
+          <span className={styles.themeGlow}></span>
+        </div>
       </div>
       <h2 className={styles.questionTitle}>{question.Enunciado}</h2>
 
@@ -104,6 +118,10 @@ const QuizQuestion: React.FC<QuizQuestionProps> = ({ question, onNextQuestion })
           <button
             className={styles.nextButton}
             onClick={handleNextQuestion}
+            style={{
+              background: `linear-gradient(135deg, ${themeColor}, ${adjustColor(themeColor, -20)})`,
+              boxShadow: `0 4px 15px ${themeColor}80`
+            }}
           >
             Próxima Pergunta
           </button>
@@ -115,5 +133,21 @@ const QuizQuestion: React.FC<QuizQuestionProps> = ({ question, onNextQuestion })
     </div>
   );
 };
+
+// Função para ajustar a luminosidade de uma cor HSL
+function adjustColor(color: string, amount: number): string {
+  // Extrai os valores H, S, L da string de cor HSL
+  const hslMatch = color.match(/hsl\((\d+),\s*(\d+)%,\s*(\d+)%\)/);
+  if (!hslMatch) return color;
+  
+  const h = parseInt(hslMatch[1]);
+  const s = parseInt(hslMatch[2]);
+  let l = parseInt(hslMatch[3]);
+  
+  // Ajusta a luminosidade
+  l = Math.max(0, Math.min(100, l + amount));
+  
+  return `hsl(${h}, ${s}%, ${l}%)`;
+}
 
 export default QuizQuestion;

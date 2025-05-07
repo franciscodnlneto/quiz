@@ -117,9 +117,11 @@
 @keyframes highlightCard {
   0% {
     box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+    transform: translateY(0);
   }
   100% {
-    box-shadow: 0 10px 30px rgba(255, 255, 255, 0.3);
+    box-shadow: 0 12px 30px rgba(255, 255, 255, 0.2);
+    transform: translateY(-5px);
   }
 }
 
@@ -128,8 +130,7 @@
   z-index: 2;
 }
 
-.themeCard::before {
-  content: '';
+.themeGlow {
   position: absolute;
   top: -50%;
   left: -50%;
