@@ -1,8 +1,8 @@
 :root {
-  --primary-color: #4361EE;
-  --secondary-color: #4CAF50;
+  --primary-color: #B02A78; /* Magenta/roxo do CPC */
+  --secondary-color: #9AC33C; /* Verde lima do CPC */
   --error-color: #F44336;
-  --background-color: #f5f5f5;
+  --background-color: #fdf0f7; /* Fundo com tom suave de rosa/magenta */
   --text-color: #333333;
   --border-color: #eaeaea;
 }
@@ -34,30 +34,69 @@ button {
 }
 
 .main-header {
-  background-color: var(--primary-color);
-  color: white;
-  padding: 1rem 2rem;
+  background-color: white;
+  color: var(--primary-color);
+  padding: 0.5rem;
   text-align: center;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
-.main-header h1 {
-  margin: 0;
-  font-size: 1.8rem;
+.app-title {
+  font-size: 2rem;
+  font-weight: bold;
+  color: var(--primary-color);
+  text-shadow: 1px 1px 2px rgba(176, 42, 120, 0.2);
 }
 
 .main-footer {
-  background-color: #333;
+  background-color: var(--primary-color);
   color: white;
   text-align: center;
-  padding: 1rem;
-  margin-top: 2rem;
+  padding: 1.5rem;
+  margin-top: 0;
   font-size: 0.9rem;
+  line-height: 1.6;
+}
+
+.main-footer p {
+  margin-bottom: 0.5rem;
+}
+
+.main-footer a {
+  color: white;
+  text-decoration: underline;
+}
+
+.main-footer a:hover {
+  color: var(--secondary-color);
+}
+
+.main-footer strong {
+  font-weight: bold;
 }
 
 /* Responsividade */
 @media (max-width: 768px) {
-  .main-header h1 {
+  .app-title {
     font-size: 1.5rem;
+  }
+  
+  .main-footer {
+    padding: 1rem;
+    font-size: 0.8rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .app-title {
+    font-size: 1.2rem;
+  }
+  
+  .main-footer {
+    padding: 0.8rem;
+    font-size: 0.7rem;
   }
 }

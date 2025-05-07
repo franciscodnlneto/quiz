@@ -141,6 +141,9 @@ export default function Home() {
     <main className={styles.main}>
       <div className={styles.container}>
         <div className={styles.themeSection}>
+          <div className={styles.themeSectionLogo}>
+            <img src="/dados_mocados/logo_cpc.svg" alt="Logo CPC" />
+          </div>
           <h2 className={styles.sectionTitle}>Temas</h2>
           
           {/* Mostra o seletor de temas ou o contador regressivo */}

@@ -151,7 +151,7 @@
 }
 
 .alternative:hover:not(:disabled) {
-  border-color: #4CAF50;
+  border-color: #9AC33C;
   background-color: #f7f7f7;
   transform: translateY(-3px);
   box-shadow: 0 5px 10px rgba(0, 0, 0, 0.05);
@@ -187,8 +187,8 @@
 }
 
 .correct {
-  background-color: #DFF2D8;
-  border-color: #4CAF50;
+  background-color: #f2f8e8;
+  border-color: #9AC33C;
   animation: correctAnswer 0.5s;
 }
 
@@ -214,13 +214,13 @@
 }
 
 .correct .letter {
-  background-color: #4CAF50;
+  background-color: #9AC33C;
   color: white;
 }
 
 .incorrect {
-  background-color: #FFDEDE;
-  border-color: #F44336;
+  background-color: #fde8f2;
+  border-color: #B02A78;
   animation: shake 0.5s;
 }
 
@@ -246,12 +246,12 @@
 }
 
 .incorrect .letter {
-  background-color: #F44336;
+  background-color: #B02A78;
   color: white;
 }
 
 .correctAnswer {
-  border-color: #4CAF50;
+  border-color: #9AC33C;
   border-style: dashed;
   animation: pulse 1.5s infinite alternate;
 }
@@ -278,7 +278,7 @@
 }
 
 .correctFeedback {
-  color: #4CAF50;
+  color: #9AC33C;
   font-weight: bold;
   font-size: 1.5rem;
   margin-bottom: 1rem;
@@ -286,7 +286,7 @@
 }
 
 .incorrectFeedback {
-  color: #F44336;
+  color: #B02A78;
   font-weight: bold;
   font-size: 1.5rem;
   margin-bottom: 1rem;
@@ -296,7 +296,7 @@
 .nextButton {
   margin-top: 1rem;
   padding: 1rem 2rem;
-  background: linear-gradient(135deg, #4361EE, #3A56D4);
+  background: linear-gradient(135deg, #B02A78, #9c2468);
   color: white;
   border: none;
   border-radius: 50px;
@@ -304,17 +304,17 @@
   font-weight: bold;
   cursor: pointer;
   transition: all 0.3s ease;
-  box-shadow: 0 4px 10px rgba(67, 97, 238, 0.3);
+  box-shadow: 0 4px 10px rgba(176, 42, 120, 0.3);
 }
 
 .nextButton:hover {
   transform: translateY(-3px);
-  box-shadow: 0 6px 15px rgba(67, 97, 238, 0.4);
+  box-shadow: 0 6px 15px rgba(176, 42, 120, 0.4);
 }
 
 .nextButton:active {
   transform: translateY(0);
-  box-shadow: 0 2px 5px rgba(67, 97, 238, 0.4);
+  box-shadow: 0 2px 5px rgba(176, 42, 120, 0.4);
 }
 
 /* Efeito de confete para respostas corretas */
@@ -327,11 +327,11 @@
   pointer-events: none;
   z-index: 10;
   background-image: 
-    radial-gradient(circle, #ff0000 8px, transparent 8px),
-    radial-gradient(circle, #ffff00 6px, transparent 6px),
-    radial-gradient(circle, #00ff00 4px, transparent 4px),
-    radial-gradient(circle, #0000ff 3px, transparent 3px),
-    radial-gradient(circle, #ff00ff 5px, transparent 5px);
+    radial-gradient(circle, #B02A78 8px, transparent 8px),
+    radial-gradient(circle, #9AC33C 6px, transparent 6px),
+    radial-gradient(circle, #B02A78 4px, transparent 4px),
+    radial-gradient(circle, #9AC33C 3px, transparent 3px),
+    radial-gradient(circle, #B02A78 5px, transparent 5px);
   background-size: 10% 10%, 15% 15%, 20% 20%, 18% 18%, 12% 12%;
   background-position: 
     0% 0%, 20% 30%, 40% 50%, 60% 70%, 80% 90%;
