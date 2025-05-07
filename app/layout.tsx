@@ -39,14 +39,11 @@ export default function RootLayout({
           
           {/* Floating dots animation */}
           <div className="floating-dots">
-            <div className="dot primary"></div>
-            <div className="dot secondary"></div>
-            <div className="dot primary"></div>
-            <div className="dot secondary"></div>
-            <div className="dot primary"></div>
-            <div className="dot secondary"></div>
-            <div className="dot primary"></div>
-          </div>
+  {Array.from({ length: 14 }).map((_, i) => (
+    <div key={i} className={`dot ${i % 2 === 0 ? 'primary' : 'secondary'}`}></div>
+  ))}
+</div>
+
           
           <div className="header-container">
             <h1 className="app-title">
