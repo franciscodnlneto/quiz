@@ -49,20 +49,27 @@ const CountDown: React.FC<CountDownProps> = ({
 
   // Escala viva de verde → laranja → vermelho
   const getInterpolatedBackground = (p: number) => {
-    const r = Math.round(0 + (255 - 0) * p);       // 0 → 255
-    const g = Math.round(230 - (230 - 72) * p);    // 230 → 72
-    const b = Math.round(118 - (118 - 36) * p);    // 118 → 36
-
-    return `linear-gradient(145deg, rgb(${r}, ${g}, ${b}), rgb(${Math.max(r - 30, 0)}, ${Math.max(g - 30, 0)}, ${Math.max(b - 30, 0)}))`;
+    const hue = 120 - 120 * p;
+  
+    // Ajuste de luminosidade para contraste
+    let lightnessTop = 50;
+    let lightnessBottom = 40;
+  
+    if (hue >= 40 && hue <= 60) {
+      lightnessTop = 42;
+      lightnessBottom = 32;
+    }
+  
+    return `linear-gradient(145deg, hsl(${hue}, 100%, ${lightnessTop}%), hsl(${hue}, 100%, ${lightnessBottom}%))`;
   };
-
-  // Texto: branco → dourado (#FFC107)
+  
   const getInterpolatedTextColor = (p: number) => {
     const r = Math.round(255 - (255 - 255) * p);
     const g = Math.round(255 - (255 - 193) * p);
     const b = Math.round(255 - (255 - 7) * p);
     return `rgb(${r}, ${g}, ${b})`;
   };
+  
 
   return (
     <div 
