@@ -1,0 +1,224 @@
+.themeSelectorContainer {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+/* Estado inicial */
+.initialState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  width: 100%;
+}
+
+.spinButton {
+  background: linear-gradient(145deg, #4CAF50, #388E3C);
+  color: white;
+  border: none;
+  border-radius: 50px;
+  padding: 1rem 2rem;
+  font-size: 1.2rem;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  box-shadow: 0 8px 25px rgba(76, 175, 80, 0.4);
+  width: 80%;
+  max-width: 250px;
+  justify-content: center;
+}
+
+.buttonIcon {
+  font-size: 1.5rem;
+}
+
+.spinButton:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 12px 30px rgba(76, 175, 80, 0.6);
+  background: linear-gradient(145deg, #5cb860, #43a047);
+}
+
+.spinButton:active {
+  transform: translateY(0);
+  box-shadow: 0 4px 15px rgba(76, 175, 80, 0.4);
+}
+
+.animating {
+  animation: buttonPress 0.3s forwards;
+}
+
+@keyframes buttonPress {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(0.95);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.helpText {
+  color: #666;
+  font-size: 0.9rem;
+  text-align: center;
+}
+
+/* Estado com tema selecionado */
+.selectedState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.8rem;
+  width: 100%;
+  animation: fadeIn 0.5s;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.themeHeader {
+  color: #444;
+  font-size: 1.1rem;
+  margin: 0;
+  text-align: center;
+}
+
+.themeCard {
+  width: 100%;
+  padding: 1.2rem;
+  border-radius: 12px;
+  text-align: center;
+  color: white;
+  font-size: 1.5rem;
+  font-weight: bold;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+  position: relative;
+  overflow: hidden;
+  animation: highlightCard 2s infinite alternate;
+}
+
+@keyframes highlightCard {
+  0% {
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+  }
+  100% {
+    box-shadow: 0 10px 30px rgba(255, 255, 255, 0.3);
+  }
+}
+
+.themeName {
+  position: relative;
+  z-index: 2;
+}
+
+.themeCard::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(
+    circle at center,
+    rgba(255, 255, 255, 0.3),
+    transparent 70%
+  );
+  animation: rotateShineBg 8s linear infinite;
+  z-index: 1;
+}
+
+@keyframes rotateShineBg {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.newThemeButton {
+  background: #f5f5f5;
+  color: #555;
+  border: none;
+  border-radius: 30px;
+  padding: 0.7rem 1.5rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  margin-top: 0.5rem;
+}
+
+.newThemeButton:hover {
+  background: #eaeaea;
+  color: #333;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+}
+
+.newThemeButton:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+  .spinButton {
+    padding: 0.8rem 1.5rem;
+    font-size: 1.1rem;
+  }
+  
+  .themeCard {
+    padding: 1rem;
+    font-size: 1.3rem;
+  }
+  
+  .newThemeButton {
+    padding: 0.6rem 1.2rem;
+    font-size: 0.85rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .spinButton {
+    padding: 0.7rem 1.2rem;
+    font-size: 1rem;
+    width: 90%;
+  }
+  
+  .buttonIcon {
+    font-size: 1.2rem;
+  }
+  
+  .themeHeader {
+    font-size: 1rem;
+  }
+  
+  .themeCard {
+    padding: 0.8rem;
+    font-size: 1.2rem;
+  }
+  
+  .newThemeButton {
+    padding: 0.5rem 1rem;
+    font-size: 0.8rem;
+  }
+}

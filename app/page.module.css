@@ -1,0 +1,150 @@
+.main {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  padding: 1.5rem;
+  background: linear-gradient(135deg, #f5f7fa 0%, #e4e8eb 100%);
+}
+
+.container {
+  display: flex;
+  width: 100%;
+  max-width: 1200px;
+  background-color: white;
+  border-radius: 15px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+
+.sectionTitle {
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin-bottom: 1.5rem;
+  color: #333;
+  text-align: center;
+}
+
+.themeSection {
+  flex: 1;
+  padding: 1.5rem;
+  border-right: 1px solid #eaeaea;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: linear-gradient(to bottom, #f9f9f9, #ffffff);
+}
+
+.questionSection {
+  flex: 2;
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  min-height: 450px;
+}
+
+.loading {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  font-size: 1.5rem;
+  color: #333;
+  background: white;
+  gap: 1.5rem;
+}
+
+.spinner {
+  width: 50px;
+  height: 50px;
+  border: 5px solid #f3f3f3;
+  border-top: 5px solid #4361EE;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.noQuestion {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  width: 100%;
+  font-size: 1.2rem;
+  color: #666;
+  text-align: center;
+  padding: 2rem;
+  background-color: #f9f9f9;
+  border-radius: 12px;
+  box-shadow: inset 0 0 15px rgba(0, 0, 0, 0.05);
+}
+
+/* Responsividade para telas menores */
+@media (max-width: 900px) {
+  .container {
+    flex-direction: column;
+  }
+  
+  .themeSection {
+    border-right: none;
+    border-bottom: 1px solid #eaeaea;
+    padding: 1.5rem;
+  }
+  
+  .questionSection {
+    padding: 1.5rem;
+    min-height: 350px;
+  }
+  
+  .sectionTitle {
+    font-size: 1.3rem;
+    margin-bottom: 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .main {
+    padding: 1rem;
+  }
+  
+  .container {
+    border-radius: 10px;
+  }
+  
+  .themeSection {
+    padding: 1rem;
+  }
+  
+  .questionSection {
+    padding: 1rem;
+    min-height: 300px;
+  }
+  
+  .sectionTitle {
+    font-size: 1.2rem;
+    margin-bottom: 0.8rem;
+  }
+  
+  .noQuestion {
+    font-size: 1rem;
+    padding: 1.5rem;
+  }
+  
+  .loading {
+    font-size: 1.2rem;
+  }
+  
+  .spinner {
+    width: 40px;
+    height: 40px;
+  }
+}
