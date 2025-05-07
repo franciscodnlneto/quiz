@@ -28,8 +28,32 @@ export default function Home() {
   const [loading, setLoading] = useState(true);
   const [isSorteando, setIsSorteando] = useState(false);
   const [sorteioCompleto, setSorteioCompleto] = useState(false);
+  
+  // Novos estados para rastrear histórico
+  const [questionHistory, setQuestionHistory] = useState<string[]>([]);
+  const [usedThemes, setUsedThemes] = useState<string[]>([]);
 
   useEffect(() => {
+    // Carrega o histórico salvo quando o componente é montado
+    const savedQuestionHistory = localStorage.getItem('quizito_questionHistory');
+    const savedThemeHistory = localStorage.getItem('quizito_themeHistory');
+    
+    if (savedQuestionHistory) {
+      try {
+        setQuestionHistory(JSON.parse(savedQuestionHistory));
+      } catch (e) {
+        console.error('Erro ao carregar histórico de perguntas:', e);
+      }
+    }
+    
+    if (savedThemeHistory) {
+      try {
+        setUsedThemes(JSON.parse(savedThemeHistory));
+      } catch (e) {
+        console.error('Erro ao carregar histórico de temas:', e);
+      }
+    }
+    
     fetch('/dados_mocados/perguntas_e_respostas.csv')
       .then(response => response.text())
       .then(csvText => {
@@ -61,6 +85,20 @@ export default function Home() {
       });
   }, []);
 
+  // Salva o histórico de perguntas quando ele muda
+  useEffect(() => {
+    if (questionHistory.length > 0) {
+      localStorage.setItem('quizito_questionHistory', JSON.stringify(questionHistory));
+    }
+  }, [questionHistory]);
+
+  // Salva o histórico de temas quando ele muda
+  useEffect(() => {
+    if (usedThemes.length > 0) {
+      localStorage.setItem('quizito_themeHistory', JSON.stringify(usedThemes));
+    }
+  }, [usedThemes]);
+
   useEffect(() => {
     if (selectedTheme && !isSorteando && questions.length > 0) {
       // Filtrar perguntas do tema selecionado
@@ -80,6 +118,17 @@ export default function Home() {
     setSelectedTheme(theme);
     setSorteioCompleto(true);
     
+    // Adicione o tema ao histórico
+    setUsedThemes(prev => {
+      const updated = [...prev, theme];
+      // Mantenha apenas os últimos N temas no histórico (N = metade do total, no máximo 5)
+      const historyLimit = Math.min(5, Math.floor(themes.length / 2));
+      return updated.slice(-historyLimit);
+    });
+    
+    // Limpe o histórico de perguntas ao mudar de tema
+    setQuestionHistory([]);
+    
     // Pequeno atraso antes de finalizar o sorteio completamente
     setTimeout(() => {
       setIsSorteando(false);
@@ -91,24 +140,45 @@ export default function Home() {
       const themeQuestions = questions.filter(q => q.Tema === selectedTheme);
       
       if (themeQuestions.length > 0) {
-        // Sempre selecionar uma pergunta diferente se possível
-        let randomIndex;
-        let newQuestion;
-        
+        // Se houver apenas uma pergunta no tema, use-a
         if (themeQuestions.length === 1) {
-          // Se houver apenas uma pergunta, use-a
-          newQuestion = themeQuestions[0];
-        } else {
-          // Continue tentando até encontrar uma pergunta diferente da atual
-          do {
-            randomIndex = Math.floor(Math.random() * themeQuestions.length);
-            newQuestion = themeQuestions[randomIndex];
-          } while (
-            currentQuestion && 
-            newQuestion.Enunciado === currentQuestion.Enunciado && 
-            themeQuestions.length > 1
+          setCurrentQuestion(themeQuestions[0]);
+          return;
+        }
+        
+        // Perguntas que não foram usadas recentemente
+        const freshQuestions = themeQuestions.filter(q => 
+          !questionHistory.includes(q.Enunciado)
+        );
+        
+        // Se todas as perguntas já foram usadas, use todas; caso contrário, use apenas as não usadas
+        const candidateQuestions = freshQuestions.length > 0 ? 
+          freshQuestions : themeQuestions;
+        
+        // Remova a pergunta atual das candidatas, se houver mais de uma pergunta disponível
+        let availableQuestions = candidateQuestions;
+        if (currentQuestion && candidateQuestions.length > 1) {
+          availableQuestions = candidateQuestions.filter(
+            q => q.Enunciado !== currentQuestion.Enunciado
           );
         }
+        
+        // Gere uma semente de aleatoriedade que muda com o tempo
+        const seed = new Date().getTime() + Math.floor(Math.random() * 10000);
+        
+        // Gere um número aleatório usando a semente
+        const randomValue = Math.abs(Math.sin(seed)) * availableQuestions.length;
+        const randomIndex = Math.floor(randomValue % availableQuestions.length);
+        
+        const newQuestion = availableQuestions[randomIndex];
+        
+        // Atualize o histórico de perguntas
+        setQuestionHistory(prev => {
+          const updated = [...prev, newQuestion.Enunciado];
+          // Mantenha apenas as últimas N perguntas no histórico (N = metade do total, no máximo 5)
+          const historyLimit = Math.min(5, Math.floor(themeQuestions.length / 2));
+          return updated.slice(-historyLimit);
+        });
         
         setCurrentQuestion(newQuestion);
       }
@@ -169,6 +239,7 @@ export default function Home() {
               themes={themes} 
               onSelect={handleThemeSelect}
               duration={5000}
+              usedThemes={usedThemes} // Passa o histórico de temas
             />
           ) : (
             // Após o sorteio, mostra a pergunta

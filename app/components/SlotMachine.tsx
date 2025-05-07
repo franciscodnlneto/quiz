@@ -6,6 +6,7 @@ interface SlotMachineProps {
   themes: string[];
   onSelect: (theme: string) => void;
   duration?: number;
+  usedThemes?: string[]; // Nova prop para temas já usados
 }
 
 // Função atualizada para gerar cores baseadas na paleta do CPC
@@ -65,7 +66,7 @@ export const generateColorFromText = (text: string): string => {
   return `hsl(${h}, ${s}%, ${l}%)`;
 };
 
-const SlotMachine: React.FC<SlotMachineProps> = ({ themes, onSelect, duration = 3000 }) => { // Duração padrão 3s
+const SlotMachine: React.FC<SlotMachineProps> = ({ themes, onSelect, duration = 3000, usedThemes = [] }) => { // Duração padrão 3s
   const [spinning, setSpinning] = useState(false);
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
   const slotRef = useRef<HTMLDivElement>(null);
@@ -87,16 +88,44 @@ const SlotMachine: React.FC<SlotMachineProps> = ({ themes, onSelect, duration = 
   }, []);
 
   const startSpin = () => {
-    const randomIndex = Math.floor(Math.random() * safeThemes.length);
+    // Tente evitar temas recentemente usados
+    let themesToConsider = [...safeThemes];
+    
+    // Se temos um histórico e ele não contém todos os temas, evite os temas recentes
+    if (usedThemes.length > 0 && usedThemes.length < themesToConsider.length) {
+      themesToConsider = themesToConsider.filter(theme => 
+        !usedThemes.includes(theme)
+      );
+    }
+    
+    // Se não sobrou nenhum tema, use todos novamente
+    if (themesToConsider.length === 0) {
+      themesToConsider = [...safeThemes];
+    }
+    
+    // Gere um número realmente aleatório usando múltiplas fontes de entropia
+    const timestamp = new Date().getTime();
+    const randomSeed = timestamp + Math.floor(Math.random() * 10000);
+    
+    // Função de aleatoriedade com melhor distribuição
+    const randomValue = Math.abs(Math.sin(randomSeed) * 10000);
+    const randomIdx = Math.floor(randomValue % themesToConsider.length);
+    
+    // Obtenha o tema selecionado
+    const selectedTheme = themesToConsider[randomIdx];
+    
+    // Encontre o índice correspondente no array original de temas
+    const originalIndex = safeThemes.findIndex(theme => theme === selectedTheme);
+    
     setSpinning(true);
     
     if (slotRef.current) {
       void slotRef.current.offsetHeight;
-      startAnimation(randomIndex);
+      startAnimation(originalIndex);
       
       setTimeout(() => {
-        setSelectedIndex(randomIndex);
-        onSelect(safeThemes[randomIndex]);
+        setSelectedIndex(originalIndex);
+        onSelect(safeThemes[originalIndex]);
       }, duration);
     }
   };
