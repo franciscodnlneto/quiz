@@ -39,3 +39,19 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# senhas e informações sensíveis
+/senhas_de_servicos/
+*.key
+*.pem
+*.cert
+credentials.json
+*config.private.*
+
+# logs
+/logs
+*.log
+
+# dados locais/temporários
+.temp/
+.cache/
