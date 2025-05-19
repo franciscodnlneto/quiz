@@ -1,3 +1,4 @@
+// QuestionTimer.tsx - Solução completa
 "use client";
 import { useState, useEffect, useRef } from 'react';
 import styles from './QuestionTimer.module.css';
@@ -8,9 +9,9 @@ interface QuestionTimerProps {
   isRunning: boolean;
   onTimerTick?: (secondsLeft: number) => void;
   currentScore: number;
-  accumulatedScore: number; // Nova prop adicionada aqui
+  accumulatedScore: number;
+  freezeDisplay?: boolean;
 }
-
 
 const QuestionTimer: React.FC<QuestionTimerProps> = ({
   seconds,
@@ -18,20 +19,29 @@ const QuestionTimer: React.FC<QuestionTimerProps> = ({
   isRunning,
   onTimerTick,
   currentScore,
-  accumulatedScore
+  accumulatedScore,
+  freezeDisplay = false
 }) => {
   // Usar refs para o estado real do timer para evitar problemas de closure
   const timeLeftRef = useRef<number>(seconds);
   const [displayTimeLeft, setDisplayTimeLeft] = useState(seconds);
   const [currentPartialScore, setCurrentPartialScore] = useState(100);
+  const [frozenPartialScore, setFrozenPartialScore] = useState(100);
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
   const startTimeRef = useRef<number | null>(null);
   const lastTickTimeRef = useRef<number>(0);
   const hasCalledTimeUpRef = useRef<boolean>(false);
   
-  // Constantes para cálculo da pontuação (mesmas do componente principal)
+  // Constantes para cálculo da pontuação
   const MAX_TIME_POINTS = 100; // Pontos máximos por resposta rápida
   const BASE_POINTS = 250;     // Pontos base por pergunta correta
+  
+  // Congelar o valor da pontuação parcial quando freezeDisplay muda para true
+  useEffect(() => {
+    if (freezeDisplay) {
+      setFrozenPartialScore(currentPartialScore);
+    }
+  }, [freezeDisplay, currentPartialScore]);
   
   // Limpa o intervalo e reseta tudo quando o componente desmonta
   useEffect(() => {
@@ -49,6 +59,7 @@ const QuestionTimer: React.FC<QuestionTimerProps> = ({
     timeLeftRef.current = seconds;
     setDisplayTimeLeft(seconds);
     setCurrentPartialScore(MAX_TIME_POINTS);
+    setFrozenPartialScore(MAX_TIME_POINTS);
     startTimeRef.current = null;
     hasCalledTimeUpRef.current = false;
     
@@ -90,7 +101,6 @@ const QuestionTimer: React.FC<QuestionTimerProps> = ({
         const roundedTimeLeft = Math.round(newTimeLeft * 10) / 10;
         
         // Calcular a pontuação parcial com base no tempo restante
-        // A fórmula deve ser exatamente a mesma usada no componente QuizQuestion
         const timePoints = Math.max(0, MAX_TIME_POINTS - ((seconds - roundedTimeLeft) * (MAX_TIME_POINTS / seconds)));
         const partialScore = Math.round(timePoints);
         
@@ -101,7 +111,11 @@ const QuestionTimer: React.FC<QuestionTimerProps> = ({
         if (now - lastTickTimeRef.current >= 100) {
           lastTickTimeRef.current = now;
           setDisplayTimeLeft(roundedTimeLeft);
-          setCurrentPartialScore(partialScore);
+          
+          // Só atualiza o score parcial se a exibição não estiver congelada
+          if (!freezeDisplay) {
+            setCurrentPartialScore(partialScore);
+          }
           
           // Notificar o componente pai sobre a mudança
           if (onTimerTick) {
@@ -131,7 +145,7 @@ const QuestionTimer: React.FC<QuestionTimerProps> = ({
         intervalRef.current = null;
       }
     };
-  }, [isRunning, seconds, onTimeUp, onTimerTick]);
+  }, [isRunning, seconds, onTimeUp, onTimerTick, freezeDisplay]);
   
   // Calcular a cor do timer baseado no tempo restante
   const getTimerColor = () => {
@@ -155,32 +169,37 @@ const QuestionTimer: React.FC<QuestionTimerProps> = ({
     return time.toFixed(1);
   };
 
- return (
-  <div className={styles.timerContainer}>
-    <div className={styles.timerHeader}>
-      <div className={styles.timerInfo}>
-        <span className={styles.timerLabel}>Tempo Restante</span>
-        <span className={`${styles.timerValue} ${getAnimationClass()}`}>
-          {formatTime(displayTimeLeft)}s
-        </span>
+  // Usar a pontuação congelada ou atual dependendo do estado
+  const displayPartialScore = freezeDisplay ? frozenPartialScore : currentPartialScore;
+
+  return (
+    <div className={styles.timerContainer}>
+      <div className={styles.timerHeader}>
+        <div className={styles.timerInfo}>
+          <span className={styles.timerLabel}>Tempo Restante</span>
+          <span className={`${styles.timerValue} ${getAnimationClass()}`}>
+            {formatTime(displayTimeLeft)}s
+          </span>
+        </div>
+        <div className={styles.scoreInfo}>
+          <span className={styles.scoreLabel}>Score Total</span>
+          <span className={styles.scoreValue}>
+            {currentScore} + {BASE_POINTS + displayPartialScore} = {currentScore + BASE_POINTS + displayPartialScore}
+          </span>
+        </div>
       </div>
-<div className={styles.scoreInfo}>
-  <span className={styles.scoreLabel}>Score Parcial</span>
-  <span className={styles.scoreValue}>
-    {BASE_POINTS} + {currentPartialScore} = {BASE_POINTS + currentPartialScore}
-  </span>
-</div>
-
-
-
+      
+      <div className={styles.progressContainer}>
+        <div 
+          className={styles.progressBar} 
+          style={{ 
+            width: `${percentLeft}%`, 
+            backgroundColor: getTimerColor() 
+          }}
+        ></div>
+      </div>
     </div>
-    
-    <div className={styles.progressContainer}>
-      <div className={styles.progressBar} style={{ width: `${percentLeft}%`, backgroundColor: getTimerColor() }}></div>
-    </div>
-  </div>
-);
-
+  );
 };
 
 export default QuestionTimer;

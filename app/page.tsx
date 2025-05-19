@@ -255,19 +255,24 @@ const handleWelcomeClose = () => {
   };
 
   // Função para processar a resposta de uma pergunta
+// Modificações no page.tsx
+// Esta é apenas a parte relevante que precisa ser ajustada no arquivo page.tsx
 
 const handleAnswerQuestion = (correct: boolean, pointsEarned: number) => {
   if (currentQuestion) {
     if (correct) {
-      // Atualizar a pontuação com os pontos já calculados (congelados) vindos do QuizQuestion
-      setGameScore(prev => ({
-        correctAnswers: prev.correctAnswers + 1,
-        totalTime: prev.totalTime, // Se quiser somar tempo, pode incluir depois
-        points: prev.points + pointsEarned
-      }));
-
-      // Adicionar à lista de perguntas completadas
-      setCompletedQuestions(prev => [...prev, currentQuestion]);
+      // IMPORTANTE: Não atualize o gameScore imediatamente na UI
+      // Em vez disso, armazene o novo valor para ser usado após a transição
+      const newScore = {
+        correctAnswers: gameScore.correctAnswers + 1,
+        totalTime: gameScore.totalTime,
+        points: gameScore.points + pointsEarned
+      };
+      
+      // Armazenar o novo score para uso posterior, mas não atualizar o state ainda
+      // Isso impede que a UI do QuizQuestion veja o score atualizado antes de ser desmontado
+      const newScoreStored = JSON.stringify(newScore);
+      localStorage.setItem('temp_new_score', newScoreStored);
 
       // Mostrar o confetti
       setShowConfetti(true);
@@ -278,6 +283,9 @@ const handleAnswerQuestion = (correct: boolean, pointsEarned: number) => {
       // Verificar se completou todas as perguntas após um breve delay
       setTimeout(() => {
         const nextQuestionIndex = currentQuestionIndex + 1;
+        
+        // Agora sim, atualize o score após o delay
+        setGameScore(newScore);
 
         if (nextQuestionIndex >= TOTAL_QUESTIONS) {
           setGameState('completed');

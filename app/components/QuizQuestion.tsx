@@ -1,4 +1,4 @@
-// QuizQuestion.tsx - Atualizado com sincronização do cálculo de pontuação
+// QuizQuestion.tsx - Solução completa
 "use client";
 import { useState, useEffect, useRef } from 'react';
 import styles from './QuizQuestion.module.css';
@@ -26,7 +26,7 @@ interface QuizQuestionProps {
   currentQuestionNumber: number;
   totalQuestions: number;
   showConfetti?: boolean;
-  currentScore: number; // Adicione esta nova prop
+  currentScore: number;
 } 
 
 const QuizQuestion: React.FC<QuizQuestionProps> = ({ 
@@ -38,7 +38,7 @@ const QuizQuestion: React.FC<QuizQuestionProps> = ({
   currentQuestionNumber,
   totalQuestions,
   showConfetti = false,
-  currentScore // Adicione esta prop
+  currentScore
 }) => {
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
   const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
@@ -48,8 +48,12 @@ const QuizQuestion: React.FC<QuizQuestionProps> = ({
   const [timerRunning, setTimerRunning] = useState(true);
   const [displayTimeSpent, setDisplayTimeSpent] = useState(0);
   const [lastPartialScore, setLastPartialScore] = useState(0);
+  // Estado para controlar o congelamento da exibição
+  const [freezeDisplayScore, setFreezeDisplayScore] = useState(false);
+  // Estado para manter a pontuação atual para exibição, independente da prop
+  const [displayScore, setDisplayScore] = useState(currentScore);
   
-  // Constantes para cálculo da pontuação (mesmas do QuestionTimer)
+  // Constantes para cálculo da pontuação
   const MAX_TIME_POINTS = 100; // Pontos máximos por resposta rápida
   const BASE_POINTS = 250;     // Pontos base por pergunta correta
   
@@ -57,6 +61,11 @@ const QuizQuestion: React.FC<QuizQuestionProps> = ({
   const initialTimeRef = useRef<number>(30);
   const currentTimeRef = useRef<number>(30);
   const processingActionRef = useRef<boolean>(false);
+
+  // Fixar o displayScore com o valor inicial do currentScore quando o componente é montado
+  useEffect(() => {
+    setDisplayScore(currentScore);
+  }, []);
 
   // Efeito para animar a entrada ao montar o componente e resetar estados
   useEffect(() => {
@@ -68,6 +77,8 @@ const QuizQuestion: React.FC<QuizQuestionProps> = ({
     setTimerRunning(true);
     setDisplayTimeSpent(0);
     setLastPartialScore(MAX_TIME_POINTS);
+    setFreezeDisplayScore(false);
+    setDisplayScore(currentScore); // Importante: usar o currentScore atual
     
     // Resetar refs
     initialTimeRef.current = 30;
@@ -79,7 +90,7 @@ const QuizQuestion: React.FC<QuizQuestionProps> = ({
     }, 500);
     
     return () => clearTimeout(timer);
-  }, [question]);
+  }, [question, currentScore]);
 
   // Preparar as alternativas da pergunta
   const numAlternativas = parseInt(question.Num_de_alternativas);
@@ -115,6 +126,9 @@ const QuizQuestion: React.FC<QuizQuestionProps> = ({
     // Parar o timer
     setTimerRunning(false);
     
+    // IMPORTANTE: Congelar a exibição do score
+    setFreezeDisplayScore(true);
+    
     // Calcular o tempo gasto - usando a diferença entre o tempo inicial e o atual
     const timeSpent = initialTimeRef.current - currentTimeRef.current;
     
@@ -134,8 +148,6 @@ const QuizQuestion: React.FC<QuizQuestionProps> = ({
     
     // Notificar o componente pai
     onAnswerQuestion(isAnswerCorrect, BASE_POINTS + lastPartialScore);
-
-
   };
 
   // Determinar a classe CSS para cada alternativa
@@ -166,6 +178,9 @@ const QuizQuestion: React.FC<QuizQuestionProps> = ({
     // Parar o timer
     setTimerRunning(false);
     
+    // Congelar o display do score
+    setFreezeDisplayScore(true);
+    
     // Notificar o componente pai
     onTimeUp();
   };
@@ -190,31 +205,29 @@ const QuizQuestion: React.FC<QuizQuestionProps> = ({
     return 0;
   };
 
-
   return (
     <div className={`${styles.questionContainer} ${fadeIn ? styles.fadeIn : ''} ${fadeOut ? styles.fadeOut : ''} ${selectedAnswer !== null ? styles.answered : ''}`}>
-    <div className={styles.progress}>
-      <div className={styles.progressText}>
-        Pergunta {currentQuestionNumber} de {totalQuestions}
+      <div className={styles.progress}>
+        <div className={styles.progressText}>
+          Pergunta {currentQuestionNumber} de {totalQuestions}
+        </div>
+        <div className={styles.progressBar}>
+          <div 
+            className={styles.progressFill} 
+            style={{ width: `${(currentQuestionNumber / totalQuestions) * 100}%` }}
+          ></div>
+        </div>
       </div>
-      <div className={styles.progressBar}>
-        <div 
-          className={styles.progressFill} 
-          style={{ width: `${(currentQuestionNumber / totalQuestions) * 100}%` }}
-        ></div>
-      </div>
-    </div>
       
-  
-<QuestionTimer
-  seconds={30}
-  onTimeUp={handleTimeUp}
-  isRunning={timerRunning}
-  onTimerTick={handleTimerTick}
-currentScore={currentScore}
-  accumulatedScore={currentScore}
-/>
-
+      <QuestionTimer
+        seconds={30}
+        onTimeUp={handleTimeUp}
+        isRunning={timerRunning}
+        onTimerTick={handleTimerTick}
+        currentScore={displayScore} // Usar o score congelado local
+        accumulatedScore={currentScore}
+        freezeDisplay={freezeDisplayScore}
+      />
       
       <div className={styles.questionHeader}>
         <div 
@@ -252,7 +265,6 @@ currentScore={currentScore}
             {isCorrect ? 'Parabéns! Você acertou!' : 'Ops! Resposta incorreta.'}
           </p>
           <div className={styles.scoreInfo}>
-
             <div className={styles.timeInfo}>
               Tempo: <span className={styles.timeValue}>{displayTimeSpent.toFixed(1)} segundos</span>
             </div>
