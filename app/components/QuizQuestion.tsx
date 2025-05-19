@@ -1,8 +1,9 @@
-// QuizQuestion.tsx - Com confetti original + timer
+// QuizQuestion.tsx - Atualizado com confetti controlado e barra de progresso
 "use client";
 import { useState, useEffect, useRef } from 'react';
 import styles from './QuizQuestion.module.css';
-import { generateColorFromText } from './SlotMachine'; // Importa a função de cor do SlotMachine
+import { generateColorFromText } from './SlotMachine';
+import QuestionTimer from './QuestionTimer';
 
 interface Question {
   Tema: string;
@@ -19,43 +20,48 @@ interface Question {
 interface QuizQuestionProps {
   question: Question;
   onNextQuestion: () => void;
-  onSelectNewTheme: () => void; // Nova prop para iniciar seleção de novo tema
+  onSelectNewTheme: () => void;
+  onAnswerQuestion: (correct: boolean, timeSpent: number) => void;
+  onTimeUp: () => void;
+  currentQuestionNumber: number;
+  totalQuestions: number;
+  showConfetti?: boolean;
 }
 
 const QuizQuestion: React.FC<QuizQuestionProps> = ({ 
   question, 
   onNextQuestion, 
-  onSelectNewTheme 
+  onSelectNewTheme, 
+  onAnswerQuestion,
+  onTimeUp,
+  currentQuestionNumber,
+  totalQuestions,
+  showConfetti = false
 }) => {
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
   const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
   const [fadeIn, setFadeIn] = useState(false);
   const [fadeOut, setFadeOut] = useState(false);
   const [themeColor, setThemeColor] = useState("");
-  const [showConfetti, setShowConfetti] = useState(false);
-
-  // Referência para controlar a duração da animação de confete
-  const confettiTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const [timerRunning, setTimerRunning] = useState(true);
+  const [timeSpent, setTimeSpent] = useState(0);
+  
+  const startTimeRef = useRef<number>(Date.now());
 
   // Efeito para animar a entrada ao montar o componente
   useEffect(() => {
     setFadeIn(true);
     setThemeColor(generateColorFromText(question.Tema));
+    setSelectedAnswer(null);
+    setIsCorrect(null);
+    setTimerRunning(true);
+    startTimeRef.current = Date.now();
     
     const timer = setTimeout(() => {
       setFadeIn(false);
     }, 500);
     return () => clearTimeout(timer);
   }, [question]);
-
-  // Efeito para limpar o temporizador do confete quando o componente é desmontado
-  useEffect(() => {
-    return () => {
-      if (confettiTimerRef.current) {
-        clearTimeout(confettiTimerRef.current);
-      }
-    };
-  }, []);
 
   const numAlternativas = parseInt(question.Num_de_alternativas);
   const alternativas = [
@@ -67,20 +73,21 @@ const QuizQuestion: React.FC<QuizQuestionProps> = ({
 
   const handleAnswerClick = (index: number) => {
     if (selectedAnswer !== null) return;
+    
+    // Parar o timer
+    setTimerRunning(false);
+    
+    // Calcular tempo gasto - usando décimos de segundo para maior precisão
+    const answerTime = (Date.now() - startTimeRef.current) / 1000;
+    setTimeSpent(parseFloat(answerTime.toFixed(1))); // Mantém 1 casa decimal
+    
     setSelectedAnswer(index);
     const correctAnswerIndex = parseInt(question.Resposta_correta) - 1;
     const correct = index === correctAnswerIndex;
     setIsCorrect(correct);
     
-    if (correct) {
-      // Ativar a animação de confete por um período limitado
-      setShowConfetti(true);
-      
-      // Configurar um timer para remover o confete após 1.5 segundos
-      confettiTimerRef.current = setTimeout(() => {
-        setShowConfetti(false);
-      }, 1500);
-    }
+    // Informar ao componente pai sobre a resposta
+    onAnswerQuestion(correct, answerTime);
   };
 
   const getAlternativeClass = (index: number) => {
@@ -95,25 +102,9 @@ const QuizQuestion: React.FC<QuizQuestionProps> = ({
     return styles.disabled;
   };
 
-  const handleNextQuestion = () => {
-    // Limpar o timer do confete se existir
-    if (confettiTimerRef.current) {
-      clearTimeout(confettiTimerRef.current);
-    }
-    
-    // Inicia a animação de saída
-    setFadeOut(true);
-    
-    // Aguarda a animação completar antes de mudar a pergunta
-    setTimeout(() => {
-      setSelectedAnswer(null);
-      setIsCorrect(null);
-      setFadeOut(false);
-      setShowConfetti(false);
-      
-      // Aqui adicionamos a chamada para selecionar um novo tema
-      onSelectNewTheme();
-    }, 500);
+  const handleTimeUp = () => {
+    setTimerRunning(false);
+    onTimeUp();
   };
 
   // Compacta o enunciado se for muito longo
@@ -130,6 +121,24 @@ const QuizQuestion: React.FC<QuizQuestionProps> = ({
 
   return (
     <div className={`${styles.questionContainer} ${fadeIn ? styles.fadeIn : ''} ${fadeOut ? styles.fadeOut : ''} ${selectedAnswer !== null ? styles.answered : ''}`}>
+      <div className={styles.progress}>
+        <div className={styles.progressText}>
+          Pergunta {currentQuestionNumber} de {totalQuestions}
+        </div>
+        <div className={styles.progressBar}>
+          <div 
+            className={styles.progressFill} 
+            style={{ width: `${(currentQuestionNumber / totalQuestions) * 100}%` }}
+          ></div>
+        </div>
+      </div>
+      
+      <QuestionTimer 
+        seconds={30} 
+        onTimeUp={handleTimeUp}
+        isRunning={timerRunning}
+      />
+      
       <div className={styles.questionHeader}>
         <div 
           className={styles.theme}
@@ -152,7 +161,7 @@ const QuizQuestion: React.FC<QuizQuestionProps> = ({
             key={index}
             className={`${styles.alternative} ${getAlternativeClass(index)}`}
             onClick={() => handleAnswerClick(index)}
-            disabled={selectedAnswer !== null}
+            disabled={selectedAnswer !== null || !timerRunning}
           >
             <span className={styles.letter}>{String.fromCharCode(65 + index)}</span>
             <span className={styles.content}>{alternativa}</span>
@@ -165,39 +174,18 @@ const QuizQuestion: React.FC<QuizQuestionProps> = ({
           <p className={isCorrect ? styles.correctFeedback : styles.incorrectFeedback}>
             {isCorrect ? 'Parabéns! Você acertou!' : 'Ops! Resposta incorreta.'}
           </p>
-          <button
-            className={`${styles.nextButton} ${styles.pulseButton}`}
-            onClick={handleNextQuestion}
-            style={{
-              background: `linear-gradient(135deg, ${themeColor}, ${adjustColor(themeColor, -20)})`,
-              boxShadow: `0 4px 15px ${themeColor}80`
-            }}
-          >
-            Próximo Tema
-          </button>
+          <div className={styles.timeInfo}>
+            Tempo: <span className={styles.timeValue}>{timeSpent.toFixed(1)} segundos</span>
+          </div>
+          
+          {/* Botão "Próxima Pergunta" removido - a transição é automática */}
         </div>
       )}
       
-      {/* Usando a classe confetti original, mas com o estado showConfetti para controlar a duração */}
+      {/* Efeito de confetti controlado pelo componente pai */}
       {showConfetti && <div className={styles.confetti}></div>}
     </div>
   );
 };
-
-// Função para ajustar a luminosidade de uma cor HSL
-function adjustColor(color: string, amount: number): string {
-  // Extrai os valores H, S, L da string de cor HSL
-  const hslMatch = color.match(/hsl\((\d+),\s*(\d+)%,\s*(\d+)%\)/);
-  if (!hslMatch) return color;
-  
-  const h = parseInt(hslMatch[1]);
-  const s = parseInt(hslMatch[2]);
-  let l = parseInt(hslMatch[3]);
-  
-  // Ajusta a luminosidade
-  l = Math.max(0, Math.min(100, l + amount));
-  
-  return `hsl(${h}, ${s}%, ${l}%)`;
-}
 
 export default QuizQuestion;
