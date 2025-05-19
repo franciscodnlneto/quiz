@@ -364,6 +364,49 @@
   }
 }
 
+/* Animação de pulsação para o botão "Próximo Tema" */
+.pulseButton {
+  animation: buttonPulse 1.5s infinite alternate;
+  position: relative;
+}
+
+@keyframes buttonPulse {
+  0% {
+    transform: scale(1);
+    box-shadow: 0 4px 10px rgba(176, 42, 120, 0.3);
+  }
+  100% {
+    transform: scale(1.05);
+    box-shadow: 0 8px 20px rgba(176, 42, 120, 0.6);
+  }
+}
+
+/* Adiciona um efeito de brilho no botão */
+.pulseButton::after {
+  content: '';
+  position: absolute;
+  top: -5px;
+  left: -5px;
+  right: -5px;
+  bottom: -5px;
+  border-radius: 50px;
+  background: transparent;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  opacity: 0;
+  animation: buttonGlow 1.5s infinite alternate;
+}
+
+@keyframes buttonGlow {
+  0% {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1.05);
+  }
+}
+
 /* Responsividade */
 @media (max-width: 768px) {
   .questionContainer {

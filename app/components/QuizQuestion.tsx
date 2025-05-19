@@ -1,6 +1,6 @@
-// QuizQuestion.tsx - Componente de perguntas com transições suaves
+// QuizQuestion.tsx - Com confetti original + timer
 "use client";
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import styles from './QuizQuestion.module.css';
 import { generateColorFromText } from './SlotMachine'; // Importa a função de cor do SlotMachine
 
@@ -19,14 +19,23 @@ interface Question {
 interface QuizQuestionProps {
   question: Question;
   onNextQuestion: () => void;
+  onSelectNewTheme: () => void; // Nova prop para iniciar seleção de novo tema
 }
 
-const QuizQuestion: React.FC<QuizQuestionProps> = ({ question, onNextQuestion }) => {
+const QuizQuestion: React.FC<QuizQuestionProps> = ({ 
+  question, 
+  onNextQuestion, 
+  onSelectNewTheme 
+}) => {
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
   const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
   const [fadeIn, setFadeIn] = useState(false);
   const [fadeOut, setFadeOut] = useState(false);
   const [themeColor, setThemeColor] = useState("");
+  const [showConfetti, setShowConfetti] = useState(false);
+
+  // Referência para controlar a duração da animação de confete
+  const confettiTimerRef = useRef<NodeJS.Timeout | null>(null);
 
   // Efeito para animar a entrada ao montar o componente
   useEffect(() => {
@@ -38,6 +47,15 @@ const QuizQuestion: React.FC<QuizQuestionProps> = ({ question, onNextQuestion })
     }, 500);
     return () => clearTimeout(timer);
   }, [question]);
+
+  // Efeito para limpar o temporizador do confete quando o componente é desmontado
+  useEffect(() => {
+    return () => {
+      if (confettiTimerRef.current) {
+        clearTimeout(confettiTimerRef.current);
+      }
+    };
+  }, []);
 
   const numAlternativas = parseInt(question.Num_de_alternativas);
   const alternativas = [
@@ -51,7 +69,18 @@ const QuizQuestion: React.FC<QuizQuestionProps> = ({ question, onNextQuestion })
     if (selectedAnswer !== null) return;
     setSelectedAnswer(index);
     const correctAnswerIndex = parseInt(question.Resposta_correta) - 1;
-    setIsCorrect(index === correctAnswerIndex);
+    const correct = index === correctAnswerIndex;
+    setIsCorrect(correct);
+    
+    if (correct) {
+      // Ativar a animação de confete por um período limitado
+      setShowConfetti(true);
+      
+      // Configurar um timer para remover o confete após 1.5 segundos
+      confettiTimerRef.current = setTimeout(() => {
+        setShowConfetti(false);
+      }, 1500);
+    }
   };
 
   const getAlternativeClass = (index: number) => {
@@ -67,6 +96,11 @@ const QuizQuestion: React.FC<QuizQuestionProps> = ({ question, onNextQuestion })
   };
 
   const handleNextQuestion = () => {
+    // Limpar o timer do confete se existir
+    if (confettiTimerRef.current) {
+      clearTimeout(confettiTimerRef.current);
+    }
+    
     // Inicia a animação de saída
     setFadeOut(true);
     
@@ -75,7 +109,10 @@ const QuizQuestion: React.FC<QuizQuestionProps> = ({ question, onNextQuestion })
       setSelectedAnswer(null);
       setIsCorrect(null);
       setFadeOut(false);
-      onNextQuestion();
+      setShowConfetti(false);
+      
+      // Aqui adicionamos a chamada para selecionar um novo tema
+      onSelectNewTheme();
     }, 500);
   };
 
@@ -129,20 +166,20 @@ const QuizQuestion: React.FC<QuizQuestionProps> = ({ question, onNextQuestion })
             {isCorrect ? 'Parabéns! Você acertou!' : 'Ops! Resposta incorreta.'}
           </p>
           <button
-            className={styles.nextButton}
+            className={`${styles.nextButton} ${styles.pulseButton}`}
             onClick={handleNextQuestion}
             style={{
               background: `linear-gradient(135deg, ${themeColor}, ${adjustColor(themeColor, -20)})`,
               boxShadow: `0 4px 15px ${themeColor}80`
             }}
           >
-            Próxima Pergunta
+            Próximo Tema
           </button>
         </div>
       )}
       
-      {/* Efeitos de confete para respostas corretas */}
-      {isCorrect && <div className={styles.confetti}></div>}
+      {/* Usando a classe confetti original, mas com o estado showConfetti para controlar a duração */}
+      {showConfetti && <div className={styles.confetti}></div>}
     </div>
   );
 };

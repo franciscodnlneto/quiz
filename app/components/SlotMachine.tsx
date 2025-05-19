@@ -1,6 +1,8 @@
 "use client";
 import React, { useState, useEffect, useRef } from 'react';
 import styles from './SlotMachine.module.css';
+import { selectRandomTheme, getSecureRandomInt, shuffleArray } from '../utils/randomUtils';
+
 
 interface SlotMachineProps {
   themes: string[];
@@ -87,48 +89,25 @@ const SlotMachine: React.FC<SlotMachineProps> = ({ themes, onSelect, duration = 
     return () => clearTimeout(timer);
   }, []);
 
-  const startSpin = () => {
-    // Tente evitar temas recentemente usados
-    let themesToConsider = [...safeThemes];
+ const startSpin = () => {
+  setSpinning(true);
+  
+  // Use o novo algoritmo de seleção de temas
+  const selectedTheme = selectRandomTheme(safeThemes, usedThemes);
+  
+  // Encontre o índice correspondente no array original
+  const selectedIndex = safeThemes.indexOf(selectedTheme);
+  
+  if (slotRef.current) {
+    void slotRef.current.offsetHeight;
+    startAnimation(selectedIndex);
     
-    // Se temos um histórico e ele não contém todos os temas, evite os temas recentes
-    if (usedThemes.length > 0 && usedThemes.length < themesToConsider.length) {
-      themesToConsider = themesToConsider.filter(theme => 
-        !usedThemes.includes(theme)
-      );
-    }
-    
-    // Se não sobrou nenhum tema, use todos novamente
-    if (themesToConsider.length === 0) {
-      themesToConsider = [...safeThemes];
-    }
-    
-    // Gere um número realmente aleatório usando múltiplas fontes de entropia
-    const timestamp = new Date().getTime();
-    const randomSeed = timestamp + Math.floor(Math.random() * 10000);
-    
-    // Função de aleatoriedade com melhor distribuição
-    const randomValue = Math.abs(Math.sin(randomSeed) * 10000);
-    const randomIdx = Math.floor(randomValue % themesToConsider.length);
-    
-    // Obtenha o tema selecionado
-    const selectedTheme = themesToConsider[randomIdx];
-    
-    // Encontre o índice correspondente no array original de temas
-    const originalIndex = safeThemes.findIndex(theme => theme === selectedTheme);
-    
-    setSpinning(true);
-    
-    if (slotRef.current) {
-      void slotRef.current.offsetHeight;
-      startAnimation(originalIndex);
-      
-      setTimeout(() => {
-        setSelectedIndex(originalIndex);
-        onSelect(safeThemes[originalIndex]);
-      }, duration);
-    }
-  };
+    setTimeout(() => {
+      setSelectedIndex(selectedIndex);
+      onSelect(safeThemes[selectedIndex]);
+    }, duration);
+  }
+};
 
   const startAnimation = (targetIndex: number) => {
     if (!slotRef.current) return;

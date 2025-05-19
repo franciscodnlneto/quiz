@@ -1,10 +1,13 @@
+// page.tsx - Arquivo principal modificado
 "use client";
 import { useEffect, useState } from 'react';
 import Papa from 'papaparse';
+import { selectRandomQuestion } from './utils/randomUtils';
+
 import ThemeSelector from './components/ThemeSelector';
-import QuizQuestion from './components/QuizQuestion';
 import SlotMachine from './components/SlotMachine';
 import CountDown from './components/CountDown';
+import QuizQuestion from './components/QuizQuestion';
 
 import styles from './page.module.css';
 
@@ -19,7 +22,6 @@ interface Question {
   Resposta_correta: string;
   Alternativa_irreverente: string;
 }
-
 export default function Home() {
   const [questions, setQuestions] = useState<Question[]>([]);
   const [themes, setThemes] = useState<string[]>([]);
@@ -101,13 +103,15 @@ export default function Home() {
 
   useEffect(() => {
     if (selectedTheme && !isSorteando && questions.length > 0) {
-      // Filtrar perguntas do tema selecionado
-      const themeQuestions = questions.filter(q => q.Tema === selectedTheme);
+      // Use o algoritmo de seleção aleatória melhorada também aqui
+      const newQuestion = selectRandomQuestion(
+        questions,
+        selectedTheme,
+        [] // não use histórico para a primeira seleção
+      );
       
-      if (themeQuestions.length > 0) {
-        // Selecionar uma pergunta aleatória
-        const randomIndex = Math.floor(Math.random() * themeQuestions.length);
-        setCurrentQuestion(themeQuestions[randomIndex]);
+      if (newQuestion) {
+        setCurrentQuestion(newQuestion);
       } else {
         setCurrentQuestion(null);
       }
@@ -137,46 +141,21 @@ export default function Home() {
 
   const handleNextQuestion = () => {
     if (selectedTheme) {
-      const themeQuestions = questions.filter(q => q.Tema === selectedTheme);
+      // Use a função de seleção aleatória de perguntas
+      const newQuestion = selectRandomQuestion(
+        questions,
+        selectedTheme,
+        questionHistory
+      );
       
-      if (themeQuestions.length > 0) {
-        // Se houver apenas uma pergunta no tema, use-a
-        if (themeQuestions.length === 1) {
-          setCurrentQuestion(themeQuestions[0]);
-          return;
-        }
-        
-        // Perguntas que não foram usadas recentemente
-        const freshQuestions = themeQuestions.filter(q => 
-          !questionHistory.includes(q.Enunciado)
-        );
-        
-        // Se todas as perguntas já foram usadas, use todas; caso contrário, use apenas as não usadas
-        const candidateQuestions = freshQuestions.length > 0 ? 
-          freshQuestions : themeQuestions;
-        
-        // Remova a pergunta atual das candidatas, se houver mais de uma pergunta disponível
-        let availableQuestions = candidateQuestions;
-        if (currentQuestion && candidateQuestions.length > 1) {
-          availableQuestions = candidateQuestions.filter(
-            q => q.Enunciado !== currentQuestion.Enunciado
-          );
-        }
-        
-        // Gere uma semente de aleatoriedade que muda com o tempo
-        const seed = new Date().getTime() + Math.floor(Math.random() * 10000);
-        
-        // Gere um número aleatório usando a semente
-        const randomValue = Math.abs(Math.sin(seed)) * availableQuestions.length;
-        const randomIndex = Math.floor(randomValue % availableQuestions.length);
-        
-        const newQuestion = availableQuestions[randomIndex];
-        
+      if (newQuestion) {
         // Atualize o histórico de perguntas
         setQuestionHistory(prev => {
           const updated = [...prev, newQuestion.Enunciado];
-          // Mantenha apenas as últimas N perguntas no histórico (N = metade do total, no máximo 5)
-          const historyLimit = Math.min(5, Math.floor(themeQuestions.length / 2));
+          // Mantenha apenas as últimas N perguntas no histórico
+          const historyLimit = Math.min(5, Math.floor(
+            questions.filter(q => q.Tema === selectedTheme).length / 2
+          ));
           return updated.slice(-historyLimit);
         });
         
@@ -247,6 +226,7 @@ export default function Home() {
               <QuizQuestion
                 question={currentQuestion}
                 onNextQuestion={handleNextQuestion}
+                onSelectNewTheme={handleSorteioStart} // Adicionamos a função para selecionar novo tema
               />
             ) : (
               <div className={styles.noQuestion}>
