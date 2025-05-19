@@ -78,33 +78,23 @@ export default function Home() {
     setShowModal(true);
     setGameState('welcome');
     
-    // Verificar se já existe uma pontuação e progresso salvos
-    const savedGameState = localStorage.getItem('quizito_gameState');
-    const savedQuestionIndex = localStorage.getItem('quizito_currentQuestionIndex');
-    
-    // Restaurar o índice da pergunta atual, se existir
-    if (savedQuestionIndex) {
-      const questionIndex = parseInt(savedQuestionIndex);
-      if (!isNaN(questionIndex)) {
-        setCurrentQuestionIndex(questionIndex);
-      }
-    }
-    
-    if (savedGameState) {
-      try {
-        const parsedState = JSON.parse(savedGameState);
-        // Não restauramos o estado completo para sempre começar com o modal
-        // mas podemos restaurar a pontuação e as perguntas completadas
-        if (parsedState.gameScore) {
-          setGameScore(parsedState.gameScore);
-        }
-        if (parsedState.completedQuestions) {
-          setCompletedQuestions(parsedState.completedQuestions);
-        }
-      } catch (e) {
-        console.error('Erro ao carregar estado do jogo:', e);
-      }
-    }
+   // Sempre começar com o modal e zerar tudo
+setShowModal(true);
+setGameState('welcome');
+setCurrentQuestionIndex(0);
+setGameScore({
+  correctAnswers: 0,
+  totalTime: 0,
+  points: 0
+});
+setCompletedQuestions([]);
+
+// Apagar qualquer estado antigo persistido
+localStorage.removeItem('quizito_gameState');
+localStorage.removeItem('quizito_currentQuestionIndex');
+localStorage.removeItem('quizito_questionHistory');
+localStorage.removeItem('quizito_themeHistory');
+
     
     // Carrega o histórico salvo quando o componente é montado
     const savedQuestionHistory = localStorage.getItem('quizito_questionHistory');
@@ -213,11 +203,20 @@ export default function Home() {
   }, [selectedTheme, isSorteando, questions, gameState, completedQuestions, currentQuestion]);
 
   // Iniciar o jogo após fechar o modal de boas-vindas
-  const handleWelcomeClose = () => {
-    setShowModal(false);
-    setGameState('sorting');
-    startSorteio();
-  };
+const handleWelcomeClose = () => {
+  setShowModal(false);
+  setGameState('sorting');
+  startSorteio();
+
+  // Resetar a pontuação quando o jogo começa de novo
+  setGameScore({
+    correctAnswers: 0,
+    totalTime: 0,
+    points: 0
+  });
+
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+};
 
   // Função para iniciar um novo sorteio de tema
   const startSorteio = () => {
@@ -257,69 +256,46 @@ export default function Home() {
 
   // Função para processar a resposta de uma pergunta
 
-const handleAnswerQuestion = (correct: boolean, timeSpent: number) => {
+const handleAnswerQuestion = (correct: boolean, pointsEarned: number) => {
   if (currentQuestion) {
     if (correct) {
-      // Garantir que o tempo seja arredondado consistentemente para uma casa decimal
-      // Estamos usando o valor exato que já foi arredondado no componente QuizQuestion
-      const roundedTimeSpent = timeSpent;
-      
-      // Calcular pontos com base no tempo - USANDO A MESMA FÓRMULA que os componentes QuestionTimer e QuizQuestion
-      const timePoints = Math.max(0, MAX_TIME_POINTS - (roundedTimeSpent * (MAX_TIME_POINTS / 30)));
-      const questionPoints = BASE_POINTS + Math.round(timePoints);
-      
-      // Atualizar a pontuação
+      // Atualizar a pontuação com os pontos já calculados (congelados) vindos do QuizQuestion
       setGameScore(prev => ({
         correctAnswers: prev.correctAnswers + 1,
-        totalTime: prev.totalTime + roundedTimeSpent, // Usar o mesmo valor arredondado
-        points: prev.points + questionPoints
+        totalTime: prev.totalTime, // Se quiser somar tempo, pode incluir depois
+        points: prev.points + pointsEarned
       }));
-      
+
       // Adicionar à lista de perguntas completadas
       setCompletedQuestions(prev => [...prev, currentQuestion]);
-      
+
       // Mostrar o confetti
       setShowConfetti(true);
-      
+
       // Mudar para o estado de resposta correta
       setGameState('right_answer');
-      
+
       // Verificar se completou todas as perguntas após um breve delay
       setTimeout(() => {
-        // Incrementar índice da pergunta DEPOIS do delay (não imediatamente)
-        // para evitar que a UI mostre o próximo número antes da transição
         const nextQuestionIndex = currentQuestionIndex + 1;
-        
+
         if (nextQuestionIndex >= TOTAL_QUESTIONS) {
-          // Se atingiu o total de perguntas, vai para a tela de conclusão
           setGameState('completed');
         } else {
-          // Se não completou todas as perguntas, atualiza o índice e sorteio novo tema
           setCurrentQuestionIndex(nextQuestionIndex);
-          // Salvar o progresso no localStorage
           localStorage.setItem('quizito_currentQuestionIndex', nextQuestionIndex.toString());
-          
-          // Esconder o confetti
           setShowConfetti(false);
-          
-          // Iniciar o sorteio para a próxima pergunta
           startSorteio();
         }
-      }, 1500); // Delay para mostrar a animação de acerto
+      }, 1500);
     } else {
-      // Se errou, não mudar imediatamente o estado
-      // Primeiro, permita que o usuário veja a resposta correta por alguns segundos
-      
-      // Depois de 3 segundos, finaliza o jogo para a tela de game over
       setTimeout(() => {
         setGameOverReason('wrong_answer');
         setGameState('game_over');
-        
-        // Zerar o contador de perguntas quando erra
+
         setCurrentQuestionIndex(0);
         localStorage.setItem('quizito_currentQuestionIndex', '0');
-        
-        // Limpar completamente a pontuação e histórico
+
         setGameScore({
           correctAnswers: 0,
           totalTime: 0,
@@ -330,6 +306,7 @@ const handleAnswerQuestion = (correct: boolean, timeSpent: number) => {
     }
   }
 };
+
 
   // Função para quando o tempo se esgota
  // Função para quando o tempo se esgota
@@ -414,17 +391,17 @@ const handleResetGame = () => {
             
             {/* Mostrar a pergunta apenas se tiver sido carregada */}
             {gameState === 'playing' && currentQuestion && (
-              <QuizQuestion
-                question={currentQuestion}
-                onNextQuestion={() => {}}
-                onSelectNewTheme={startSorteio}
-                onAnswerQuestion={handleAnswerQuestion}
-                onTimeUp={handleTimeUp}
-                // Garantir que o número da pergunta esteja no intervalo correto (1 a TOTAL_QUESTIONS)
-                currentQuestionNumber={Math.min(currentQuestionIndex + 1, TOTAL_QUESTIONS)}
-                totalQuestions={TOTAL_QUESTIONS}
-                showConfetti={showConfetti}
-              />
+       <QuizQuestion
+  question={currentQuestion}
+  onNextQuestion={() => {}}
+  onSelectNewTheme={startSorteio}
+  onAnswerQuestion={handleAnswerQuestion}
+  onTimeUp={handleTimeUp}
+  currentQuestionNumber={Math.min(currentQuestionIndex + 1, TOTAL_QUESTIONS)}
+  totalQuestions={TOTAL_QUESTIONS}
+  showConfetti={showConfetti}
+  currentScore={gameScore.points} // Adicione esta linha
+/>
             )}
           </div>
         );
@@ -433,17 +410,17 @@ const handleResetGame = () => {
         return (
           <div className={styles.questionSection}>
             {currentQuestion && (
-              <QuizQuestion
-                question={currentQuestion}
-                onNextQuestion={() => {}}
-                onSelectNewTheme={startSorteio}
-                onAnswerQuestion={handleAnswerQuestion}
-                onTimeUp={handleTimeUp}
-                // Usar o mesmo número atual para evitar incremento duplo
-                currentQuestionNumber={Math.min(currentQuestionIndex + 1, TOTAL_QUESTIONS)}
-                totalQuestions={TOTAL_QUESTIONS}
-                showConfetti={showConfetti}
-              />
+       <QuizQuestion
+  question={currentQuestion}
+  onNextQuestion={() => {}}
+  onSelectNewTheme={startSorteio}
+  onAnswerQuestion={handleAnswerQuestion}
+  onTimeUp={handleTimeUp}
+  currentQuestionNumber={Math.min(currentQuestionIndex + 1, TOTAL_QUESTIONS)}
+  totalQuestions={TOTAL_QUESTIONS}
+  showConfetti={showConfetti}
+  currentScore={gameScore.points} // Adicione esta linha
+/>  
             )}
           </div>
         );

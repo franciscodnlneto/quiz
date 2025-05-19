@@ -1,4 +1,3 @@
-// QuestionTimer.tsx - Atualizado para mostrar pontuação parcial decrescente
 "use client";
 import { useState, useEffect, useRef } from 'react';
 import styles from './QuestionTimer.module.css';
@@ -8,13 +7,18 @@ interface QuestionTimerProps {
   onTimeUp: () => void;
   isRunning: boolean;
   onTimerTick?: (secondsLeft: number) => void;
+  currentScore: number;
+  accumulatedScore: number; // Nova prop adicionada aqui
 }
 
-const QuestionTimer: React.FC<QuestionTimerProps> = ({ 
-  seconds, 
-  onTimeUp, 
+
+const QuestionTimer: React.FC<QuestionTimerProps> = ({
+  seconds,
+  onTimeUp,
   isRunning,
-  onTimerTick
+  onTimerTick,
+  currentScore,
+  accumulatedScore
 }) => {
   // Usar refs para o estado real do timer para evitar problemas de closure
   const timeLeftRef = useRef<number>(seconds);
@@ -151,34 +155,32 @@ const QuestionTimer: React.FC<QuestionTimerProps> = ({
     return time.toFixed(1);
   };
 
-  return (
-    <div className={styles.timerContainer}>
-      <div className={styles.timerHeader}>
-        <div className={styles.timerInfo}>
-          <span className={styles.timerLabel}>Tempo Restante</span>
-          <span className={`${styles.timerValue} ${getAnimationClass()}`}>
-            {displayTimeLeft > 0 ? formatTime(displayTimeLeft) : '0.0'}s
-          </span>
-        </div>
-        <div className={styles.scoreInfo}>
-          <span className={styles.scoreLabel}>Pontos Parciais</span>
-          <span className={`${styles.scoreValue} ${getAnimationClass()}`}>
-            {currentPartialScore}
-          </span>
-        </div>
+ return (
+  <div className={styles.timerContainer}>
+    <div className={styles.timerHeader}>
+      <div className={styles.timerInfo}>
+        <span className={styles.timerLabel}>Tempo Restante</span>
+        <span className={`${styles.timerValue} ${getAnimationClass()}`}>
+          {formatTime(displayTimeLeft)}s
+        </span>
       </div>
-      
-      <div className={styles.progressContainer}>
-        <div 
-          className={styles.progressBar} 
-          style={{ 
-            width: `${percentLeft}%`,
-            backgroundColor: getTimerColor()
-          }}
-        ></div>
-      </div>
+<div className={styles.scoreInfo}>
+  <span className={styles.scoreLabel}>Score Parcial</span>
+  <span className={styles.scoreValue}>
+    {BASE_POINTS} + {currentPartialScore} = {BASE_POINTS + currentPartialScore}
+  </span>
+</div>
+
+
+
     </div>
-  );
+    
+    <div className={styles.progressContainer}>
+      <div className={styles.progressBar} style={{ width: `${percentLeft}%`, backgroundColor: getTimerColor() }}></div>
+    </div>
+  </div>
+);
+
 };
 
 export default QuestionTimer;

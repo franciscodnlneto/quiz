@@ -10,12 +10,14 @@ interface WelcomeModalProps {
 const WelcomeModal: React.FC<WelcomeModalProps> = ({ onClose }) => {
   const [modalOpen, setModalOpen] = useState(true);
 
-  const handleClose = () => {
-    setModalOpen(false);
-    setTimeout(() => {
-      onClose();
-    }, 500); // Pequeno delay para a animação de saída
-  };
+const handleClose = () => {
+  setModalOpen(false);
+  setTimeout(() => {
+    onClose();
+    window.scrollTo({ top: 0, behavior: 'smooth' }); // adicionada essa linha
+  }, 500); 
+};
+
 
   return (
     <div className={`${styles.modalOverlay} ${modalOpen ? styles.open : styles.closing}`}>

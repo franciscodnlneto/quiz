@@ -26,7 +26,8 @@ interface QuizQuestionProps {
   currentQuestionNumber: number;
   totalQuestions: number;
   showConfetti?: boolean;
-}
+  currentScore: number; // Adicione esta nova prop
+} 
 
 const QuizQuestion: React.FC<QuizQuestionProps> = ({ 
   question, 
@@ -36,7 +37,8 @@ const QuizQuestion: React.FC<QuizQuestionProps> = ({
   onTimeUp,
   currentQuestionNumber,
   totalQuestions,
-  showConfetti = false
+  showConfetti = false,
+  currentScore // Adicione esta prop
 }) => {
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
   const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
@@ -131,7 +133,9 @@ const QuizQuestion: React.FC<QuizQuestionProps> = ({
     setIsCorrect(isAnswerCorrect);
     
     // Notificar o componente pai
-    onAnswerQuestion(isAnswerCorrect, roundedTimeSpent);
+    onAnswerQuestion(isAnswerCorrect, BASE_POINTS + lastPartialScore);
+
+
   };
 
   // Determinar a classe CSS para cada alternativa
@@ -186,26 +190,31 @@ const QuizQuestion: React.FC<QuizQuestionProps> = ({
     return 0;
   };
 
+
   return (
     <div className={`${styles.questionContainer} ${fadeIn ? styles.fadeIn : ''} ${fadeOut ? styles.fadeOut : ''} ${selectedAnswer !== null ? styles.answered : ''}`}>
-      <div className={styles.progress}>
-        <div className={styles.progressText}>
-          Pergunta {currentQuestionNumber} de {totalQuestions}
-        </div>
-        <div className={styles.progressBar}>
-          <div 
-            className={styles.progressFill} 
-            style={{ width: `${(currentQuestionNumber / totalQuestions) * 100}%` }}
-          ></div>
-        </div>
+    <div className={styles.progress}>
+      <div className={styles.progressText}>
+        Pergunta {currentQuestionNumber} de {totalQuestions}
       </div>
+      <div className={styles.progressBar}>
+        <div 
+          className={styles.progressFill} 
+          style={{ width: `${(currentQuestionNumber / totalQuestions) * 100}%` }}
+        ></div>
+      </div>
+    </div>
       
-      <QuestionTimer 
-        seconds={30} 
-        onTimeUp={handleTimeUp}
-        isRunning={timerRunning}
-        onTimerTick={handleTimerTick}
-      />
+  
+<QuestionTimer
+  seconds={30}
+  onTimeUp={handleTimeUp}
+  isRunning={timerRunning}
+  onTimerTick={handleTimerTick}
+currentScore={currentScore}
+  accumulatedScore={currentScore}
+/>
+
       
       <div className={styles.questionHeader}>
         <div 
@@ -243,14 +252,7 @@ const QuizQuestion: React.FC<QuizQuestionProps> = ({
             {isCorrect ? 'Parabéns! Você acertou!' : 'Ops! Resposta incorreta.'}
           </p>
           <div className={styles.scoreInfo}>
-            {isCorrect && (
-              <div className={styles.pointsInfo}>
-                <span className={styles.scoreLabel}>Pontuação:</span>
-                <span className={styles.scoreAmount}>
-                  {BASE_POINTS} + {lastPartialScore} = {calculateTotalScore()} pontos
-                </span>
-              </div>
-            )}
+
             <div className={styles.timeInfo}>
               Tempo: <span className={styles.timeValue}>{displayTimeSpent.toFixed(1)} segundos</span>
             </div>

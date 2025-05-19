@@ -55,10 +55,18 @@
 }
 
 /* Barra de progresso */
+.timerHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+  flex-wrap: wrap; /* Adicione esta linha */
+  gap: 0.5rem; /* Adicione esta linha */
+}
+
 .progress {
-  margin-bottom: 1rem;
-  z-index: 2;
-  position: relative;
+  width: 100%; /* Adicione esta linha */
+  margin-bottom: 0.5rem; /* Reduza esta margem */
 }
 
 .progressText {
@@ -68,6 +76,7 @@
   font-size: 0.9rem;
   color: #666;
   margin-bottom: 0.3rem;
+  width: 100%; /* Adicione esta linha */
 }
 
 .progressBar {
