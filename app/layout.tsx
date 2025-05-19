@@ -5,7 +5,7 @@ import "./globals.css";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "🎯 Quizito.App - Crie Quiz Interativos Gratuitamente!",
+  title: "Quizito.App - Crie Quiz Interativos Gratuitamente!",
   description: "Crie quizzes interativos de forma totalmente gratuita com o Quizito.App! Ideal para gamificar eventos, ações educacionais ou sorteios de brindes. 🚀",
 };
 
