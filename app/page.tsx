@@ -1,4 +1,3 @@
-
 "use client";
 import { useEffect, useState } from 'react';
 import Papa from 'papaparse';
@@ -257,101 +256,129 @@ export default function Home() {
   };
 
   // Função para processar a resposta de uma pergunta
-  const handleAnswerQuestion = (correct: boolean, timeSpent: number) => {
-    if (currentQuestion) {
-      if (correct) {
-        // Calcular pontos com base no tempo
-        const timePoints = Math.max(0, MAX_TIME_POINTS - (timeSpent * (MAX_TIME_POINTS / 30)));
-        const questionPoints = BASE_POINTS + Math.round(timePoints);
-        
-        // Atualizar a pontuação
-        setGameScore(prev => ({
-          correctAnswers: prev.correctAnswers + 1,
-          totalTime: prev.totalTime + timeSpent,
-          points: prev.points + questionPoints
-        }));
-        
-        // Adicionar à lista de perguntas completadas
-        setCompletedQuestions(prev => [...prev, currentQuestion]);
-        
-        // Incrementar índice da pergunta IMEDIATAMENTE após acertar
-        // Isso garante que a barra de progresso seja atualizada corretamente
+
+const handleAnswerQuestion = (correct: boolean, timeSpent: number) => {
+  if (currentQuestion) {
+    if (correct) {
+      // Garantir que o tempo seja arredondado consistentemente para uma casa decimal
+      // Estamos usando o valor exato que já foi arredondado no componente QuizQuestion
+      const roundedTimeSpent = timeSpent;
+      
+      // Calcular pontos com base no tempo
+      const timePoints = Math.max(0, MAX_TIME_POINTS - (roundedTimeSpent * (MAX_TIME_POINTS / 30)));
+      const questionPoints = BASE_POINTS + Math.round(timePoints);
+      
+      // Atualizar a pontuação
+      setGameScore(prev => ({
+        correctAnswers: prev.correctAnswers + 1,
+        totalTime: prev.totalTime + roundedTimeSpent, // Usar o mesmo valor arredondado
+        points: prev.points + questionPoints
+      }));
+      
+      // Adicionar à lista de perguntas completadas
+      setCompletedQuestions(prev => [...prev, currentQuestion]);
+      
+      // Mostrar o confetti
+      setShowConfetti(true);
+      
+      // Mudar para o estado de resposta correta
+      setGameState('right_answer');
+      
+      // Verificar se completou todas as perguntas após um breve delay
+      setTimeout(() => {
+        // Incrementar índice da pergunta DEPOIS do delay (não imediatamente)
+        // para evitar que a UI mostre o próximo número antes da transição
         const nextQuestionIndex = currentQuestionIndex + 1;
-        setCurrentQuestionIndex(nextQuestionIndex);
         
-        // Mostrar o confetti
-        setShowConfetti(true);
-        
-        // Mudar para o estado de resposta correta
-        setGameState('right_answer');
-        
-        // Salvar o progresso no localStorage para persistir entre recargas
-        localStorage.setItem('quizito_currentQuestionIndex', nextQuestionIndex.toString());
-        
-        // Verificar se completou todas as perguntas após um breve delay
-        setTimeout(() => {
-          if (nextQuestionIndex >= TOTAL_QUESTIONS) {
-            setGameState('completed');
-          } else {
-            // Esconder o confetti
-            setShowConfetti(false);
-            
-            // Iniciar o sorteio para a próxima pergunta
-            startSorteio();
-          }
-        }, 1500); // Delay para mostrar a animação de acerto
-      } else {
-        // Se errou, não mudar imediatamente o estado
-        // Primeiro, permita que o usuário veja a resposta correta por alguns segundos
-        
-        // Depois de 3 segundos, finaliza o jogo para a tela de game over
-        setTimeout(() => {
-          setGameOverReason('wrong_answer');
-          setGameState('game_over');
+        if (nextQuestionIndex >= TOTAL_QUESTIONS) {
+          // Se atingiu o total de perguntas, vai para a tela de conclusão
+          setGameState('completed');
+        } else {
+          // Se não completou todas as perguntas, atualiza o índice e sorteio novo tema
+          setCurrentQuestionIndex(nextQuestionIndex);
+          // Salvar o progresso no localStorage
+          localStorage.setItem('quizito_currentQuestionIndex', nextQuestionIndex.toString());
           
-          // Zerar o contador de perguntas quando erra
-          setCurrentQuestionIndex(0);
-          localStorage.setItem('quizito_currentQuestionIndex', '0');
-        }, 3000);
-      }
+          // Esconder o confetti
+          setShowConfetti(false);
+          
+          // Iniciar o sorteio para a próxima pergunta
+          startSorteio();
+        }
+      }, 1500); // Delay para mostrar a animação de acerto
+    } else {
+      // Se errou, não mudar imediatamente o estado
+      // Primeiro, permita que o usuário veja a resposta correta por alguns segundos
+      
+      // Depois de 3 segundos, finaliza o jogo para a tela de game over
+      setTimeout(() => {
+        setGameOverReason('wrong_answer');
+        setGameState('game_over');
+        
+        // Zerar o contador de perguntas quando erra
+        setCurrentQuestionIndex(0);
+        localStorage.setItem('quizito_currentQuestionIndex', '0');
+        
+        // Limpar completamente a pontuação e histórico
+        setGameScore({
+          correctAnswers: 0,
+          totalTime: 0,
+          points: 0
+        });
+        setCompletedQuestions([]);
+      }, 3000);
     }
-  };
+  }
+};
 
   // Função para quando o tempo se esgota
-  const handleTimeUp = () => {
-    // Atraso para mostrar que o tempo acabou antes de ir para a tela de game over
-    setTimeout(() => {
-      setGameOverReason('timeout');
-      setGameState('game_over');
-      
-      // Zerar o contador de perguntas quando o tempo acaba
-      setCurrentQuestionIndex(0);
-      localStorage.setItem('quizito_currentQuestionIndex', '0');
-    }, 3000);
-  };
-
-  // Função para reiniciar o jogo - agora recarregando a página para garantir estado inicial completo
-  const handleResetGame = () => {
-    // Limpar o localStorage para evitar restaurar estado antigo
-    localStorage.removeItem('quizito_gameState');
+ // Função para quando o tempo se esgota
+const handleTimeUp = () => {
+  // Atraso para mostrar que o tempo acabou antes de ir para a tela de game over
+  setTimeout(() => {
+    setGameOverReason('timeout');
+    setGameState('game_over');
     
-    // Reiniciar todos os estados
+    // Zerar o contador de perguntas quando o tempo acaba
+    setCurrentQuestionIndex(0);
+    localStorage.setItem('quizito_currentQuestionIndex', '0');
+    
+    // Garantir que todos os dados sejam limpos corretamente
     setGameScore({
       correctAnswers: 0,
       totalTime: 0,
       points: 0
     });
-    setCurrentQuestionIndex(0);
     setCompletedQuestions([]);
-    setSelectedTheme(null);
-    setCurrentQuestion(null);
-    setShowModal(true);
-    setGameState('welcome');
-    
-    // Recarregar a página para garantir um estado totalmente limpo e o modal aparecer
-    window.location.reload();
-  };
+  }, 3000);
+};
 
+// Função para reiniciar o jogo - corrigida para garantir estado inicial completo
+const handleResetGame = () => {
+  // Limpar TODOS os itens do localStorage para evitar restaurar estado antigo
+  localStorage.removeItem('quizito_gameState');
+  localStorage.removeItem('quizito_currentQuestionIndex');
+  localStorage.removeItem('quizito_questionHistory');
+  localStorage.removeItem('quizito_themeHistory');
+  
+  // Reiniciar todos os estados
+  setGameScore({
+    correctAnswers: 0,
+    totalTime: 0,
+    points: 0
+  });
+  setCurrentQuestionIndex(0);
+  setCompletedQuestions([]);
+  setSelectedTheme(null);
+  setCurrentQuestion(null);
+  setQuestionHistory([]);
+  setUsedThemes([]);
+  setShowModal(true);
+  setGameState('welcome');
+  
+  // Recarregar a página para garantir um estado totalmente limpo e o modal aparecer
+  window.location.reload();
+};
   // Função para mostrar o conteúdo baseado no estado do jogo
   const renderGameContent = () => {
     switch (gameState) {
@@ -386,7 +413,8 @@ export default function Home() {
                 onSelectNewTheme={startSorteio}
                 onAnswerQuestion={handleAnswerQuestion}
                 onTimeUp={handleTimeUp}
-                currentQuestionNumber={currentQuestionIndex + 1}
+                // Garantir que o número da pergunta esteja no intervalo correto (1 a TOTAL_QUESTIONS)
+                currentQuestionNumber={Math.min(currentQuestionIndex + 1, TOTAL_QUESTIONS)}
                 totalQuestions={TOTAL_QUESTIONS}
                 showConfetti={showConfetti}
               />
@@ -404,7 +432,8 @@ export default function Home() {
                 onSelectNewTheme={startSorteio}
                 onAnswerQuestion={handleAnswerQuestion}
                 onTimeUp={handleTimeUp}
-                currentQuestionNumber={currentQuestionIndex + 1}
+                // Usar o mesmo número atual para evitar incremento duplo
+                currentQuestionNumber={Math.min(currentQuestionIndex + 1, TOTAL_QUESTIONS)}
                 totalQuestions={TOTAL_QUESTIONS}
                 showConfetti={showConfetti}
               />

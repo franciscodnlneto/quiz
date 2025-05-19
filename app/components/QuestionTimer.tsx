@@ -1,4 +1,4 @@
-// QuestionTimer.tsx - Corrigindo para mostrar décimos de segundo
+// QuestionTimer.tsx - Totalmente reescrito para maior confiabilidade
 "use client";
 import { useState, useEffect, useRef } from 'react';
 import styles from './QuestionTimer.module.css';
@@ -16,63 +16,121 @@ const QuestionTimer: React.FC<QuestionTimerProps> = ({
   isRunning,
   onTimerTick
 }) => {
-  const [timeLeft, setTimeLeft] = useState(seconds);
-  const timerRef = useRef<NodeJS.Timeout | null>(null);
+  // Usar refs para o estado real do timer para evitar problemas de closure
+  const timeLeftRef = useRef<number>(seconds);
+  const [displayTimeLeft, setDisplayTimeLeft] = useState(seconds);
+  const intervalRef = useRef<NodeJS.Timeout | null>(null);
   const startTimeRef = useRef<number | null>(null);
+  const lastTickTimeRef = useRef<number>(0);
+  const hasCalledTimeUpRef = useRef<boolean>(false);
   
-  // Resetar o timer quando a prop seconds mudar
+  // Limpa o intervalo e reseta tudo quando o componente desmonta
   useEffect(() => {
-    setTimeLeft(seconds);
+    return () => {
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+        intervalRef.current = null;
+      }
+    };
+  }, []);
+  
+  // Resetar o timer quando as props mudam
+  useEffect(() => {
+    // Reiniciar tudo quando o componente é montado ou quando seconds muda
+    timeLeftRef.current = seconds;
+    setDisplayTimeLeft(seconds);
     startTimeRef.current = null;
+    hasCalledTimeUpRef.current = false;
+    
+    // Notificar o componente pai sobre o valor inicial
+    if (onTimerTick) {
+      onTimerTick(seconds);
+    }
+    
+    // Limpar qualquer intervalo existente
+    if (intervalRef.current) {
+      clearInterval(intervalRef.current);
+      intervalRef.current = null;
+    }
   }, [seconds]);
   
-  // Gerenciar o temporizador
+  // Manipular a execução/pausa do timer
   useEffect(() => {
+    // Limpar qualquer intervalo existente antes de configurar um novo
+    if (intervalRef.current) {
+      clearInterval(intervalRef.current);
+      intervalRef.current = null;
+    }
+    
     if (isRunning) {
-      startTimeRef.current = Date.now();
+      // Registrar o tempo de início se ainda não estiver definido
+      if (startTimeRef.current === null) {
+        startTimeRef.current = Date.now();
+        lastTickTimeRef.current = Date.now();
+      }
       
-      timerRef.current = setInterval(() => {
-        const elapsed = (Date.now() - (startTimeRef.current || 0)) / 1000;
+      // Criar um novo intervalo de alta precisão (50ms)
+      intervalRef.current = setInterval(() => {
+        // Calcular tempo decorrido desde o início
+        const now = Date.now();
+        const elapsed = (now - startTimeRef.current!) / 1000;
         const newTimeLeft = Math.max(0, seconds - elapsed);
         
-        // Arredondar para uma casa decimal
+        // Arredondar para uma casa decimal de forma consistente
         const roundedTimeLeft = Math.round(newTimeLeft * 10) / 10;
         
-        setTimeLeft(roundedTimeLeft);
-        if (onTimerTick) onTimerTick(roundedTimeLeft);
+        // Atualizar refs
+        timeLeftRef.current = roundedTimeLeft;
         
-        if (roundedTimeLeft <= 0) {
-          if (timerRef.current) clearInterval(timerRef.current);
+        // Atualizar state apenas se o tempo mudou significativamente (100ms)
+        if (now - lastTickTimeRef.current >= 100) {
+          lastTickTimeRef.current = now;
+          setDisplayTimeLeft(roundedTimeLeft);
+          
+          // Notificar o componente pai sobre a mudança
+          if (onTimerTick) {
+            onTimerTick(roundedTimeLeft);
+          }
+        }
+        
+        // Verificar se o tempo acabou
+        if (roundedTimeLeft <= 0 && !hasCalledTimeUpRef.current) {
+          hasCalledTimeUpRef.current = true; // Evitar múltiplas chamadas
+          
+          // Limpar o intervalo
+          if (intervalRef.current) {
+            clearInterval(intervalRef.current);
+            intervalRef.current = null;
+          }
+          
+          // Notificar que o tempo acabou
           onTimeUp();
         }
-      }, 100); // Atualizando a cada 100ms para mostrar os décimos de segundo
-    } else {
-      if (timerRef.current) {
-        clearInterval(timerRef.current);
-      }
+      }, 50); // Intervalo mais curto para maior precisão
     }
     
     return () => {
-      if (timerRef.current) {
-        clearInterval(timerRef.current);
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+        intervalRef.current = null;
       }
     };
   }, [isRunning, seconds, onTimeUp, onTimerTick]);
   
   // Calcular a cor do timer baseado no tempo restante
   const getTimerColor = () => {
-    if (timeLeft > seconds * 0.6) return '#4CAF50'; // Verde
-    if (timeLeft > seconds * 0.3) return '#FFC107'; // Amarelo
+    if (displayTimeLeft > seconds * 0.6) return '#4CAF50'; // Verde
+    if (displayTimeLeft > seconds * 0.3) return '#FFC107'; // Amarelo
     return '#F44336'; // Vermelho
   };
   
   // Calcular a porcentagem restante
-  const percentLeft = (timeLeft / seconds) * 100;
+  const percentLeft = (displayTimeLeft / seconds) * 100;
   
   // Determinar a classe de animação
   const getAnimationClass = () => {
-    if (timeLeft <= 5) return styles.critical;
-    if (timeLeft <= 10) return styles.warning;
+    if (displayTimeLeft <= 5) return styles.critical;
+    if (displayTimeLeft <= 10) return styles.warning;
     return '';
   };
 
@@ -86,7 +144,7 @@ const QuestionTimer: React.FC<QuestionTimerProps> = ({
       <div className={styles.timerHeader}>
         <span className={styles.timerLabel}>Tempo Restante</span>
         <span className={`${styles.timerValue} ${getAnimationClass()}`}>
-          {timeLeft > 0 ? formatTime(timeLeft) : '0.0'}s
+          {displayTimeLeft > 0 ? formatTime(displayTimeLeft) : '0.0'}s
         </span>
       </div>
       

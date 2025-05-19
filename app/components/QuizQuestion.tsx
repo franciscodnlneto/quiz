@@ -1,4 +1,4 @@
-// QuizQuestion.tsx - Corrigido para lidar adequadamente com confetti e transições
+// QuizQuestion.tsx - Versão final com cálculo de tempo mais preciso
 "use client";
 import { useState, useEffect, useRef } from 'react';
 import styles from './QuizQuestion.module.css';
@@ -44,25 +44,36 @@ const QuizQuestion: React.FC<QuizQuestionProps> = ({
   const [fadeOut, setFadeOut] = useState(false);
   const [themeColor, setThemeColor] = useState("");
   const [timerRunning, setTimerRunning] = useState(true);
-  const [timeSpent, setTimeSpent] = useState(0);
+  const [displayTimeSpent, setDisplayTimeSpent] = useState(0);
   
-  const startTimeRef = useRef<number>(Date.now());
+  // Usar refs para maior confiabilidade
+  const initialTimeRef = useRef<number>(30);
+  const currentTimeRef = useRef<number>(30);
+  const processingActionRef = useRef<boolean>(false);
 
-  // Efeito para animar a entrada ao montar o componente
+  // Efeito para animar a entrada ao montar o componente e resetar estados
   useEffect(() => {
+    // Resetar todos os estados quando uma nova pergunta é carregada
     setFadeIn(true);
     setThemeColor(generateColorFromText(question.Tema));
     setSelectedAnswer(null);
     setIsCorrect(null);
     setTimerRunning(true);
-    startTimeRef.current = Date.now();
+    setDisplayTimeSpent(0);
+    
+    // Resetar refs
+    initialTimeRef.current = 30;
+    currentTimeRef.current = 30;
+    processingActionRef.current = false;
     
     const timer = setTimeout(() => {
       setFadeIn(false);
     }, 500);
+    
     return () => clearTimeout(timer);
   }, [question]);
 
+  // Preparar as alternativas da pergunta
   const numAlternativas = parseInt(question.Num_de_alternativas);
   const alternativas = [
     question.Alternativa_1,
@@ -71,43 +82,77 @@ const QuizQuestion: React.FC<QuizQuestionProps> = ({
     question.Alternativa_4
   ].slice(0, numAlternativas);
 
+  // Função para acompanhar o valor atual do timer
+  const handleTimerTick = (secondsLeft: number) => {
+    // Atualizar o ref com o valor atual
+    currentTimeRef.current = secondsLeft;
+  };
+
+  // Função para processar a escolha de uma alternativa
   const handleAnswerClick = (index: number) => {
-    if (selectedAnswer !== null) return;
+    // Evitar processamento múltiplo ou quando já selecionou uma resposta
+    if (selectedAnswer !== null || processingActionRef.current) return;
+    
+    // Marcar que estamos processando para evitar cliques duplos
+    processingActionRef.current = true;
     
     // Parar o timer
     setTimerRunning(false);
     
-    // Calcular tempo gasto - usando décimos de segundo para maior precisão
-    const answerTime = (Date.now() - startTimeRef.current) / 1000;
-    setTimeSpent(parseFloat(answerTime.toFixed(1))); // Mantém 1 casa decimal
+    // Calcular o tempo gasto - usando a diferença entre o tempo inicial e o atual
+    const timeSpent = initialTimeRef.current - currentTimeRef.current;
     
-    setSelectedAnswer(index);
+    // Garantir que é um valor positivo e arredondar consistentemente
+    const roundedTimeSpent = Math.max(0, Math.round(timeSpent * 10) / 10);
+    
+    // Atualizar o state para exibição
+    setDisplayTimeSpent(roundedTimeSpent);
+    
+    // Determinar se a resposta está correta
     const correctAnswerIndex = parseInt(question.Resposta_correta) - 1;
-    const correct = index === correctAnswerIndex;
-    setIsCorrect(correct);
+    const isAnswerCorrect = index === correctAnswerIndex;
     
-    // Informar ao componente pai sobre a resposta
-    onAnswerQuestion(correct, answerTime);
+    // Atualizar os estados
+    setSelectedAnswer(index);
+    setIsCorrect(isAnswerCorrect);
+    
+    // Notificar o componente pai
+    onAnswerQuestion(isAnswerCorrect, roundedTimeSpent);
   };
 
+  // Determinar a classe CSS para cada alternativa
   const getAlternativeClass = (index: number) => {
     if (selectedAnswer === null) return '';
+    
     const correctAnswerIndex = parseInt(question.Resposta_correta) - 1;
+    
     if (index === selectedAnswer) {
       return index === correctAnswerIndex ? styles.correct : styles.incorrect;
     }
+    
     if (index === correctAnswerIndex) {
       return styles.correctAnswer;
     }
+    
     return styles.disabled;
   };
 
+  // Função para lidar com o tempo esgotado
   const handleTimeUp = () => {
+    // Evitar processamento múltiplo
+    if (processingActionRef.current) return;
+    
+    // Marcar que estamos processando
+    processingActionRef.current = true;
+    
+    // Parar o timer
     setTimerRunning(false);
+    
+    // Notificar o componente pai
     onTimeUp();
   };
 
-  // Compacta o enunciado se for muito longo
+  // Ajustar o tamanho do título baseado no comprimento
   const formatQuestionTitle = (text: string) => {
     if (text.length > 100) {
       return (
@@ -137,6 +182,7 @@ const QuizQuestion: React.FC<QuizQuestionProps> = ({
         seconds={30} 
         onTimeUp={handleTimeUp}
         isRunning={timerRunning}
+        onTimerTick={handleTimerTick}
       />
       
       <div className={styles.questionHeader}>
@@ -175,7 +221,7 @@ const QuizQuestion: React.FC<QuizQuestionProps> = ({
             {isCorrect ? 'Parabéns! Você acertou!' : 'Ops! Resposta incorreta.'}
           </p>
           <div className={styles.timeInfo}>
-            Tempo: <span className={styles.timeValue}>{timeSpent.toFixed(1)} segundos</span>
+            Tempo: <span className={styles.timeValue}>{displayTimeSpent.toFixed(1)} segundos</span>
           </div>
         </div>
       )}

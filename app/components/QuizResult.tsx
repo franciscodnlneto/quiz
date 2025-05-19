@@ -1,4 +1,4 @@
-// QuizResult.tsx - Com máscara de telefone corrigida
+// QuizResult.tsx - Corrigido para consistência de formatação de tempo
 "use client";
 import { useState, useEffect } from 'react';
 import styles from './QuizResult.module.css';
@@ -31,9 +31,19 @@ const QuizResult: React.FC<QuizResultProps> = ({
     if (savedWhatsapp) setWhatsapp(savedWhatsapp);
   }, []);
   
+  // Função corrigida para formatar o tempo de forma consistente
   const formatTime = (timeInSeconds: number) => {
-    const minutes = Math.floor(timeInSeconds / 60);
-    const seconds = Math.round(timeInSeconds % 60);
+    // Garantir que o valor é um número válido e não NaN
+    const validTime = isNaN(timeInSeconds) ? 0 : timeInSeconds;
+    
+    // Arredondar para uma casa decimal para consistência com o restante do aplicativo
+    const roundedTime = Math.round(validTime * 10) / 10;
+    
+    // Formatação para minutos e segundos
+    const minutes = Math.floor(roundedTime / 60);
+    const seconds = Math.round(roundedTime % 60);
+    
+    // Retornar no formato MM:SS
     return `${minutes}:${seconds.toString().padStart(2, '0')}`;
   };
   
@@ -97,6 +107,7 @@ const QuizResult: React.FC<QuizResultProps> = ({
       localStorage.setItem('quizito_user_name', name);
       localStorage.setItem('quizito_user_whatsapp', whatsapp);
       localStorage.setItem('quizito_user_score', score.toString());
+      localStorage.setItem('quizito_user_time', totalTime.toString());
       
       setSubmitted(true);
     } catch (error) {
