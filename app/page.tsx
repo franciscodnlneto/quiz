@@ -308,7 +308,7 @@ const handleAnswerQuestion = (correct: boolean, pointsEarned: number, timeSpent:
           points: 0
         });
         setCompletedQuestions([]);
-      }, 3000);
+      }, 5000); // Delay para o candidato ler a alternativa errada
     }
   }
 };
