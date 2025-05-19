@@ -21,13 +21,14 @@ interface QuizQuestionProps {
   question: Question;
   onNextQuestion: () => void;
   onSelectNewTheme: () => void;
-  onAnswerQuestion: (correct: boolean, timeSpent: number) => void;
+  onAnswerQuestion: (correct: boolean, pointsEarned: number, timeSpent: number) => void; // Adicionamos o timeSpent
   onTimeUp: () => void;
   currentQuestionNumber: number;
   totalQuestions: number;
   showConfetti?: boolean;
   currentScore: number;
-} 
+}
+
 
 const QuizQuestion: React.FC<QuizQuestionProps> = ({ 
   question, 
@@ -129,27 +130,26 @@ const QuizQuestion: React.FC<QuizQuestionProps> = ({
     // IMPORTANTE: Congelar a exibição do score
     setFreezeDisplayScore(true);
     
-    // Calcular o tempo gasto - usando a diferença entre o tempo inicial e o atual
-    const timeSpent = initialTimeRef.current - currentTimeRef.current;
-    
-    // Garantir que é um valor positivo e arredondar consistentemente
-    const roundedTimeSpent = Math.max(0, Math.round(timeSpent * 10) / 10);
-    
-    // Atualizar o state para exibição
-    setDisplayTimeSpent(roundedTimeSpent);
-    
-    // Determinar se a resposta está correta
-    const correctAnswerIndex = parseInt(question.Resposta_correta) - 1;
-    const isAnswerCorrect = index === correctAnswerIndex;
-    
-    // Atualizar os estados
-    setSelectedAnswer(index);
-    setIsCorrect(isAnswerCorrect);
-    
-    // Notificar o componente pai
-    onAnswerQuestion(isAnswerCorrect, BASE_POINTS + lastPartialScore);
-  };
-
+     // Calcular o tempo gasto - usando a diferença entre o tempo inicial e o atual
+  const timeSpent = initialTimeRef.current - currentTimeRef.current;
+  
+  // Garantir que é um valor positivo e arredondar consistentemente
+  const roundedTimeSpent = Math.max(0, Math.round(timeSpent * 10) / 10);
+  
+  // Atualizar o state para exibição
+  setDisplayTimeSpent(roundedTimeSpent);
+  
+  // Determinar se a resposta está correta
+  const correctAnswerIndex = parseInt(question.Resposta_correta) - 1;
+  const isAnswerCorrect = index === correctAnswerIndex;
+  
+  // Atualizar os estados
+  setSelectedAnswer(index);
+  setIsCorrect(isAnswerCorrect);
+  
+  // Notificar o componente pai - adicionando o tempo gasto como terceiro parâmetro
+  onAnswerQuestion(isAnswerCorrect, BASE_POINTS + lastPartialScore, roundedTimeSpent);
+};
   // Determinar a classe CSS para cada alternativa
   const getAlternativeClass = (index: number) => {
     if (selectedAnswer === null) return '';

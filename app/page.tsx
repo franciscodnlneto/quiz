@@ -257,20 +257,18 @@ const handleWelcomeClose = () => {
   // Função para processar a resposta de uma pergunta
 // Modificações no page.tsx
 // Esta é apenas a parte relevante que precisa ser ajustada no arquivo page.tsx
-
-const handleAnswerQuestion = (correct: boolean, pointsEarned: number) => {
+const handleAnswerQuestion = (correct: boolean, pointsEarned: number, timeSpent: number) => {
   if (currentQuestion) {
     if (correct) {
       // IMPORTANTE: Não atualize o gameScore imediatamente na UI
       // Em vez disso, armazene o novo valor para ser usado após a transição
       const newScore = {
         correctAnswers: gameScore.correctAnswers + 1,
-        totalTime: gameScore.totalTime,
+        totalTime: gameScore.totalTime + timeSpent, // Acumular o tempo gasto
         points: gameScore.points + pointsEarned
       };
       
       // Armazenar o novo score para uso posterior, mas não atualizar o state ainda
-      // Isso impede que a UI do QuizQuestion veja o score atualizado antes de ser desmontado
       const newScoreStored = JSON.stringify(newScore);
       localStorage.setItem('temp_new_score', newScoreStored);
 
@@ -315,7 +313,6 @@ const handleAnswerQuestion = (correct: boolean, pointsEarned: number) => {
   }
 };
 
-
   // Função para quando o tempo se esgota
  // Função para quando o tempo se esgota
 const handleTimeUp = () => {
@@ -337,7 +334,6 @@ const handleTimeUp = () => {
     setCompletedQuestions([]);
   }, 3000);
 };
-
 // Função para reiniciar o jogo - corrigida para garantir estado inicial completo
 
 // Função para reiniciar o jogo - corrigida para garantir estado inicial completo
