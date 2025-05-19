@@ -264,7 +264,7 @@ const handleAnswerQuestion = (correct: boolean, timeSpent: number) => {
       // Estamos usando o valor exato que já foi arredondado no componente QuizQuestion
       const roundedTimeSpent = timeSpent;
       
-      // Calcular pontos com base no tempo
+      // Calcular pontos com base no tempo - USANDO A MESMA FÓRMULA que os componentes QuestionTimer e QuizQuestion
       const timePoints = Math.max(0, MAX_TIME_POINTS - (roundedTimeSpent * (MAX_TIME_POINTS / 30)));
       const questionPoints = BASE_POINTS + Math.round(timePoints);
       
@@ -354,12 +354,18 @@ const handleTimeUp = () => {
 };
 
 // Função para reiniciar o jogo - corrigida para garantir estado inicial completo
+
+// Função para reiniciar o jogo - corrigida para garantir estado inicial completo
 const handleResetGame = () => {
   // Limpar TODOS os itens do localStorage para evitar restaurar estado antigo
   localStorage.removeItem('quizito_gameState');
   localStorage.removeItem('quizito_currentQuestionIndex');
   localStorage.removeItem('quizito_questionHistory');
   localStorage.removeItem('quizito_themeHistory');
+  
+  // Criar uma nova sessão para garantir que o formulário final venha limpo
+  const newSessionId = Date.now().toString();
+  sessionStorage.setItem('quizito_current_session', newSessionId);
   
   // Reiniciar todos os estados
   setGameScore({
@@ -379,7 +385,8 @@ const handleResetGame = () => {
   // Recarregar a página para garantir um estado totalmente limpo e o modal aparecer
   window.location.reload();
 };
-  // Função para mostrar o conteúdo baseado no estado do jogo
+
+// Função para mostrar o conteúdo baseado no estado do jogo
   const renderGameContent = () => {
     switch (gameState) {
       case 'welcome':

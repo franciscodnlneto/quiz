@@ -1,4 +1,4 @@
-// QuizResult.tsx - Corrigido para consistência de formatação de tempo
+// QuizResult.tsx - Corrigido para limpar dados do formulário a cada nova partida
 "use client";
 import { useState, useEffect } from 'react';
 import styles from './QuizResult.module.css';
@@ -21,14 +21,31 @@ const QuizResult: React.FC<QuizResultProps> = ({
   const [whatsappError, setWhatsappError] = useState('');
   const [submitted, setSubmitted] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isNewSession, setIsNewSession] = useState(true);
   
-  // Carrega os dados salvos do localStorage, se existirem
+  // Verificar se esta é uma nova sessão para evitar o preenchimento automático
   useEffect(() => {
-    const savedName = localStorage.getItem('quizito_user_name');
-    const savedWhatsapp = localStorage.getItem('quizito_user_whatsapp');
+    // Verificar a sessão atual
+    const currentSession = sessionStorage.getItem('quizito_current_session');
     
-    if (savedName) setName(savedName);
-    if (savedWhatsapp) setWhatsapp(savedWhatsapp);
+    if (!currentSession) {
+      // Se não existe uma sessão atual, criar uma nova
+      const sessionId = Date.now().toString();
+      sessionStorage.setItem('quizito_current_session', sessionId);
+      setIsNewSession(true);
+      
+      // Limpar os dados do formulário no localStorage
+      localStorage.removeItem('quizito_user_name');
+      localStorage.removeItem('quizito_user_whatsapp');
+    } else {
+      // Se já existe uma sessão, verificar se devemos carregar dados salvos
+      const savedName = localStorage.getItem('quizito_user_name');
+      const savedWhatsapp = localStorage.getItem('quizito_user_whatsapp');
+      
+      // Apenas carregar dados salvos se não for uma nova sessão
+      if (!isNewSession && savedName) setName(savedName);
+      if (!isNewSession && savedWhatsapp) setWhatsapp(savedWhatsapp);
+    }
   }, []);
   
   // Função corrigida para formatar o tempo de forma consistente
@@ -109,6 +126,8 @@ const QuizResult: React.FC<QuizResultProps> = ({
       localStorage.setItem('quizito_user_score', score.toString());
       localStorage.setItem('quizito_user_time', totalTime.toString());
       
+      // Marca que esta sessão já enviou dados
+      setIsNewSession(false);
       setSubmitted(true);
     } catch (error) {
       console.error('Erro ao enviar dados:', error);
@@ -156,6 +175,7 @@ const QuizResult: React.FC<QuizResultProps> = ({
                 onChange={(e) => setName(e.target.value)}
                 placeholder="Digite seu nome completo"
                 required
+                autoComplete="off"
               />
             </div>
             
@@ -170,6 +190,7 @@ const QuizResult: React.FC<QuizResultProps> = ({
                 onChange={handleWhatsappChange}
                 placeholder="(XX)9.XXXX-XXXX"
                 required
+                autoComplete="off"
               />
               {whatsappError && (
                 <div className={styles.errorMessage}>

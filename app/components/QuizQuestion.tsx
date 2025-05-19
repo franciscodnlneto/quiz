@@ -1,4 +1,4 @@
-// QuizQuestion.tsx - Versão final com cálculo de tempo mais preciso
+// QuizQuestion.tsx - Atualizado com sincronização do cálculo de pontuação
 "use client";
 import { useState, useEffect, useRef } from 'react';
 import styles from './QuizQuestion.module.css';
@@ -45,6 +45,11 @@ const QuizQuestion: React.FC<QuizQuestionProps> = ({
   const [themeColor, setThemeColor] = useState("");
   const [timerRunning, setTimerRunning] = useState(true);
   const [displayTimeSpent, setDisplayTimeSpent] = useState(0);
+  const [lastPartialScore, setLastPartialScore] = useState(0);
+  
+  // Constantes para cálculo da pontuação (mesmas do QuestionTimer)
+  const MAX_TIME_POINTS = 100; // Pontos máximos por resposta rápida
+  const BASE_POINTS = 250;     // Pontos base por pergunta correta
   
   // Usar refs para maior confiabilidade
   const initialTimeRef = useRef<number>(30);
@@ -60,6 +65,7 @@ const QuizQuestion: React.FC<QuizQuestionProps> = ({
     setIsCorrect(null);
     setTimerRunning(true);
     setDisplayTimeSpent(0);
+    setLastPartialScore(MAX_TIME_POINTS);
     
     // Resetar refs
     initialTimeRef.current = 30;
@@ -86,6 +92,14 @@ const QuizQuestion: React.FC<QuizQuestionProps> = ({
   const handleTimerTick = (secondsLeft: number) => {
     // Atualizar o ref com o valor atual
     currentTimeRef.current = secondsLeft;
+    
+    // Calcular a pontuação parcial - MESMA FÓRMULA usada no QuestionTimer
+    const timeElapsed = initialTimeRef.current - secondsLeft;
+    const timePoints = Math.max(0, MAX_TIME_POINTS - (timeElapsed * (MAX_TIME_POINTS / initialTimeRef.current)));
+    const partialScore = Math.round(timePoints);
+    
+    // Registrar a pontuação parcial para uso quando a resposta for selecionada
+    setLastPartialScore(partialScore);
   };
 
   // Função para processar a escolha de uma alternativa
@@ -164,6 +178,14 @@ const QuizQuestion: React.FC<QuizQuestionProps> = ({
     return <h2 className={styles.questionTitle}>{text}</h2>;
   };
 
+  // Calculador de pontuação total
+  const calculateTotalScore = () => {
+    if (isCorrect) {
+      return BASE_POINTS + lastPartialScore;
+    }
+    return 0;
+  };
+
   return (
     <div className={`${styles.questionContainer} ${fadeIn ? styles.fadeIn : ''} ${fadeOut ? styles.fadeOut : ''} ${selectedAnswer !== null ? styles.answered : ''}`}>
       <div className={styles.progress}>
@@ -220,8 +242,18 @@ const QuizQuestion: React.FC<QuizQuestionProps> = ({
           <p className={isCorrect ? styles.correctFeedback : styles.incorrectFeedback}>
             {isCorrect ? 'Parabéns! Você acertou!' : 'Ops! Resposta incorreta.'}
           </p>
-          <div className={styles.timeInfo}>
-            Tempo: <span className={styles.timeValue}>{displayTimeSpent.toFixed(1)} segundos</span>
+          <div className={styles.scoreInfo}>
+            {isCorrect && (
+              <div className={styles.pointsInfo}>
+                <span className={styles.scoreLabel}>Pontuação:</span>
+                <span className={styles.scoreAmount}>
+                  {BASE_POINTS} + {lastPartialScore} = {calculateTotalScore()} pontos
+                </span>
+              </div>
+            )}
+            <div className={styles.timeInfo}>
+              Tempo: <span className={styles.timeValue}>{displayTimeSpent.toFixed(1)} segundos</span>
+            </div>
           </div>
         </div>
       )}

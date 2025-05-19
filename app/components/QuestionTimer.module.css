@@ -1,4 +1,4 @@
-/* QuestionTimer.module.css */
+/* QuestionTimer.module.css - Atualizado para incluir o contador de pontuação parcial */
 .timerContainer {
   width: 100%;
   background-color: white;
@@ -15,18 +15,39 @@
   margin-bottom: 0.5rem;
 }
 
-.timerLabel {
+.timerInfo {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.scoreInfo {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.timerLabel, .scoreLabel {
   font-size: 0.9rem;
   font-weight: bold;
   color: #555;
+  margin-bottom: 0.2rem;
 }
 
-.timerValue {
-  font-size: 1.1rem;
+.timerValue, .scoreValue {
   font-weight: bold;
   color: #333;
   min-width: 40px;
   text-align: right;
+}
+
+.timerValue {
+  font-size: 1.1rem;
+}
+
+.scoreValue {
+  font-size: 1.3rem;
+  color: var(--primary-color, #B02A78);
 }
 
 .progressContainer {
@@ -90,12 +111,16 @@
     padding: 0.7rem;
   }
   
-  .timerLabel {
+  .timerLabel, .scoreLabel {
     font-size: 0.85rem;
   }
   
   .timerValue {
     font-size: 1rem;
+  }
+
+  .scoreValue {
+    font-size: 1.2rem;
   }
   
   .progressContainer {
@@ -108,12 +133,16 @@
     padding: 0.6rem;
   }
   
-  .timerLabel {
+  .timerLabel, .scoreLabel {
     font-size: 0.8rem;
   }
   
   .timerValue {
     font-size: 0.9rem;
+  }
+
+  .scoreValue {
+    font-size: 1.1rem;
   }
   
   .progressContainer {
