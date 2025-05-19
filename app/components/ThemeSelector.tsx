@@ -60,12 +60,14 @@ const ThemeSelector: React.FC<ThemeSelectorProps> = ({
             <span className={styles.themeName}>{selectedTheme}</span>
             <div className={styles.themeGlow}></div>
           </div>
-          <button 
-            className={styles.newThemeButton}
-            onClick={startSorteio}
-          >
-            Trocar Tema
-          </button>
+{/* 
+  <button 
+    className={styles.newThemeButton}
+    onClick={startSorteio}
+  >
+    Trocar Tema
+  </button>
+*/}
         </div>
       )}
     </div>
