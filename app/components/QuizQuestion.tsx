@@ -1,4 +1,4 @@
-// QuizQuestion.tsx - Atualizado com confetti controlado e barra de progresso
+// QuizQuestion.tsx - Corrigido para lidar adequadamente com confetti e transições
 "use client";
 import { useState, useEffect, useRef } from 'react';
 import styles from './QuizQuestion.module.css';
@@ -177,8 +177,6 @@ const QuizQuestion: React.FC<QuizQuestionProps> = ({
           <div className={styles.timeInfo}>
             Tempo: <span className={styles.timeValue}>{timeSpent.toFixed(1)} segundos</span>
           </div>
-          
-          {/* Botão "Próxima Pergunta" removido - a transição é automática */}
         </div>
       )}
       

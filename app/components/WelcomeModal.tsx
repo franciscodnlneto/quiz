@@ -1,4 +1,4 @@
-// WelcomeModal.tsx
+// WelcomeModal.tsx - Corrigido para garantir que seja sempre visível
 "use client";
 import { useState, useEffect } from 'react';
 import styles from './WelcomeModal.module.css';

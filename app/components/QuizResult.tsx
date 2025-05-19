@@ -1,6 +1,6 @@
-// QuizResult.tsx
+// QuizResult.tsx - Com máscara de telefone corrigida
 "use client";
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import styles from './QuizResult.module.css';
 
 interface QuizResultProps {
@@ -18,19 +18,70 @@ const QuizResult: React.FC<QuizResultProps> = ({
 }) => {
   const [name, setName] = useState('');
   const [whatsapp, setWhatsapp] = useState('');
+  const [whatsappError, setWhatsappError] = useState('');
   const [submitted, setSubmitted] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   
+  // Carrega os dados salvos do localStorage, se existirem
+  useEffect(() => {
+    const savedName = localStorage.getItem('quizito_user_name');
+    const savedWhatsapp = localStorage.getItem('quizito_user_whatsapp');
+    
+    if (savedName) setName(savedName);
+    if (savedWhatsapp) setWhatsapp(savedWhatsapp);
+  }, []);
+  
   const formatTime = (timeInSeconds: number) => {
     const minutes = Math.floor(timeInSeconds / 60);
-    const seconds = timeInSeconds % 60;
+    const seconds = Math.round(timeInSeconds % 60);
     return `${minutes}:${seconds.toString().padStart(2, '0')}`;
+  };
+  
+  // Função simplificada para aplicar máscara de telefone
+  const formatPhone = (value: string) => {
+    // Remove tudo que não é dígito
+    const digitsOnly = value.replace(/\D/g, '');
+    
+    // Aplica a máscara de acordo com o comprimento da string
+    if (digitsOnly.length <= 2) {
+      return `(${digitsOnly}`;
+    } else if (digitsOnly.length <= 3) {
+      return `(${digitsOnly.substring(0, 2)})${digitsOnly.substring(2)}`;
+    } else if (digitsOnly.length <= 7) {
+      return `(${digitsOnly.substring(0, 2)})${digitsOnly.substring(2, 3)}.${digitsOnly.substring(3)}`;
+    } else {
+      return `(${digitsOnly.substring(0, 2)})${digitsOnly.substring(2, 3)}.${digitsOnly.substring(3, 7)}-${digitsOnly.substring(7, 11)}`;
+    }
+  };
+  
+  const handleWhatsappChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const rawValue = e.target.value;
+    const formattedValue = formatPhone(rawValue);
+    setWhatsapp(formattedValue);
+    
+    // Validação
+    const digitsOnly = rawValue.replace(/\D/g, '');
+    
+    if (digitsOnly.length === 0) {
+      setWhatsappError('');
+    } else if (digitsOnly.length < 11) {
+      setWhatsappError('O número deve ter 11 dígitos incluindo o 9');
+    } else if (digitsOnly[2] !== '9') {
+      setWhatsappError('O terceiro dígito deve ser 9 (número de celular)');
+    } else {
+      setWhatsappError('');
+    }
+  };
+  
+  const isWhatsappValid = () => {
+    const digitsOnly = whatsapp.replace(/\D/g, '');
+    return digitsOnly.length === 11 && digitsOnly[2] === '9';
   };
   
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!name.trim() || !whatsapp.trim()) {
+    if (!name.trim() || !isWhatsappValid()) {
       return;
     }
     
@@ -60,20 +111,16 @@ const QuizResult: React.FC<QuizResultProps> = ({
       <div className={styles.confetti}></div>
       
       <h2 className={styles.congratsTitle}>
-        <span className={styles.emoji}>🎉</span> Parabéns! <span className={styles.emoji}>🎉</span>
+        <span className={styles.emoji}>🏆</span> Parabéns! Você completou o desafio! <span className={styles.emoji}>🎉</span>
       </h2>
       
       <div className={styles.scoreCard}>
         <h3 className={styles.scoreTitle}>Sua pontuação</h3>
         <div className={styles.scoreValue}>{score}</div>
         <div className={styles.scoreDetails}>
-          <div className={styles.scoreItem}>
-            <span className={styles.scoreLabel}>Respostas certas:</span>
-            <span className={styles.scoreNumber}>{correctAnswers}/4</span>
-          </div>
-          <div className={styles.scoreItem}>
-            <span className={styles.scoreLabel}>Tempo total:</span>
-            <span className={styles.scoreNumber}>{formatTime(totalTime)}</span>
+          <div className={styles.timeItem}>
+            <span className={styles.timeLabel}>Tempo total:</span>
+            <span className={styles.timeNumber}>{formatTime(totalTime)}</span>
           </div>
         </div>
       </div>
@@ -81,10 +128,10 @@ const QuizResult: React.FC<QuizResultProps> = ({
       {!submitted ? (
         <div className={styles.formContainer}>
           <h3 className={styles.formTitle}>
-            <span className={styles.emoji}>🏆</span> Concorra a prêmios!
+            <span className={styles.emoji}>🎁</span> Concorra a prêmios!
           </h3>
           <p className={styles.formDescription}>
-            Deixe seus dados para concorrer a prêmios especiais da equipe de Pesquisa Clínica.
+            Parabéns por completar o desafio! Deixe seus dados para concorrer a prêmios especiais da equipe de Pesquisa Clínica.
           </p>
           
           <form onSubmit={handleSubmit} className={styles.form}>
@@ -104,20 +151,29 @@ const QuizResult: React.FC<QuizResultProps> = ({
             <div className={styles.formGroup}>
               <label htmlFor="whatsapp" className={styles.label}>WhatsApp (com DDD)</label>
               <input
-                type="tel"
+                type="tel" 
+                inputMode="numeric"
                 id="whatsapp"
-                className={styles.input}
+                className={`${styles.input} ${whatsappError ? styles.inputError : ''}`}
                 value={whatsapp}
-                onChange={(e) => setWhatsapp(e.target.value)}
-                placeholder="(00) 00000-0000"
+                onChange={handleWhatsappChange}
+                placeholder="(XX)9.XXXX-XXXX"
                 required
               />
+              {whatsappError && (
+                <div className={styles.errorMessage}>
+                  <span className={styles.errorIcon}>⚠️</span> {whatsappError}
+                </div>
+              )}
+              <div className={styles.inputHelper}>
+                Formato: (XX)9.XXXX-XXXX - Apenas celulares
+              </div>
             </div>
             
             <button 
               type="submit" 
               className={styles.submitButton}
-              disabled={isSubmitting}
+              disabled={isSubmitting || !!whatsappError || !isWhatsappValid() || !name.trim()}
             >
               {isSubmitting ? 'Enviando...' : 'Registrar minha pontuação'}
             </button>

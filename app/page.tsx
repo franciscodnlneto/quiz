@@ -1,4 +1,4 @@
-// page.tsx - Corrigindo a duplicação do contador
+
 "use client";
 import { useEffect, useState } from 'react';
 import Papa from 'papaparse';
@@ -38,6 +38,7 @@ type GameState =
   | 'welcome'        // Modal inicial de boas-vindas
   | 'sorting'        // Sorteando tema
   | 'playing'        // Jogando (respondendo perguntas)
+  | 'right_answer'   // Resposta correta (exibindo animação/feedback)
   | 'game_over'      // Jogo finalizado por erro/timeout
   | 'completed'      // Completou todas as perguntas
   | 'result';        // Exibindo resultado
@@ -65,6 +66,8 @@ export default function Home() {
     points: 0
   });
   const [completedQuestions, setCompletedQuestions] = useState<Question[]>([]);
+  const [showConfetti, setShowConfetti] = useState(false);
+  const [showModal, setShowModal] = useState(true); // Garantir que o modal sempre apareça
   
   // Constantes do jogo
   const TOTAL_QUESTIONS = 4;
@@ -72,20 +75,32 @@ export default function Home() {
   const BASE_POINTS = 250;     // Pontos base por pergunta correta
   
   useEffect(() => {
-    // Verificar se já existe uma pontuação salva
+    // Sempre mostrar o modal na primeira carga
+    setShowModal(true);
+    setGameState('welcome');
+    
+    // Verificar se já existe uma pontuação e progresso salvos
     const savedGameState = localStorage.getItem('quizito_gameState');
+    const savedQuestionIndex = localStorage.getItem('quizito_currentQuestionIndex');
+    
+    // Restaurar o índice da pergunta atual, se existir
+    if (savedQuestionIndex) {
+      const questionIndex = parseInt(savedQuestionIndex);
+      if (!isNaN(questionIndex)) {
+        setCurrentQuestionIndex(questionIndex);
+      }
+    }
     
     if (savedGameState) {
       try {
         const parsedState = JSON.parse(savedGameState);
-        if (parsedState.gameState && parsedState.gameScore) {
-          // Só restaurar se o jogo não estava completo
-          if (parsedState.gameState !== 'completed' && parsedState.gameState !== 'result') {
-            setGameState(parsedState.gameState);
-            setGameScore(parsedState.gameScore);
-            setCurrentQuestionIndex(parsedState.currentQuestionIndex || 0);
-            setCompletedQuestions(parsedState.completedQuestions || []);
-          }
+        // Não restauramos o estado completo para sempre começar com o modal
+        // mas podemos restaurar a pontuação e as perguntas completadas
+        if (parsedState.gameScore) {
+          setGameScore(parsedState.gameScore);
+        }
+        if (parsedState.completedQuestions) {
+          setCompletedQuestions(parsedState.completedQuestions);
         }
       } catch (e) {
         console.error('Erro ao carregar estado do jogo:', e);
@@ -171,26 +186,36 @@ export default function Home() {
 
   // Selecionar uma nova pergunta quando o tema é escolhido
   useEffect(() => {
-    if (selectedTheme && !isSorteando && questions.length > 0 && gameState === 'playing') {
-      // Buscar perguntas do tema atual que ainda não foram usadas
-      const availableQuestions = questions.filter(q => 
-        q.Tema === selectedTheme && 
-        !completedQuestions.some(cq => cq.Enunciado === q.Enunciado)
-      );
-      
-      if (availableQuestions.length > 0) {
-        // Selecionar uma pergunta aleatória
-        const randomIndex = Math.floor(Math.random() * availableQuestions.length);
-        setCurrentQuestion(availableQuestions[randomIndex]);
-      } else {
-        // Se não houver perguntas disponíveis, escolher um novo tema
-        startSorteio();
+    if (selectedTheme && !isSorteando && questions.length > 0 && 
+        (gameState === 'playing' || gameState === 'sorting')) {
+      // Se ainda não carregamos uma pergunta após selecionar o tema, carregue uma
+      if (!currentQuestion) {
+        // Buscar perguntas do tema atual que ainda não foram usadas
+        const availableQuestions = questions.filter(q => 
+          q.Tema === selectedTheme && 
+          !completedQuestions.some(cq => cq.Enunciado === q.Enunciado)
+        );
+        
+        if (availableQuestions.length > 0) {
+          // Selecionar uma pergunta aleatória
+          const randomIndex = Math.floor(Math.random() * availableQuestions.length);
+          
+          // Pequeno atraso para garantir que a SlotMachine seja visível por tempo suficiente
+          setTimeout(() => {
+            setCurrentQuestion(availableQuestions[randomIndex]);
+          }, 1000);
+        } else {
+          // Se não houver perguntas disponíveis, escolher um novo tema
+          console.log("Sem perguntas disponíveis para o tema, buscando novo tema...");
+          startSorteio();
+        }
       }
     }
-  }, [selectedTheme, isSorteando, questions, gameState, completedQuestions]);
+  }, [selectedTheme, isSorteando, questions, gameState, completedQuestions, currentQuestion]);
 
   // Iniciar o jogo após fechar o modal de boas-vindas
   const handleWelcomeClose = () => {
+    setShowModal(false);
     setGameState('sorting');
     startSorteio();
   };
@@ -208,7 +233,9 @@ export default function Home() {
   const handleThemeSelect = (theme: string) => {
     setSelectedTheme(theme);
     setSorteioCompleto(true);
-    setGameState('playing');
+    
+    // Não mudar imediatamente para o estado de playing
+    // Mantemos no estado 'sorting' por mais tempo para que a SlotMachine fique visível
     
     // Adicione o tema ao histórico
     setUsedThemes(prev => {
@@ -221,10 +248,12 @@ export default function Home() {
     // Limpe o histórico de perguntas ao mudar de tema
     setQuestionHistory([]);
     
-    // Pequeno atraso antes de finalizar o sorteio completamente
+    // Atraso maior antes de mudar para o estado playing
+    // Este atraso permite que a SlotMachine fique visível por mais tempo
     setTimeout(() => {
+      setGameState('playing');
       setIsSorteando(false);
-    }, 2000);
+    }, 3000); // Aumentado para 3 segundos
   };
 
   // Função para processar a resposta de uma pergunta
@@ -245,66 +274,68 @@ export default function Home() {
         // Adicionar à lista de perguntas completadas
         setCompletedQuestions(prev => [...prev, currentQuestion]);
         
-        // Verificar se completou todas as perguntas
-        if (currentQuestionIndex + 1 >= TOTAL_QUESTIONS) {
-          setGameState('completed');
-        }
+        // Incrementar índice da pergunta IMEDIATAMENTE após acertar
+        // Isso garante que a barra de progresso seja atualizada corretamente
+        const nextQuestionIndex = currentQuestionIndex + 1;
+        setCurrentQuestionIndex(nextQuestionIndex);
+        
+        // Mostrar o confetti
+        setShowConfetti(true);
+        
+        // Mudar para o estado de resposta correta
+        setGameState('right_answer');
+        
+        // Salvar o progresso no localStorage para persistir entre recargas
+        localStorage.setItem('quizito_currentQuestionIndex', nextQuestionIndex.toString());
+        
+        // Verificar se completou todas as perguntas após um breve delay
+        setTimeout(() => {
+          if (nextQuestionIndex >= TOTAL_QUESTIONS) {
+            setGameState('completed');
+          } else {
+            // Esconder o confetti
+            setShowConfetti(false);
+            
+            // Iniciar o sorteio para a próxima pergunta
+            startSorteio();
+          }
+        }, 1500); // Delay para mostrar a animação de acerto
       } else {
-        // Se errou, finaliza o jogo
-        setGameOverReason('wrong_answer');
-        setGameState('game_over');
+        // Se errou, não mudar imediatamente o estado
+        // Primeiro, permita que o usuário veja a resposta correta por alguns segundos
+        
+        // Depois de 3 segundos, finaliza o jogo para a tela de game over
+        setTimeout(() => {
+          setGameOverReason('wrong_answer');
+          setGameState('game_over');
+          
+          // Zerar o contador de perguntas quando erra
+          setCurrentQuestionIndex(0);
+          localStorage.setItem('quizito_currentQuestionIndex', '0');
+        }, 3000);
       }
     }
   };
 
   // Função para quando o tempo se esgota
   const handleTimeUp = () => {
-    setGameOverReason('timeout');
-    setGameState('game_over');
-  };
-
-  // Função para avançar para a próxima pergunta
-  const handleNextQuestion = () => {
-    setCurrentQuestionIndex(prev => prev + 1);
-    
-    // Se completou todas as perguntas, mostrar resultado
-    if (currentQuestionIndex + 1 >= TOTAL_QUESTIONS) {
-      setGameState('result');
-    } else {
-      // Caso contrário, selecionar nova pergunta
-      if (currentQuestion) {
-        // Atualize o histórico de perguntas
-        setQuestionHistory(prev => {
-          const updated = [...prev, currentQuestion.Enunciado];
-          // Mantenha apenas as últimas N perguntas no histórico
-          const historyLimit = Math.min(5, Math.floor(
-            questions.filter(q => q.Tema === selectedTheme).length / 2
-          ));
-          return updated.slice(-historyLimit);
-        });
-      }
+    // Atraso para mostrar que o tempo acabou antes de ir para a tela de game over
+    setTimeout(() => {
+      setGameOverReason('timeout');
+      setGameState('game_over');
       
-      // Selecione uma nova pergunta
-      if (selectedTheme) {
-        const availableQuestions = questions.filter(q => 
-          q.Tema === selectedTheme && 
-          !completedQuestions.some(cq => cq.Enunciado === q.Enunciado) &&
-          currentQuestion?.Enunciado !== q.Enunciado
-        );
-        
-        if (availableQuestions.length > 0) {
-          const randomIndex = Math.floor(Math.random() * availableQuestions.length);
-          setCurrentQuestion(availableQuestions[randomIndex]);
-        } else {
-          // Se não houver mais perguntas neste tema, sortear um novo
-          startSorteio();
-        }
-      }
-    }
+      // Zerar o contador de perguntas quando o tempo acaba
+      setCurrentQuestionIndex(0);
+      localStorage.setItem('quizito_currentQuestionIndex', '0');
+    }, 3000);
   };
 
-  // Função para reiniciar o jogo
+  // Função para reiniciar o jogo - agora recarregando a página para garantir estado inicial completo
   const handleResetGame = () => {
+    // Limpar o localStorage para evitar restaurar estado antigo
+    localStorage.removeItem('quizito_gameState');
+    
+    // Reiniciar todos os estados
     setGameScore({
       correctAnswers: 0,
       totalTime: 0,
@@ -314,40 +345,68 @@ export default function Home() {
     setCompletedQuestions([]);
     setSelectedTheme(null);
     setCurrentQuestion(null);
-    startSorteio();
+    setShowModal(true);
+    setGameState('welcome');
+    
+    // Recarregar a página para garantir um estado totalmente limpo e o modal aparecer
+    window.location.reload();
   };
 
   // Função para mostrar o conteúdo baseado no estado do jogo
   const renderGameContent = () => {
     switch (gameState) {
       case 'welcome':
-        return <WelcomeModal onClose={handleWelcomeClose} />;
-        
-      case 'sorting':
         return (
-          <div className={styles.questionSection}>
-            {/* Removido o contador duplicado aqui */}
-            <SlotMachine 
-              themes={themes} 
-              onSelect={handleThemeSelect}
-              duration={5000}
-              usedThemes={usedThemes}
-            />
-          </div>
+          <>
+            {showModal && <WelcomeModal onClose={handleWelcomeClose} />}
+          </>
         );
         
-      case 'playing':
+      case 'sorting':
+      case 'playing': // Mostrar a SlotMachine também durante o início do estado 'playing'
+        // Se estamos no estado 'playing' mas ainda não temos uma pergunta, mostrar o sorteio
+        const showSlotMachine = gameState === 'sorting' || !currentQuestion;
+        
         return (
           <div className={styles.questionSection}>
-            {currentQuestion && (
+            {showSlotMachine && (
+              <SlotMachine 
+                themes={themes} 
+                onSelect={handleThemeSelect}
+                duration={5000}
+                usedThemes={usedThemes}
+              />
+            )}
+            
+            {/* Mostrar a pergunta apenas se tiver sido carregada */}
+            {gameState === 'playing' && currentQuestion && (
               <QuizQuestion
                 question={currentQuestion}
-                onNextQuestion={handleNextQuestion}
+                onNextQuestion={() => {}}
                 onSelectNewTheme={startSorteio}
                 onAnswerQuestion={handleAnswerQuestion}
                 onTimeUp={handleTimeUp}
                 currentQuestionNumber={currentQuestionIndex + 1}
                 totalQuestions={TOTAL_QUESTIONS}
+                showConfetti={showConfetti}
+              />
+            )}
+          </div>
+        );
+        
+      case 'right_answer':
+        return (
+          <div className={styles.questionSection}>
+            {currentQuestion && (
+              <QuizQuestion
+                question={currentQuestion}
+                onNextQuestion={() => {}}
+                onSelectNewTheme={startSorteio}
+                onAnswerQuestion={handleAnswerQuestion}
+                onTimeUp={handleTimeUp}
+                currentQuestionNumber={currentQuestionIndex + 1}
+                totalQuestions={TOTAL_QUESTIONS}
+                showConfetti={showConfetti}
               />
             )}
           </div>
@@ -397,7 +456,7 @@ export default function Home() {
   return (
     <main className={styles.main}>
       <div className={styles.container}>
-        {/* Seção de temas só fica visível quando não estamos em game_over, completed ou result */}
+        {/* Seção de temas só fica visível quando não estamos em game_over, completed, result ou welcome */}
         {(gameState !== 'game_over' && gameState !== 'completed' && gameState !== 'result' && gameState !== 'welcome') && (
           <div className={styles.themeSection}>
             <div className={styles.themeSectionLogo}>
@@ -405,18 +464,21 @@ export default function Home() {
             </div>
             <h2 className={styles.sectionTitle}>Temas</h2>
             
-            {/* Mostra o seletor de temas ou o contador regressivo */}
-            {!isSorteando ? (
+            {/* Mostra o contador regressivo durante o sorteio e até que a pergunta apareça */}
+            {/* isSorteando será true desde o início do sorteio até o tema ser selecionado, 
+                mas queremos manter o contador mesmo depois disso, enquanto a pergunta carrega */}
+            {(isSorteando || (gameState === 'playing' && !currentQuestion)) ? (
+              <CountDown
+                seconds={5}
+                onComplete={() => {}}
+                phase={sorteioCompleto ? 'finalizando' : 'sorteando'}
+              />
+            ) : (
               <ThemeSelector
                 themes={themes}
                 onSelectTheme={handleThemeSelect}
                 selectedTheme={selectedTheme}
                 onSorteioStart={startSorteio}
-              />
-            ) : (
-              <CountDown
-                seconds={5}
-                onComplete={() => {}}
               />
             )}
           </div>

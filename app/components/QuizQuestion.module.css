@@ -1,4 +1,4 @@
-/* QuizQuestion.module.css - Atualizado com funcionalidades de progresso e tempo */
+/* QuizQuestion.module.css - Atualizado para melhorar o confetti e a transição */
 .questionContainer {
   width: 100%;
   background-color: #f9f9f9;
@@ -57,6 +57,8 @@
 /* Barra de progresso */
 .progress {
   margin-bottom: 1rem;
+  z-index: 2;
+  position: relative;
 }
 
 .progressText {
@@ -88,6 +90,8 @@
   justify-content: space-between;
   align-items: center;
   margin-bottom: 0.8rem;
+  position: relative;
+  z-index: 2;
 }
 
 .theme {
@@ -159,6 +163,8 @@
   text-align: center;
   padding-bottom: 0.5rem;
   border-bottom: 1px dashed #ddd;
+  position: relative;
+  z-index: 2;
 }
 
 .alternatives {
@@ -166,6 +172,8 @@
   flex-direction: column;
   gap: 0.6rem;
   margin-bottom: 0.6rem;
+  position: relative;
+  z-index: 2;
 }
 
 .alternative {
@@ -295,6 +303,8 @@
   margin-top: 1rem;
   text-align: center;
   animation: fadeInUp 0.5s;
+  position: relative;
+  z-index: 2;
 }
 
 @keyframes fadeInUp {
@@ -335,31 +345,7 @@
   color: #333;
 }
 
-.nextButton {
-  margin-top: 0.5rem;
-  padding: 0.7rem 1.5rem;
-  background: linear-gradient(135deg, #B02A78, #9c2468);
-  color: white;
-  border: none;
-  border-radius: 50px;
-  font-size: 1rem;
-  font-weight: bold;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  box-shadow: 0 4px 10px rgba(176, 42, 120, 0.3);
-}
-
-.nextButton:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 6px 15px rgba(176, 42, 120, 0.4);
-}
-
-.nextButton:active {
-  transform: translateY(0);
-  box-shadow: 0 2px 5px rgba(176, 42, 120, 0.4);
-}
-
-/* Efeito de confete para respostas corretas */
+/* Efeito de confetti para respostas corretas - Melhorado */
 .confetti {
   position: absolute;
   top: 0;
@@ -367,7 +353,7 @@
   width: 100%;
   height: 100%;
   pointer-events: none;
-  z-index: 10;
+  z-index: 5;
   background-image: 
     radial-gradient(circle, #B02A78 8px, transparent 8px),
     radial-gradient(circle, #9AC33C 6px, transparent 6px),
@@ -377,74 +363,23 @@
   background-size: 10% 10%, 15% 15%, 20% 20%, 18% 18%, 12% 12%;
   background-position: 
     0% 0%, 20% 30%, 40% 50%, 60% 70%, 80% 90%;
-  animation: confettiRain 2s linear infinite;
-  opacity: 0;
-  animation-delay: 0.5s;
+  animation: confettiRain 2s linear forwards;
+  opacity: 0.9;
 }
 
 @keyframes confettiRain {
   0% {
     background-position: 
       0% 0%, 20% 30%, 40% 50%, 60% 70%, 80% 90%;
-    opacity: 0;
-  }
-  10% {
-    opacity: 1;
+    opacity: 0.9;
   }
   50% {
-    background-position: 
-      10% 20%, 30% 40%, 50% 60%, 70% 80%, 90% 100%;
-  }
-  90% {
-    opacity: 1;
+    opacity: 0.95;
   }
   100% {
     background-position: 
-      20% 30%, 40% 50%, 60% 70%, 80% 90%, 100% 110%;
+      20% 130%, 40% 160%, 60% 180%, 80% 200%, 100% 220%;
     opacity: 0;
-  }
-}
-
-/* Animação de pulsação para o botão "Próximo Tema" */
-.pulseButton {
-  animation: buttonPulse 1.5s infinite alternate;
-  position: relative;
-}
-
-@keyframes buttonPulse {
-  0% {
-    transform: scale(1);
-    box-shadow: 0 4px 10px rgba(176, 42, 120, 0.3);
-  }
-  100% {
-    transform: scale(1.05);
-    box-shadow: 0 8px 20px rgba(176, 42, 120, 0.6);
-  }
-}
-
-/* Adiciona um efeito de brilho no botão */
-.pulseButton::after {
-  content: '';
-  position: absolute;
-  top: -5px;
-  left: -5px;
-  right: -5px;
-  bottom: -5px;
-  border-radius: 50px;
-  background: transparent;
-  border: 2px solid rgba(255, 255, 255, 0.3);
-  opacity: 0;
-  animation: buttonGlow 1.5s infinite alternate;
-}
-
-@keyframes buttonGlow {
-  0% {
-    opacity: 0;
-    transform: scale(0.95);
-  }
-  100% {
-    opacity: 1;
-    transform: scale(1.05);
   }
 }
 
@@ -466,11 +401,6 @@
   }
   
   .content {
-    font-size: 0.9rem;
-  }
-  
-  .nextButton {
-    padding: 0.6rem 1.2rem;
     font-size: 0.9rem;
   }
   
