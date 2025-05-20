@@ -90,6 +90,9 @@ const QuizQuestion: React.FC<QuizQuestionProps> = ({
       setFadeIn(false);
     }, 500);
     
+    // Role para o topo quando uma nova pergunta é carregada
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    
     return () => clearTimeout(timer);
   }, [question, currentScore]);
 
@@ -146,6 +149,9 @@ const QuizQuestion: React.FC<QuizQuestionProps> = ({
   // Atualizar os estados
   setSelectedAnswer(index);
   setIsCorrect(isAnswerCorrect);
+  
+  // Role para o topo quando o usuário responde à pergunta
+  window.scrollTo({ top: 0, behavior: 'smooth' });
   
   // Notificar o componente pai - adicionando o tempo gasto como terceiro parâmetro
   onAnswerQuestion(isAnswerCorrect, BASE_POINTS + lastPartialScore, roundedTimeSpent);

@@ -195,6 +195,8 @@ localStorage.removeItem('quizito_themeHistory');
           // Pequeno atraso para garantir que a SlotMachine seja visível por tempo suficiente
           setTimeout(() => {
             setCurrentQuestion(availableQuestions[randomIndex]);
+            // Role para o topo quando uma nova pergunta é carregada
+            window.scrollTo({ top: 0, behavior: 'smooth' });
           }, 1000);
         } else {
           // Se não houver perguntas disponíveis, escolher um novo tema
@@ -228,12 +230,18 @@ const handleWelcomeClose = () => {
     setCurrentQuestion(null);
     setSelectedTheme(null);
     setGameState('sorting');
+    
+    // Role para o topo quando iniciar um novo sorteio
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   // Quando um tema é selecionado no sorteio
   const handleThemeSelect = (theme: string) => {
     setSelectedTheme(theme);
     setSorteioCompleto(true);
+    
+    // Role para o topo da página quando um tema é selecionado
+    window.scrollTo({ top: 0, behavior: 'smooth' });
     
     // Não mudar imediatamente para o estado de playing
     // Mantemos no estado 'sorting' por mais tempo para que a SlotMachine fique visível
@@ -258,8 +266,6 @@ const handleWelcomeClose = () => {
   };
 
   // Função para processar a resposta de uma pergunta
-// Modificações no page.tsx
-// Esta é apenas a parte relevante que precisa ser ajustada no arquivo page.tsx
 const handleAnswerQuestion = (correct: boolean, pointsEarned: number, timeSpent: number) => {
   if (currentQuestion) {
     if (correct) {
@@ -290,11 +296,15 @@ const handleAnswerQuestion = (correct: boolean, pointsEarned: number, timeSpent:
 
         if (nextQuestionIndex >= TOTAL_QUESTIONS) {
           setGameState('completed');
+          // Role para o topo ao completar todas as perguntas
+          window.scrollTo({ top: 0, behavior: 'smooth' });
         } else {
           setCurrentQuestionIndex(nextQuestionIndex);
           localStorage.setItem('quizito_currentQuestionIndex', nextQuestionIndex.toString());
           setShowConfetti(false);
           startSorteio();
+          // Role para o topo ao iniciar o sorteio de um novo tema
+          window.scrollTo({ top: 0, behavior: 'smooth' });
         }
       }, 1500);
     } else {
@@ -311,13 +321,15 @@ const handleAnswerQuestion = (correct: boolean, pointsEarned: number, timeSpent:
           points: 0
         });
         setCompletedQuestions([]);
+        
+        // Role para o topo quando o jogo acabar por resposta errada
+        window.scrollTo({ top: 0, behavior: 'smooth' });
       }, 5000); // Delay para o candidato ler a alternativa errada
     }
   }
 };
 
   // Função para quando o tempo se esgota
- // Função para quando o tempo se esgota
 const handleTimeUp = () => {
   // Atraso para mostrar que o tempo acabou antes de ir para a tela de game over
   setTimeout(() => {
@@ -335,9 +347,11 @@ const handleTimeUp = () => {
       points: 0
     });
     setCompletedQuestions([]);
+    
+    // Role para o topo quando o tempo acabar
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   }, 3000);
 };
-// Função para reiniciar o jogo - corrigida para garantir estado inicial completo
 
 // Função para reiniciar o jogo - corrigida para garantir estado inicial completo
 const handleResetGame = () => {
@@ -365,6 +379,9 @@ const handleResetGame = () => {
   setUsedThemes([]);
   setShowModal(true);
   setGameState('welcome');
+  
+  // Role para o topo antes de recarregar a página
+  window.scrollTo({ top: 0, behavior: 'auto' });
   
   // Recarregar a página para garantir um estado totalmente limpo e o modal aparecer
   window.location.reload();
@@ -398,17 +415,17 @@ const handleResetGame = () => {
             
             {/* Mostrar a pergunta apenas se tiver sido carregada */}
             {gameState === 'playing' && currentQuestion && (
-       <QuizQuestion
-  question={currentQuestion}
-  onNextQuestion={() => {}}
-  onSelectNewTheme={startSorteio}
-  onAnswerQuestion={handleAnswerQuestion}
-  onTimeUp={handleTimeUp}
-  currentQuestionNumber={Math.min(currentQuestionIndex + 1, TOTAL_QUESTIONS)}
-  totalQuestions={TOTAL_QUESTIONS}
-  showConfetti={showConfetti}
-  currentScore={gameScore.points} // Adicione esta linha
-/>
+              <QuizQuestion
+                question={currentQuestion}
+                onNextQuestion={() => {}}
+                onSelectNewTheme={startSorteio}
+                onAnswerQuestion={handleAnswerQuestion}
+                onTimeUp={handleTimeUp}
+                currentQuestionNumber={Math.min(currentQuestionIndex + 1, TOTAL_QUESTIONS)}
+                totalQuestions={TOTAL_QUESTIONS}
+                showConfetti={showConfetti}
+                currentScore={gameScore.points} // Adicione esta linha
+              />
             )}
           </div>
         );
@@ -417,17 +434,17 @@ const handleResetGame = () => {
         return (
           <div className={styles.questionSection}>
             {currentQuestion && (
-       <QuizQuestion
-  question={currentQuestion}
-  onNextQuestion={() => {}}
-  onSelectNewTheme={startSorteio}
-  onAnswerQuestion={handleAnswerQuestion}
-  onTimeUp={handleTimeUp}
-  currentQuestionNumber={Math.min(currentQuestionIndex + 1, TOTAL_QUESTIONS)}
-  totalQuestions={TOTAL_QUESTIONS}
-  showConfetti={showConfetti}
-  currentScore={gameScore.points} // Adicione esta linha
-/>  
+              <QuizQuestion
+                question={currentQuestion}
+                onNextQuestion={() => {}}
+                onSelectNewTheme={startSorteio}
+                onAnswerQuestion={handleAnswerQuestion}
+                onTimeUp={handleTimeUp}
+                currentQuestionNumber={Math.min(currentQuestionIndex + 1, TOTAL_QUESTIONS)}
+                totalQuestions={TOTAL_QUESTIONS}
+                showConfetti={showConfetti}
+                currentScore={gameScore.points} // Adicione esta linha
+              />  
             )}
           </div>
         );
