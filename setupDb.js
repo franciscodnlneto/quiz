@@ -15,7 +15,7 @@ async function setupDatabase() {
   const options = {
     tlsAllowInvalidCertificates: true, // Permite certificados inválidos (use apenas em desenvolvimento)
     tlsAllowInvalidHostnames: true,    // Permite hostnames inválidos (use apenas em desenvolvimento) 
-    serverSelectionTimeoutMS: 10000    // Aumenta o timeout para seleção de servidor
+    serverSelectionTimeoutMS: 60000    // Aumenta o timeout para seleção de servidor para 60 segundos
   };
 
   const client = new MongoClient(uri, options);
@@ -43,6 +43,8 @@ async function setupDatabase() {
           await createScoresCollection(db);
         } else {
           console.log('Operação cancelada. A coleção "scores" não foi modificada.');
+          // Mesmo que não recrie a coleção, garante que o índice existe
+          await ensureIndexes(db);
         }
         readline.close();
         await client.close();
@@ -59,6 +61,24 @@ async function setupDatabase() {
   }
 }
 
+// Nova função para garantir que os índices existam
+async function ensureIndexes(db) {
+  try {
+    // Criar índice para ordenação por pontuação (descendente)
+    await db.collection('scores').createIndex({ score: -1 });
+    console.log('Índice score criado ou já existente');
+    
+    // Criar índice para ordenação por data (útil para consultas por período)
+    await db.collection('scores').createIndex({ createdAt: -1 });
+    console.log('Índice createdAt criado ou já existente');
+    
+    console.log('Índices verificados com sucesso.');
+  } catch (error) {
+    console.error('Erro ao criar índices:', error);
+    throw error;
+  }
+}
+
 async function createScoresCollection(db) {
   try {
     // Criar a coleção de pontuações
@@ -66,11 +86,9 @@ async function createScoresCollection(db) {
     console.log('Coleção "scores" criada com sucesso.');
 
     // Criar índices para melhorar a performance das consultas
-    await db.collection('scores').createIndex({ score: -1 });
-    await db.collection('scores').createIndex({ createdAt: -1 });
-    console.log('Índices criados com sucesso.');
+    await ensureIndexes(db);
 
-    // Inserir algumas pontuações de exemplo
+    // Inserir algumas pontuações de exemplo (opcional)
     const sampleScores = [
       {
         name: 'João Silva',

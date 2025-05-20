@@ -14,17 +14,13 @@ interface LeaderboardScore {
 
 interface ApiResponse {
   scores?: LeaderboardScore[];
-  usingRealDb?: boolean;
   error?: string;
-  warning?: string;
 }
 
 const Leaderboard: React.FC = () => {
   const [scores, setScores] = useState<LeaderboardScore[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-  const [warning, setWarning] = useState('');
-  const [usingRealDb, setUsingRealDb] = useState(false);
   const [fetchCount, setFetchCount] = useState(0); // Para forçar atualizações
 
   // Função para buscar as pontuações
@@ -41,8 +37,7 @@ const Leaderboard: React.FC = () => {
       
       const data = await response.json() as ApiResponse;
       
-      // Verificar explicitamente se scores existe e tem um array
-      if (data.error && (!data.scores || data.scores.length === 0)) {
+      if (data.error) {
         throw new Error(data.error);
       }
       
@@ -55,8 +50,6 @@ const Leaderboard: React.FC = () => {
         setScores([]);
       }
       
-      setUsingRealDb(data.usingRealDb ?? false);
-      setWarning(data.warning || '');
       setError('');
       
       // Incrementar o contador de atualizações
@@ -116,46 +109,40 @@ const Leaderboard: React.FC = () => {
       );
     }
     
-    
-return (
-  <div className={styles.tableContainer}>
-    {warning && (
-      <div className={styles.warningBanner}>
-        {warning}
+    return (
+      <div className={styles.tableContainer}>
+        <table className={styles.leaderboardTable}>
+          <thead>
+            <tr>
+              <th className={styles.positionHeader}>Pos</th>
+              <th className={styles.whatsappHeader}>WhatsApp</th>
+              <th className={styles.scoreHeader}>Pontos</th>
+            </tr>
+          </thead>
+          <tbody>
+            {scores.map((item, idx) => (
+              <tr key={`${item.position}-${idx}-${fetchCount}`} className={styles.scoreRow}>
+                <td className={styles.position}>
+                  {item.position <= 3 ? (
+                    <span className={`${styles.medal} ${styles[`medal${item.position}`]}`}>
+                      {item.position === 1 ? '🥇' : item.position === 2 ? '🥈' : '🥉'}
+                    </span>
+                  ) : (
+                    `${item.position}º`
+                  )}
+                </td>
+                <td className={styles.whatsapp}>{item.whatsapp}</td>
+                <td className={styles.score}>
+                  <span>{item.score}</span>
+                  {item.createdAt && (
+                    <span className={styles.timestamp}>{item.createdAt}</span>
+                  )}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </div>
-    )}
-    <table className={styles.leaderboardTable}>
-      <thead>
-        <tr>
-          <th className={styles.positionHeader}>Pos</th>
-          <th className={styles.whatsappHeader}>WhatsApp</th>
-          <th className={styles.scoreHeader}>Pontos</th>
-        </tr>
-      </thead>
-      <tbody>
-        {scores.map((item, idx) => (
-          <tr key={`${item.position}-${idx}-${fetchCount}`} className={styles.scoreRow}>
-            <td className={styles.position}>
-              {item.position <= 3 ? (
-                <span className={`${styles.medal} ${styles[`medal${item.position}`]}`}>
-                  {item.position === 1 ? '🥇' : item.position === 2 ? '🥈' : '🥉'}
-                </span>
-              ) : (
-                `${item.position}º`
-              )}
-            </td>
-            <td className={styles.whatsapp}>{item.whatsapp}</td>
-            <td className={styles.score}>
-              <span>{item.score}</span>
-              {item.createdAt && (
-                <span className={styles.timestamp}>{item.createdAt}</span>
-              )}
-            </td>
-          </tr>
-        ))}
-      </tbody>
-    </table>
-  </div>
     );
   };
 
@@ -163,9 +150,6 @@ return (
     <div className={styles.leaderboardContainer}>
       <h3 className={styles.leaderboardTitle}>
         <span className={styles.trophyIcon}>🏆</span> Ranking
-        {!loading && !usingRealDb && (
-          <span className={styles.dbIndicator}> (modo local)</span>
-        )}
       </h3>
       {renderContent()}
     </div>
