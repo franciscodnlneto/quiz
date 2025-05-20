@@ -1,0 +1,268 @@
+/* app/components/Leaderboard.module.css */
+.leaderboardContainer {
+  width: 100%;
+  background-color: white;
+  border-radius: 12px;
+  padding: 0.8rem;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+  display: flex;
+  flex-direction: column;
+  margin-top: 1rem;
+  max-height: 300px;
+  overflow: hidden;
+  animation: fadeIn 0.5s;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.leaderboardTitle {
+  font-size: 1.1rem;
+  color: var(--primary-color, #B02A78);
+  text-align: center;
+  margin-bottom: 0.8rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.trophyIcon {
+  font-size: 1.2rem;
+  animation: bounce 1s infinite alternate;
+}
+
+.dbIndicator {
+  font-size: 0.7rem;
+  color: #888;
+  font-weight: normal;
+  background-color: #f0f0f0;
+  padding: 0.15rem 0.4rem;
+  border-radius: 0.8rem;
+  margin-left: 0.3rem;
+}
+
+@keyframes bounce {
+  0% {
+    transform: translateY(0);
+  }
+  100% {
+    transform: translateY(-3px);
+  }
+}
+
+.tableContainer {
+  overflow-y: auto;
+  max-height: 230px;
+  scrollbar-width: thin;
+  scrollbar-color: #d0d0d0 transparent;
+  padding-right: 4px;
+}
+
+.tableContainer::-webkit-scrollbar {
+  width: 6px;
+}
+
+.tableContainer::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.tableContainer::-webkit-scrollbar-thumb {
+  background-color: #d0d0d0;
+  border-radius: 10px;
+}
+
+.leaderboardTable {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.85rem;
+}
+
+.leaderboardTable th {
+  padding: 0.4rem 0.5rem;
+  text-align: left;
+  color: #666;
+  font-weight: 600;
+  border-bottom: 1px solid #eaeaea;
+  position: sticky;
+  top: 0;
+  background-color: white;
+  z-index: 1;
+}
+
+.leaderboardTable td {
+  padding: 0.5rem;
+  border-bottom: 1px solid #f5f5f5;
+}
+
+.scoreRow:hover {
+  background-color: #f9f9f9;
+}
+
+.positionHeader {
+  width: 50px;
+}
+
+.scoreHeader {
+  width: 70px;
+  text-align: right;
+}
+
+.position {
+  text-align: center;
+  font-weight: 600;
+  color: #555;
+}
+
+.whatsapp {
+  font-family: monospace;
+  color: #555;
+}
+
+.score {
+  font-weight: bold;
+  color: var(--primary-color, #B02A78);
+  text-align: right;
+}
+
+.medal {
+  font-size: 1.2rem;
+}
+
+.medal1 {
+  color: gold;
+}
+
+.medal2 {
+  color: silver;
+}
+
+.medal3 {
+  color: #cd7f32; /* Bronze */
+}
+
+.loadingContainer, 
+.errorContainer, 
+.emptyContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 150px;
+  color: #666;
+  text-align: center;
+  padding: 1rem;
+}
+
+.spinner {
+  width: 30px;
+  height: 30px;
+  border: 3px solid #f3f3f3;
+  border-top: 3px solid var(--primary-color, #B02A78);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 0.8rem;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.retryButton {
+  margin-top: 0.5rem;
+  background-color: var(--secondary-color, #9AC33C);
+  color: white;
+  border: none;
+  border-radius: 20px;
+  padding: 0.4rem 0.8rem;
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.retryButton:hover {
+  background-color: #88ae35;
+  transform: translateY(-2px);
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+  .leaderboardContainer {
+    padding: 0.7rem;
+    max-height: 250px;
+  }
+  
+  .leaderboardTitle {
+    font-size: 1rem;
+  }
+  
+  .tableContainer {
+    max-height: 180px;
+  }
+  
+  .leaderboardTable {
+    font-size: 0.8rem;
+  }
+  
+  .leaderboardTable th,
+  .leaderboardTable td {
+    padding: 0.4rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .leaderboardContainer {
+    padding: 0.6rem;
+    max-height: 220px;
+  }
+  
+  .leaderboardTitle {
+    font-size: 0.9rem;
+    margin-bottom: 0.6rem;
+  }
+  
+  .tableContainer {
+    max-height: 160px;
+  }
+  
+  .leaderboardTable {
+    font-size: 0.75rem;
+  }
+  
+  .positionHeader {
+    width: 40px;
+  }
+  
+  .scoreHeader {
+    width: 60px;
+  }
+}
+
+.timestamp {
+  display: inline-block;
+  font-size: 0.65rem;
+  color: #888;
+  font-weight: normal;
+  margin-left: 5px;
+  vertical-align: middle;
+}
+
+/* Ajuste opcional para o score */
+.score {
+  font-weight: bold;
+  color: var(--primary-color, #B02A78);
+  text-align: right;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}

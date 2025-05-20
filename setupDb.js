@@ -1,75 +1,120 @@
-const { MongoClient, ObjectId } = require('mongodb');
-const dotenv = require('dotenv');
-const fs = require('fs');
-const csv = require('csv-parser');
+// setupDb.js
+require('dotenv').config();
+const { MongoClient } = require('mongodb');
 
-dotenv.config();
-
-const client = new MongoClient(process.env.MONGODB_URI);
+const uri = process.env.MONGODB_URI;
+const dbName = process.env.DATABASE_NAME;
 
 async function setupDatabase() {
+  if (!uri || !dbName) {
+    console.error('MONGODB_URI ou DATABASE_NAME não definidos no arquivo .env');
+    process.exit(1);
+  }
+
+  // Configurações específicas para contornar problemas de SSL - usando apenas opções compatíveis
+  const options = {
+    tlsAllowInvalidCertificates: true, // Permite certificados inválidos (use apenas em desenvolvimento)
+    tlsAllowInvalidHostnames: true,    // Permite hostnames inválidos (use apenas em desenvolvimento) 
+    serverSelectionTimeoutMS: 10000    // Aumenta o timeout para seleção de servidor
+  };
+
+  const client = new MongoClient(uri, options);
+
   try {
     await client.connect();
-    const db = client.db(process.env.DATABASE_NAME);
+    console.log('Conectado ao MongoDB com sucesso!');
 
-    // Collections
-    const users = db.collection('users');
-    const quizzes = db.collection('quizzes');
-    const questions = db.collection('questions');
+    const db = client.db(dbName);
+    
+    // Verificar se a coleção de pontuações já existe
+    const collections = await db.listCollections({ name: 'scores' }).toArray();
+    
+    if (collections.length > 0) {
+      console.log('A coleção "scores" já existe. Deseja recriá-la? (s/n)');
+      const readline = require('readline').createInterface({
+        input: process.stdin,
+        output: process.stdout
+      });
 
-    // Admin user
-    const adminUser = {
-      email: 'appquizito@gmail.com',
-      password: '123456',
-      role: 'admin',
-      createdAt: new Date(),
-    };
-
-    const userResult = await users.insertOne(adminUser);
-    console.log('Usuário admin criado com ID:', userResult.insertedId);
-
-    // Quiz
-    const quiz = {
-      title: 'Quiz CPC - Centro de Pesquisa Clínica',
-      logoUrl: 'https://raw.githubusercontent.com/franciscodnlneto/imagens_publicas_diversas/refs/heads/main/logo_cpc_500x200.png',
-      themeColors: {
-        primary: '#B02A78',
-        secondary: '#9AC33C',
-        error: '#F44336',
-        background: '#fdf0f7',
-        text: '#333333',
-        border: '#eaeaea',
-      },
-      createdBy: userResult.insertedId,
-      createdAt: new Date(),
-    };
-
-    const quizResult = await quizzes.insertOne(quiz);
-    console.log('Quiz criado com ID:', quizResult.insertedId);
-
-    // Leitura do CSV e inserção de perguntas
-    const questionsArray = [];
-
-    fs.createReadStream('perguntas_e_respostas.csv')
-      .pipe(csv())
-      .on('data', (row) => {
-        questionsArray.push({
-          quizId: quizResult.insertedId,
-          questionText: row.pergunta,
-          options: [row.alternativa1, row.alternativa2, row.alternativa3, row.alternativa4].filter(Boolean),
-          correctAnswer: row.resposta_correta,
-          createdAt: new Date(),
-        });
-      })
-      .on('end', async () => {
-        const questionResult = await questions.insertMany(questionsArray);
-        console.log(`${questionResult.insertedCount} perguntas inseridas com sucesso!`);
-
+      readline.question('', async (answer) => {
+        if (answer.toLowerCase() === 's') {
+          await db.collection('scores').drop();
+          console.log('Coleção "scores" removida com sucesso.');
+          await createScoresCollection(db);
+        } else {
+          console.log('Operação cancelada. A coleção "scores" não foi modificada.');
+        }
+        readline.close();
         await client.close();
       });
-  } catch (err) {
-    console.error(err);
+    } else {
+      await createScoresCollection(db);
+      await client.close();
+    }
+  } catch (error) {
+    console.error('Erro ao configurar o banco de dados:', error);
+    console.error('Detalhes do erro:', error.stack);
+    await client.close();
+    process.exit(1);
   }
 }
 
-setupDatabase();
+async function createScoresCollection(db) {
+  try {
+    // Criar a coleção de pontuações
+    await db.createCollection('scores');
+    console.log('Coleção "scores" criada com sucesso.');
+
+    // Criar índices para melhorar a performance das consultas
+    await db.collection('scores').createIndex({ score: -1 });
+    await db.collection('scores').createIndex({ createdAt: -1 });
+    console.log('Índices criados com sucesso.');
+
+    // Inserir algumas pontuações de exemplo
+    const sampleScores = [
+      {
+        name: 'João Silva',
+        whatsapp: '(34)9.1234-5678',
+        score: 1250,
+        totalTime: 87.5,
+        createdAt: new Date()
+      },
+      {
+        name: 'Maria Oliveira',
+        whatsapp: '(34)9.8765-4321',
+        score: 1100,
+        totalTime: 92.3,
+        createdAt: new Date()
+      },
+      {
+        name: 'Pedro Santos',
+        whatsapp: '(11)9.5555-6666',
+        score: 950,
+        totalTime: 103.2,
+        createdAt: new Date()
+      },
+      {
+        name: 'Ana Costa',
+        whatsapp: '(21)9.7777-8888',
+        score: 1150,
+        totalTime: 88.9,
+        createdAt: new Date()
+      },
+      {
+        name: 'Carlos Ferreira',
+        whatsapp: '(34)9.3333-2222',
+        score: 850,
+        totalTime: 112.5,
+        createdAt: new Date()
+      }
+    ];
+
+    const result = await db.collection('scores').insertMany(sampleScores);
+    console.log(`${result.insertedCount} pontuações de exemplo inseridas com sucesso.`);
+  } catch (error) {
+    console.error('Erro ao criar coleção:', error);
+    throw error;
+  }
+}
+
+setupDatabase().catch(console.error);

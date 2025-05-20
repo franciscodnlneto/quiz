@@ -2,6 +2,7 @@
 import { useState } from 'react';
 import styles from './ThemeSelector.module.css';
 import { generateColorFromText } from './SlotMachine'; // Importa a função de cor do SlotMachine
+import Leaderboard from './Leaderboard'; // Importar o componente Leaderboard
 
 interface ThemeSelectorProps {
   themes: string[];
@@ -70,6 +71,9 @@ const ThemeSelector: React.FC<ThemeSelectorProps> = ({
 */}
         </div>
       )}
+      
+      {/* Componente Leaderboard adicionado abaixo do seletor de temas */}
+      <Leaderboard />
     </div>
   );
 };

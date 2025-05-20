@@ -1,4 +1,4 @@
-// QuizResult.tsx - Corrigido para limpar dados do formulário a cada nova partida
+// app/components/QuizResult.tsx
 "use client";
 import { useState, useEffect } from 'react';
 import styles from './QuizResult.module.css';
@@ -22,6 +22,7 @@ const QuizResult: React.FC<QuizResultProps> = ({
   const [submitted, setSubmitted] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isNewSession, setIsNewSession] = useState(true);
+  const [submitError, setSubmitError] = useState('');
   
   // Verificar se esta é uma nova sessão para evitar o preenchimento automático
   useEffect(() => {
@@ -113,12 +114,27 @@ const QuizResult: React.FC<QuizResultProps> = ({
     }
     
     setIsSubmitting(true);
+    setSubmitError('');
     
-    // Aqui você implementaria a lógica para enviar os dados para seu backend
-    // Por enquanto vamos apenas simular um envio
     try {
-      // Simulação de envio para o servidor
-      await new Promise(resolve => setTimeout(resolve, 1500));
+      // Enviar dados para a API
+      const response = await fetch('/api/scores', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          name,
+          whatsapp,
+          score,
+          totalTime
+        }),
+      });
+      
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Erro ao enviar pontuação');
+      }
       
       // Armazena localmente para demonstração
       localStorage.setItem('quizito_user_name', name);
@@ -131,6 +147,7 @@ const QuizResult: React.FC<QuizResultProps> = ({
       setSubmitted(true);
     } catch (error) {
       console.error('Erro ao enviar dados:', error);
+      setSubmitError('Erro ao salvar pontuação. Por favor, tente novamente.');
     } finally {
       setIsSubmitting(false);
     }
@@ -201,6 +218,12 @@ const QuizResult: React.FC<QuizResultProps> = ({
                 Formato: (XX)9.XXXX-XXXX - Apenas celulares
               </div>
             </div>
+            
+            {submitError && (
+              <div className={styles.errorMessage} style={{ marginBottom: '10px' }}>
+                <span className={styles.errorIcon}>⚠️</span> {submitError}
+              </div>
+            )}
             
             <button 
               type="submit" 
