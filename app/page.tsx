@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useState } from 'react';
 import Papa from 'papaparse';
-import { selectRandomQuestion, selectRandomTheme } from './utils/randomUtils';
+import { selectRandomQuestion, selectRandomTheme, shuffleArray } from './utils/randomUtils';
 
 import ThemeSelector from './components/ThemeSelector';
 import SlotMachine from './components/SlotMachine';
@@ -82,21 +82,21 @@ export default function Home() {
     setGameState('welcome');
     
    // Sempre começar com o modal e zerar tudo
-setShowModal(true);
-setGameState('welcome');
-setCurrentQuestionIndex(0);
-setGameScore({
-  correctAnswers: 0,
-  totalTime: 0,
-  points: 0
-});
-setCompletedQuestions([]);
+    setShowModal(true);
+    setGameState('welcome');
+    setCurrentQuestionIndex(0);
+    setGameScore({
+      correctAnswers: 0,
+      totalTime: 0,
+      points: 0
+    });
+    setCompletedQuestions([]);
 
-// Apagar qualquer estado antigo persistido
-localStorage.removeItem('quizito_gameState');
-localStorage.removeItem('quizito_currentQuestionIndex');
-localStorage.removeItem('quizito_questionHistory');
-localStorage.removeItem('quizito_themeHistory');
+    // Apagar qualquer estado antigo persistido
+    localStorage.removeItem('quizito_gameState');
+    localStorage.removeItem('quizito_currentQuestionIndex');
+    localStorage.removeItem('quizito_questionHistory');
+    localStorage.removeItem('quizito_themeHistory');
 
     
     // Carrega o histórico salvo quando o componente é montado
@@ -127,11 +127,18 @@ localStorage.removeItem('quizito_themeHistory');
           delimiter: ';',
           skipEmptyLines: true,
           complete: (results) => {
+            // Obter as perguntas do CSV
             const parsedQuestions = results.data as Question[];
-            setQuestions(parsedQuestions);
+            
+            // MODIFICAÇÃO: Embaralhar as perguntas aqui antes de qualquer processamento
+            const shuffledQuestions = shuffleArray(parsedQuestions);
+            console.log('Perguntas embaralhadas inicialmente:', shuffledQuestions.length);
+            
+            // Usar as perguntas embaralhadas
+            setQuestions(shuffledQuestions);
             
             // Extrair todos os temas únicos do CSV
-            const uniqueThemes = Array.from(new Set(parsedQuestions.map(q => q.Tema)))
+            const uniqueThemes = Array.from(new Set(shuffledQuestions.map(q => q.Tema)))
               .filter(theme => theme && theme.trim() !== ''); // Filtrar temas vazios
               
             console.log('Temas carregados:', uniqueThemes);
@@ -189,12 +196,15 @@ localStorage.removeItem('quizito_themeHistory');
         );
         
         if (availableQuestions.length > 0) {
-          // Selecionar uma pergunta aleatória
-          const randomIndex = Math.floor(Math.random() * availableQuestions.length);
+          // MODIFICAÇÃO: Embaralhar novamente as perguntas disponíveis antes de selecionar uma
+          const shuffledAvailableQuestions = shuffleArray(availableQuestions);
+          
+          // Selecionar a primeira pergunta do array embaralhado (mais determinístico que Math.random)
+          const selectedQuestion = shuffledAvailableQuestions[0];
           
           // Pequeno atraso para garantir que a SlotMachine seja visível por tempo suficiente
           setTimeout(() => {
-            setCurrentQuestion(availableQuestions[randomIndex]);
+            setCurrentQuestion(selectedQuestion);
             // Role para o topo quando uma nova pergunta é carregada
             window.scrollTo({ top: 0, behavior: 'smooth' });
           }, 1000);
@@ -208,20 +218,20 @@ localStorage.removeItem('quizito_themeHistory');
   }, [selectedTheme, isSorteando, questions, gameState, completedQuestions, currentQuestion]);
 
   // Iniciar o jogo após fechar o modal de boas-vindas
-const handleWelcomeClose = () => {
-  setShowModal(false);
-  setGameState('sorting');
-  startSorteio();
+  const handleWelcomeClose = () => {
+    setShowModal(false);
+    setGameState('sorting');
+    startSorteio();
 
-  // Resetar a pontuação quando o jogo começa de novo
-  setGameScore({
-    correctAnswers: 0,
-    totalTime: 0,
-    points: 0
-  });
+    // Resetar a pontuação quando o jogo começa de novo
+    setGameScore({
+      correctAnswers: 0,
+      totalTime: 0,
+      points: 0
+    });
 
-  window.scrollTo({ top: 0, behavior: 'smooth' });
-};
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
 
   // Função para iniciar um novo sorteio de tema
   const startSorteio = () => {
@@ -266,128 +276,131 @@ const handleWelcomeClose = () => {
   };
 
   // Função para processar a resposta de uma pergunta
-const handleAnswerQuestion = (correct: boolean, pointsEarned: number, timeSpent: number) => {
-  if (currentQuestion) {
-    if (correct) {
-      // IMPORTANTE: Não atualize o gameScore imediatamente na UI
-      // Em vez disso, armazene o novo valor para ser usado após a transição
-      const newScore = {
-        correctAnswers: gameScore.correctAnswers + 1,
-        totalTime: gameScore.totalTime + timeSpent, // Acumular o tempo gasto
-        points: gameScore.points + pointsEarned
-      };
-      
-      // Armazenar o novo score para uso posterior, mas não atualizar o state ainda
-      const newScoreStored = JSON.stringify(newScore);
-      localStorage.setItem('temp_new_score', newScoreStored);
-
-      // Mostrar o confetti
-      setShowConfetti(true);
-
-      // Mudar para o estado de resposta correta
-      setGameState('right_answer');
-
-      // Verificar se completou todas as perguntas após um breve delay
-      setTimeout(() => {
-        const nextQuestionIndex = currentQuestionIndex + 1;
+  const handleAnswerQuestion = (correct: boolean, pointsEarned: number, timeSpent: number) => {
+    if (currentQuestion) {
+      if (correct) {
+        // IMPORTANTE: Não atualize o gameScore imediatamente na UI
+        // Em vez disso, armazene o novo valor para ser usado após a transição
+        const newScore = {
+          correctAnswers: gameScore.correctAnswers + 1,
+          totalTime: gameScore.totalTime + timeSpent, // Acumular o tempo gasto
+          points: gameScore.points + pointsEarned
+        };
         
-        // Agora sim, atualize o score após o delay
-        setGameScore(newScore);
+        // Armazenar o novo score para uso posterior, mas não atualizar o state ainda
+        const newScoreStored = JSON.stringify(newScore);
+        localStorage.setItem('temp_new_score', newScoreStored);
 
-        if (nextQuestionIndex >= TOTAL_QUESTIONS) {
-          setGameState('completed');
-          // Role para o topo ao completar todas as perguntas
+        // Mostrar o confetti
+        setShowConfetti(true);
+
+        // Mudar para o estado de resposta correta
+        setGameState('right_answer');
+
+        // Verificar se completou todas as perguntas após um breve delay
+        setTimeout(() => {
+          const nextQuestionIndex = currentQuestionIndex + 1;
+          
+          // Agora sim, atualize o score após o delay
+          setGameScore(newScore);
+
+          if (nextQuestionIndex >= TOTAL_QUESTIONS) {
+            setGameState('completed');
+            // Role para o topo ao completar todas as perguntas
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+          } else {
+            setCurrentQuestionIndex(nextQuestionIndex);
+            localStorage.setItem('quizito_currentQuestionIndex', nextQuestionIndex.toString());
+            setShowConfetti(false);
+            startSorteio();
+            // Role para o topo ao iniciar o sorteio de um novo tema
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+          }
+        }, 1500);
+      } else {
+        setTimeout(() => {
+          setGameOverReason('wrong_answer');
+          setGameState('game_over');
+
+          setCurrentQuestionIndex(0);
+          localStorage.setItem('quizito_currentQuestionIndex', '0');
+
+          setGameScore({
+            correctAnswers: 0,
+            totalTime: 0,
+            points: 0
+          });
+          setCompletedQuestions([]);
+          
+          // Role para o topo quando o jogo acabar por resposta errada
           window.scrollTo({ top: 0, behavior: 'smooth' });
-        } else {
-          setCurrentQuestionIndex(nextQuestionIndex);
-          localStorage.setItem('quizito_currentQuestionIndex', nextQuestionIndex.toString());
-          setShowConfetti(false);
-          startSorteio();
-          // Role para o topo ao iniciar o sorteio de um novo tema
-          window.scrollTo({ top: 0, behavior: 'smooth' });
-        }
-      }, 1500);
-    } else {
-      setTimeout(() => {
-        setGameOverReason('wrong_answer');
-        setGameState('game_over');
-
-        setCurrentQuestionIndex(0);
-        localStorage.setItem('quizito_currentQuestionIndex', '0');
-
-        setGameScore({
-          correctAnswers: 0,
-          totalTime: 0,
-          points: 0
-        });
-        setCompletedQuestions([]);
-        
-        // Role para o topo quando o jogo acabar por resposta errada
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-      }, 5000); // Delay para o candidato ler a alternativa errada
+        }, 5000); // Delay para o candidato ler a alternativa errada
+      }
     }
-  }
-};
+  };
 
   // Função para quando o tempo se esgota
-const handleTimeUp = () => {
-  // Atraso para mostrar que o tempo acabou antes de ir para a tela de game over
-  setTimeout(() => {
-    setGameOverReason('timeout');
-    setGameState('game_over');
+  const handleTimeUp = () => {
+    // Atraso para mostrar que o tempo acabou antes de ir para a tela de game over
+    setTimeout(() => {
+      setGameOverReason('timeout');
+      setGameState('game_over');
+      
+      // Zerar o contador de perguntas quando o tempo acaba
+      setCurrentQuestionIndex(0);
+      localStorage.setItem('quizito_currentQuestionIndex', '0');
+      
+      // Garantir que todos os dados sejam limpos corretamente
+      setGameScore({
+        correctAnswers: 0,
+        totalTime: 0,
+        points: 0
+      });
+      setCompletedQuestions([]);
+      
+      // Role para o topo quando o tempo acabar
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }, 3000);
+  };
+
+  // Função para reiniciar o jogo - corrigida para garantir estado inicial completo
+  const handleResetGame = () => {
+    // Limpar TODOS os itens do localStorage para evitar restaurar estado antigo
+    localStorage.removeItem('quizito_gameState');
+    localStorage.removeItem('quizito_currentQuestionIndex');
+    localStorage.removeItem('quizito_questionHistory');
+    localStorage.removeItem('quizito_themeHistory');
     
-    // Zerar o contador de perguntas quando o tempo acaba
-    setCurrentQuestionIndex(0);
-    localStorage.setItem('quizito_currentQuestionIndex', '0');
+    // Criar uma nova sessão para garantir que o formulário final venha limpo
+    const newSessionId = Date.now().toString();
+    sessionStorage.setItem('quizito_current_session', newSessionId);
     
-    // Garantir que todos os dados sejam limpos corretamente
+    // Reiniciar todos os estados
     setGameScore({
       correctAnswers: 0,
       totalTime: 0,
       points: 0
     });
+    setCurrentQuestionIndex(0);
     setCompletedQuestions([]);
+    setSelectedTheme(null);
+    setCurrentQuestion(null);
+    setQuestionHistory([]);
+    setUsedThemes([]);
+    setShowModal(true);
+    setGameState('welcome');
     
-    // Role para o topo quando o tempo acabar
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  }, 3000);
-};
+    // MODIFICAÇÃO: Embaralhar novamente as perguntas quando o jogo é reiniciado
+    setQuestions(prevQuestions => shuffleArray([...prevQuestions]));
+    
+    // Role para o topo antes de recarregar a página
+    window.scrollTo({ top: 0, behavior: 'auto' });
+    
+    // Recarregar a página para garantir um estado totalmente limpo e o modal aparecer
+    window.location.reload();
+  };
 
-// Função para reiniciar o jogo - corrigida para garantir estado inicial completo
-const handleResetGame = () => {
-  // Limpar TODOS os itens do localStorage para evitar restaurar estado antigo
-  localStorage.removeItem('quizito_gameState');
-  localStorage.removeItem('quizito_currentQuestionIndex');
-  localStorage.removeItem('quizito_questionHistory');
-  localStorage.removeItem('quizito_themeHistory');
-  
-  // Criar uma nova sessão para garantir que o formulário final venha limpo
-  const newSessionId = Date.now().toString();
-  sessionStorage.setItem('quizito_current_session', newSessionId);
-  
-  // Reiniciar todos os estados
-  setGameScore({
-    correctAnswers: 0,
-    totalTime: 0,
-    points: 0
-  });
-  setCurrentQuestionIndex(0);
-  setCompletedQuestions([]);
-  setSelectedTheme(null);
-  setCurrentQuestion(null);
-  setQuestionHistory([]);
-  setUsedThemes([]);
-  setShowModal(true);
-  setGameState('welcome');
-  
-  // Role para o topo antes de recarregar a página
-  window.scrollTo({ top: 0, behavior: 'auto' });
-  
-  // Recarregar a página para garantir um estado totalmente limpo e o modal aparecer
-  window.location.reload();
-};
-
-// Função para mostrar o conteúdo baseado no estado do jogo
+  // Função para mostrar o conteúdo baseado no estado do jogo
   const renderGameContent = () => {
     switch (gameState) {
       case 'welcome':
