@@ -172,3 +172,29 @@
     height: 40px;
   }
 }
+
+
+.noTopPadding {
+  padding-top: 0; /* Remove o padding superior quando o banner está visível */
+}
+
+/* Ajuste a classe .main existente para permitir que volte ao padrão quando o banner é fechado */
+@media (max-width: 900px) {
+  .main {
+    padding: 0.8rem 0 0 0;
+  }
+  
+  .noTopPadding {
+    padding-top: 0;
+  }
+}
+
+@media (max-width: 480px) {
+  .main {
+    padding: 0.5rem 0 0 0;
+  }
+  
+  .noTopPadding {
+    padding-top: 0;
+  }
+}

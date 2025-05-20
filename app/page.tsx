@@ -13,6 +13,9 @@ import QuizResult from './components/QuizResult';
 
 import styles from './page.module.css';
 
+import AnnouncementBanner from './components/AnnouncementBanner';
+
+
 interface Question {
   Tema: string;
   Enunciado: string;
@@ -471,39 +474,40 @@ const handleResetGame = () => {
   }
 
   return (
-    <main className={styles.main}>
-      <div className={styles.container}>
-        {/* Seção de temas só fica visível quando não estamos em game_over, completed, result ou welcome */}
-        {(gameState !== 'game_over' && gameState !== 'completed' && gameState !== 'result' && gameState !== 'welcome') && (
-          <div className={styles.themeSection}>
-            <div className={styles.themeSectionLogo}>
-              <img src="/dados_mocados/logo_cpc.svg" alt="Logo CPC" />
+    <>
+      <AnnouncementBanner email="ugits.hc-ufu@ebserh.gov.br" />
+      <main className={`${styles.main} ${styles.noTopPadding}`}>
+        <div className={styles.container}>
+          {/* Seção de temas só fica visível quando não estamos em game_over, completed, result ou welcome */}
+          {(gameState !== 'game_over' && gameState !== 'completed' && gameState !== 'result' && gameState !== 'welcome') && (
+            <div className={styles.themeSection}>
+              <div className={styles.themeSectionLogo}>
+                <img src="/dados_mocados/logo_cpc.svg" alt="Logo CPC" />
+              </div>
+              <h2 className={styles.sectionTitle}>Temas</h2>
+              
+              {/* Mostra o contador regressivo durante o sorteio e até que a pergunta apareça */}
+              {(isSorteando || (gameState === 'playing' && !currentQuestion)) ? (
+                <CountDown
+                  seconds={5}
+                  onComplete={() => {}}
+                  phase={sorteioCompleto ? 'finalizando' : 'sorteando'}
+                />
+              ) : (
+                <ThemeSelector
+                  themes={themes}
+                  onSelectTheme={handleThemeSelect}
+                  selectedTheme={selectedTheme}
+                  onSorteioStart={startSorteio}
+                />
+              )}
             </div>
-            <h2 className={styles.sectionTitle}>Temas</h2>
-            
-            {/* Mostra o contador regressivo durante o sorteio e até que a pergunta apareça */}
-            {/* isSorteando será true desde o início do sorteio até o tema ser selecionado, 
-                mas queremos manter o contador mesmo depois disso, enquanto a pergunta carrega */}
-            {(isSorteando || (gameState === 'playing' && !currentQuestion)) ? (
-              <CountDown
-                seconds={5}
-                onComplete={() => {}}
-                phase={sorteioCompleto ? 'finalizando' : 'sorteando'}
-              />
-            ) : (
-              <ThemeSelector
-                themes={themes}
-                onSelectTheme={handleThemeSelect}
-                selectedTheme={selectedTheme}
-                onSorteioStart={startSorteio}
-              />
-            )}
-          </div>
-        )}
+          )}
 
-        {/* Conteúdo principal do jogo que muda com base no estado */}
-        {renderGameContent()}
-      </div>
-    </main>
+          {/* Conteúdo principal do jogo que muda com base no estado */}
+          {renderGameContent()}
+        </div>
+      </main>
+    </>
   );
 }
