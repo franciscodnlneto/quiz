@@ -1,4 +1,4 @@
-/* QuizResult.module.css - Modificado para destacar pontuação e tempo */
+/* QuizResult.module.css - Correções para melhorar responsividade e rolagem */
 .resultContainer {
   width: 100%;
   background-color: white;
@@ -6,8 +6,9 @@
   padding: 1.5rem;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
   position: relative;
-  overflow: hidden;
+  overflow: visible; /* Alterado para visible para permitir rolagem na página */
   animation: fadeIn 0.8s;
+  margin-bottom: 2rem; /* Adicionado espaço inferior */
 }
 
 @keyframes fadeIn {
@@ -318,6 +319,7 @@
   font-weight: bold;
   cursor: pointer;
   margin-top: 1.5rem;
+  margin-bottom: 1rem; /* Adicionado espaço inferior */
   transition: all 0.3s ease;
   box-shadow: 0 5px 15px rgba(154, 195, 60, 0.3);
   position: relative;
@@ -333,10 +335,11 @@
   transform: translateY(0);
 }
 
-/* Responsividade */
+/* Responsividade aprimorada */
 @media (max-width: 768px) {
   .resultContainer {
     padding: 1.2rem;
+    max-height: none; /* Removida altura máxima */
   }
   
   .congratsTitle {
@@ -364,6 +367,7 @@
 @media (max-width: 480px) {
   .resultContainer {
     padding: 1rem;
+    overflow: visible; /* Garantir que o conteúdo transborde se necessário */
   }
   
   .congratsTitle {
@@ -375,7 +379,7 @@
   }
   
   .scoreValue {
-    font-size: 3.5rem;
+    font-size: 3rem; /* Reduzi ainda mais o tamanho para telas pequenas */
   }
   
   .timeItem {
@@ -394,13 +398,31 @@
     font-size: 1.1rem;
   }
   
+  .formDescription {
+    font-size: 0.85rem;
+    margin-bottom: 1rem;
+  }
+  
   .input {
     padding: 0.7rem;
     font-size: 0.9rem;
   }
   
+  .label {
+    font-size: 0.85rem;
+  }
+  
+  .inputHelper {
+    font-size: 0.7rem;
+  }
+  
   .submitButton,
   .resetButton {
     font-size: 0.9rem;
+    padding: 0.7rem;
+  }
+  
+  .form {
+    gap: 0.8rem; /* Reduzido o espaço entre elementos do formulário */
   }
 }
