@@ -1,6 +1,6 @@
 // app/lib/mockDb.ts
 // Este é um banco de dados simulado para ser usado se o MongoDB Atlas não estiver acessível
-import { MongoClient, ObjectId } from 'mongodb';
+import { ObjectId } from 'mongodb';
 
 class MockCollection {
   private data: any[] = [];
@@ -145,39 +145,29 @@ class MockDb {
   }
 }
 
-// Criando um cliente mock com os bancos de dados armazenados
-const mockDbs: Record<string, MockDb> = {};
+class MockClient {
+  private dbs: Record<string, MockDb> = {};
 
-// Criando uma instância do cliente mockado
-const mockClient = {
   async connect() {
     console.log('Conectado ao banco de dados simulado');
     return this;
-  },
-  
+  }
+
   db(name: string) {
-    // Usar o objeto mockDbs definido fora do objeto para armazenar os bancos
-    if (!mockDbs[name]) {
-      mockDbs[name] = new MockDb(name);
+    if (!this.dbs[name]) {
+      this.dbs[name] = new MockDb(name);
     }
-    return mockDbs[name];
-  },
-  
+    return this.dbs[name];
+  }
+
   async close() {
     console.log('Conexão fechada no banco de dados simulado');
     return true;
-  },
-  
-  // Propriedades necessárias para compatibilidade com MongoClient
-  options: {},
-  serverApi: {},
-  readConcern: {},
-  writeConcern: {},
-  readPreference: {},
-  bsonOptions: {},
-  namespace: 'mock'
-} as unknown as MongoClient;
+  }
+}
 
+// Criando uma instância mockada do MongoDB
+const mockClient = new MockClient();
 const mockClientPromise = Promise.resolve(mockClient);
 const dbName = process.env.DATABASE_NAME || 'quizAppDB';
 
