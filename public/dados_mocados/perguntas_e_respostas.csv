@@ -122,3 +122,37 @@ Farmacologia;O que é uma reação adversa esperada?;3;Efeito colateral conhecid
 Conceitos Básicos;O que é análise de segurança?;3;Avaliação dos riscos do estudo;Revisão das câmeras do laboratório;Análise da segurança da entrada do hospital;-;1;2
 Metodologia;O que é acompanhamento dos participantes?;3;Perseguição disfarçada de participantes;Monitoramento periódico durante o estudo;Grupo de WhatsApp dos pesquisadores;-;2;1
 Ética em Pesquisa;O que é risco mínimo em pesquisa?;3;Nenhum risco ao participar do estudo;Risco semelhante ao encontrado no dia-a-dia;Risco apenas para pessoas pequenas;-;2;3
+Ética em Pesquisa;Quem garante os direitos dos participantes em estudos clínicos?;4;Super-heróis aposentados;Investigadores principais;CEP (Comitê de Ética em Pesquisa);Patrocinadores;3;1
+Metodologia;O que significa placebo duplo-cego?;3;Quando dois placebos brigam no escuro;Participantes e pesquisadores não sabem quem recebe placebo;Dois placebos administrados juntos;-;2;1
+Farmacologia;Qual é o objetivo da dose de manutenção de um medicamento?;4;Evitar que o medicamento fique triste;Manter concentração eficaz no organismo;Acelerar a eliminação do medicamento;Diminuir efeitos colaterais;2;1
+Regulamentação;O que é um protocolo clínico?;3;Receita secreta do pesquisador;Documento que descreve como o estudo será realizado;Guia para atendimento hospitalar;-;2;1
+Conceitos Básicos;Qual termo define a eficácia máxima de um medicamento?;4;Poder de cura absoluto;Pico de eficácia;Efeito teto;Efeito placebo;3;1
+Ética em Pesquisa;Quem deve fornecer o TCLE ao participante?;3;O carteiro;O pesquisador responsável;O recepcionista;-;2;1
+Metodologia;Como se chama o processo que evita preferências nos estudos clínicos?;4;Terapia anti-favoritismo;Randomização;Seleção natural;Escolha democrática;2;1
+Farmacologia;O que é período de washout?;3;Quando os medicamentos tomam banho juntos;Intervalo para eliminar efeitos anteriores;Momento para lavar as mãos antes da medicação;-;2;1
+Conceitos Básicos;O que é o recrutamento competitivo em estudos clínicos?;4;Competição olímpica dos pesquisadores;Disputa entre centros para incluir participantes;Corrida dos participantes até o laboratório;Seleção baseada em habilidades atléticas;2;1
+Ética em Pesquisa;O que são benefícios diretos em pesquisa clínica?;3;Ganhar brindes personalizados;Melhoria imediata da saúde dos participantes;Participar gratuitamente do estudo;-;2;1
+Regulamentação;Para quem deve ser submetido o relatório final do estudo?;4;Para revista de fofocas médicas;Ao Comitê de Ética e autoridades reguladoras;Aos familiares dos participantes;Ao responsável pelo café;2;1
+Metodologia;Como é chamado o estudo em que participantes sabem qual tratamento recebem?;3;Estudo indiscreto;Estudo aberto (open-label);Estudo transparente;-;2;1
+Farmacologia;O que significa "janela terapêutica"?;4;Horário ideal para abrir as janelas do laboratório;Intervalo entre dose eficaz e tóxica;Horário em que todos tomam o medicamento;Período de observação dos pacientes;2;1
+Conceitos Básicos;Quem realiza a monitoria clínica do estudo?;3;Espião secreto do laboratório;Monitor clínico treinado;Participantes antigos;-;2;1
+Ética em Pesquisa;O que significa consentimento esclarecido?;4;Assinatura após leitura rápida;Entendimento completo sobre participação;Decisão tomada pelo pesquisador;Explicação dada em 30 segundos;2;1
+Regulamentação;Quem autoriza o início de um estudo clínico no Brasil?;3;Zelador chefe do prédio;CEP e ANVISA;Comitê Olímpico Internacional;-;2;1
+Metodologia;Como se chama a fase inicial de estudo em humanos?;4;Fase de testes secretos;Fase I;Fase zero;Fase preliminar;2;1
+Farmacologia;O que é metabolização de medicamentos?;3;Medicamentos que fazem dieta;Transformação química no organismo;Descarte dos medicamentos usados;-;2;1
+Conceitos Básicos;O que significa follow-up em pesquisa clínica?;4;Perseguição amigável aos participantes;Acompanhamento após tratamento;Sessões fotográficas dos participantes;Avaliação médica inicial;2;1
+Ética em Pesquisa;O que é voluntariedade em pesquisa?;3;Participação após ser convencido pelos amigos;Participação livre e sem pressão;Participação obrigatória;-;2;1
+Regulamentação;Qual órgão brasileiro regula medicamentos biológicos?;4;Federação Intergaláctica de Saúde;ANVISA;Sociedade Brasileira de Farmácia;Ministério da Agricultura;2;1
+Metodologia;O que é uma variável secundária?;3;Variável que ninguém liga muito;Desfecho adicional ao principal;Variável que aparece por acaso;-;2;1
+Farmacologia;Qual termo define diminuição do efeito de um medicamento com uso contínuo?;4;Medicamento desanimado;Tolerância;Adaptação medicamentosa;Esgotamento farmacêutico;2;1
+Conceitos Básicos;Qual termo define risco que pode ocorrer durante o estudo?;3;Risco aventureiro;Evento adverso;Risco assumido;-;2;1
+Ética em Pesquisa;Quem pode interromper um estudo clínico por segurança?;4;Guardião secreto do laboratório;Investigador principal;Recepcionista;Chefe da cozinha;2;1
+Regulamentação;O que é auditoria em pesquisa clínica?;3;Festa surpresa para pesquisadores;Inspeção independente dos dados do estudo;Verificação casual dos equipamentos;-;2;1
+Metodologia;Qual método evita influências nos resultados do estudo?;4;Método da invisibilidade;Cegamento;Influência neutra;Observação disfarçada;2;1
+Farmacologia;O que é medicamento inovador?;3;Medicamento com ideias criativas;Medicamento novo e registrado pela primeira vez;Medicamento que sabe fazer truques;-;2;1
+Conceitos Básicos;O que é desfecho clínico?;4;Final da novela médica;Evento ou resultado avaliado no estudo;Momento de despedida dos participantes;Encerramento do laboratório;2;1
+Ética em Pesquisa;Como devem ser tratados os dados do participante?;3;Publicados em outdoor;Mantidos confidenciais;Compartilhados nas redes sociais;-;2;1
+Regulamentação;Quem fiscaliza segurança de medicamentos no Brasil?;4;Agentes secretos farmacêuticos;ANVISA;Polícia Militar;Sociedade Secreta da Farmácia;2;1
+Metodologia;O que significa "viés de seleção"?;3;Preferência por participantes bonitos;Erro na escolha dos participantes;Seleção feita por sorteio;-;2;1
+Farmacologia;O que é farmacologia clínica?;4;Estudo de medicamentos em hospitais;Estudo dos efeitos de medicamentos em humanos;Farmácia exclusiva para médicos;Estudo sobre comportamento farmacêutico;2;1
+Conceitos Básicos;O que são critérios diagnósticos?;3;Teste surpresa aplicado por médicos;Condições usadas para confirmar doenças;Métodos rápidos de diagnóstico;-;2;1
