@@ -118,8 +118,9 @@
 }
 
 .whatsappHeader {
-  width: 110px;
+  width: 78px;
   text-align: left;
+  font-size: 0.78rem;
 }
 
 .scoreHeader {
@@ -279,7 +280,8 @@
   }
 
   .whatsappHeader {
-    width: 95px;
+    width: 68px;
+    font-size: 0.7rem;
   }
 
   .scoreHeader {
@@ -292,20 +294,21 @@
 }
 
 .timestamp {
-  display: inline-block;
+  display: block;
   font-size: 0.65rem;
   color: #888;
   font-weight: normal;
-  margin-left: 5px;
-  vertical-align: middle;
+  margin-top: 2px;
+  line-height: 1;
 }
 
-/* Ajuste opcional para o score */
+/* Score: pontuação em cima, data/hora em letrinhas embaixo */
 .score {
   font-weight: bold;
   color: var(--primary-color, #17129D);
   text-align: right;
   display: flex;
-  align-items: center;
-  justify-content: flex-end;
+  flex-direction: column;
+  align-items: flex-end;
+  line-height: 1.1;
 }

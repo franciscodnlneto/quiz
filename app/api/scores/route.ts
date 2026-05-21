@@ -106,20 +106,12 @@ export async function GET() {
     console.log(`Encontradas ${scores.length} pontuações`);
     
     // Mascarar os números de WhatsApp antes de enviar
+    // Formato compacto: "***-1795" (so mostra os 4 ultimos digitos)
     const maskedScores = scores.map((item, index) => {
       const whatsapp = String(item.whatsapp || '').replace(/\D/g, '');
-      let maskedWhatsapp = '';
-      
-      if (whatsapp.length >= 11) {
-        // Formato: (XX)9.****-XXXX
-        maskedWhatsapp = `(${whatsapp.substring(0, 2)})${whatsapp.substring(2, 3)}.****-${whatsapp.substring(7, 11)}`;
-      } else if (whatsapp.length >= 8) {
-        // Caso o formato seja diferente, tentar máscarar da melhor forma possível
-        maskedWhatsapp = whatsapp.replace(/(\d{2})(\d{1})(\d{4})(\d{4})/, '($1)$2.****-$4');
-      } else {
-        // Formato muito diferente do esperado
-        maskedWhatsapp = '(XX)9.****-XXXX';
-      }
+      const maskedWhatsapp = whatsapp.length >= 4
+        ? `***-${whatsapp.substring(whatsapp.length - 4)}`
+        : '***-XXXX';
       
       // Formatar a data
       let formattedDate = '';

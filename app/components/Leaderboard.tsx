@@ -111,7 +111,7 @@ const Leaderboard: React.FC = () => {
             <tr>
               <th className={styles.positionHeader}>Pos</th>
               <th className={styles.nameHeader}>Nome</th>
-              <th className={styles.whatsappHeader}>WhatsApp</th>
+              <th className={styles.whatsappHeader}>Final do Whats</th>
               <th className={styles.scoreHeader}>Pontos</th>
             </tr>
           </thead>
