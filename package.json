@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "reset-db": "node scripts/reset-database.js"
   },
   "dependencies": {
     "csv-parser": "^3.2.0",
