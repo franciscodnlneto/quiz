@@ -39,7 +39,10 @@
 
 .themeSectionLogo {
   width: 90%;
-  max-width: 180px; /* Reduzido levemente para dar mais espaço */
+  /* Logo CEBS é horizontal/wide (468x178 px, ratio ~2.63:1).
+     Aumentamos o max-width para compensar a menor altura e dar
+     mais presença visual à marca CEBS. */
+  max-width: 240px;
   height: auto;
   margin-bottom: 0.7rem;
   display: flex;
@@ -116,7 +119,7 @@
   }
   
   .themeSectionLogo {
-    max-width: 150px;
+    max-width: 200px;
     margin-bottom: 0.4rem;
   }
   
@@ -145,7 +148,7 @@
   }
   
   .themeSectionLogo {
-    max-width: 130px;
+    max-width: 170px;
   }
   
   .questionSection {

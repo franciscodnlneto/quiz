@@ -508,7 +508,7 @@ export default function Home() {
           {(gameState !== 'game_over' && gameState !== 'completed' && gameState !== 'result' && gameState !== 'welcome') && (
             <div className={styles.themeSection}>
               <div className={styles.themeSectionLogo}>
-                <img src="/dados_mocados/logo_cpc.svg" alt="Logo CPC" />
+                <img src="/dados_mocados/logo_cebs.svg" alt="Logo CEBS" />
               </div>
               <h2 className={styles.sectionTitle}>Temas</h2>
               
