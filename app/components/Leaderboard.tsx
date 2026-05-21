@@ -85,26 +85,21 @@ const Leaderboard: React.FC = () => {
         </div>
       );
     }
-    
-    if (error && scores.length === 0) {
-      return (
-        <div className={styles.errorContainer}>
-          <p>{error}</p>
-          <button 
-            className={styles.retryButton}
-            onClick={fetchScores}
-          >
-            Tentar novamente
-          </button>
-        </div>
-      );
-    }
-    
+
+    // Quando não há pontuações (independente de ter dado erro técnico)
+    // mostramos uma mensagem convidativa em vez de exibir o erro
     if (scores.length === 0) {
       return (
         <div className={styles.emptyContainer}>
-          <p>Nenhuma pontuação registrada ainda.</p>
-          <p>Seja o primeiro a completar o desafio!</p>
+          <p className={styles.emptyTitle}>🎯 Até agora não temos nenhuma pontuação registrada.</p>
+          <p className={styles.emptySubtitle}>Seja o primeiro a entrar para o ranking!</p>
+          <button
+            className={styles.retryButton}
+            onClick={fetchScores}
+            aria-label="Atualizar ranking"
+          >
+            🔄 Atualizar
+          </button>
         </div>
       );
     }

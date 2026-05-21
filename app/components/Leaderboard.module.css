@@ -150,8 +150,8 @@
   color: #cd7f32; /* Bronze */
 }
 
-.loadingContainer, 
-.errorContainer, 
+.loadingContainer,
+.errorContainer,
 .emptyContainer {
   display: flex;
   flex-direction: column;
@@ -161,6 +161,19 @@
   color: #666;
   text-align: center;
   padding: 1rem;
+  gap: 0.4rem;
+}
+
+.emptyTitle {
+  font-size: 0.95rem;
+  color: var(--primary-color, #17129D);
+  font-weight: 600;
+}
+
+.emptySubtitle {
+  font-size: 0.85rem;
+  color: #777;
+  margin-bottom: 0.5rem;
 }
 
 .spinner {
