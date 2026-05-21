@@ -42,9 +42,21 @@ npm run reset-db -- --confirm
 
 Faz `collection.drop()` na `quizito_cebs`. A collection é recriada vazia automaticamente quando alguém terminar o quiz e enviar uma nova pontuação pela app.
 
+### Diagnóstico de conexão
+
+Antes de rodar o reset (ou se a app estiver dando erro de banco), use:
+
+```bash
+npm run test-db
+```
+
+Tenta autenticar, listar o banco, contar documentos. Mostra erro específico
+quando falha (bad auth, timeout, sem permissão, placeholder no URI, etc.).
+Não loga a string de conexão nem a senha.
+
 ### Pré-requisitos
 
-O script lê de `.env.local` (não comitado, gitignored):
+Os scripts leem de `.env.local` (não comitado, gitignored):
 
 ```
 MONGODB_URI=mongodb+srv://...
