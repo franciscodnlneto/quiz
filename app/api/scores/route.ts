@@ -2,6 +2,19 @@
 import { NextResponse } from 'next/server';
 import { clientPromise, dbName } from '../../lib/db';
 
+// Mascara o nome para exibição pública no ranking:
+// "Francisco Negrão Lopes Neto" -> "Francisco N. L. N."
+function maskName(fullName: string): string {
+  const parts = (fullName || '').trim().split(/\s+/).filter(p => p.length > 0);
+  if (parts.length === 0) return 'Anônimo';
+  if (parts.length === 1) return parts[0];
+  const first = parts[0];
+  const initials = parts.slice(1)
+    .map(p => p.charAt(0).toUpperCase() + '.')
+    .join(' ');
+  return `${first} ${initials}`;
+}
+
 // Função para formatar a data no padrão brasileiro
 function formatDateTime(date: Date): string {
   // Ajustar para GMT-3 (Brasil)
@@ -119,7 +132,7 @@ export async function GET() {
       
       return {
         position: index + 1,
-        name: item.name || 'Anônimo',
+        name: maskName(String(item.name || '')),
         whatsapp: maskedWhatsapp,
         score: Number(item.score) || 0,
         totalTime: Number(item.totalTime) || 0,

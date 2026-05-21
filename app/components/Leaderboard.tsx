@@ -110,7 +110,7 @@ const Leaderboard: React.FC = () => {
           <thead>
             <tr>
               <th className={styles.positionHeader}>Pos</th>
-              <th className={styles.whatsappHeader}>WhatsApp</th>
+              <th className={styles.nameHeader}>Nome</th>
               <th className={styles.scoreHeader}>Pontos</th>
             </tr>
           </thead>
@@ -126,7 +126,7 @@ const Leaderboard: React.FC = () => {
                     `${item.position}º`
                   )}
                 </td>
-                <td className={styles.whatsapp}>{item.whatsapp}</td>
+                <td className={styles.name} title={item.name}>{item.name}</td>
                 <td className={styles.score}>
                   <span>{item.score}</span>
                   {item.createdAt && (

@@ -8,7 +8,7 @@
   display: flex;
   flex-direction: column;
   margin-top: 1rem;
-  max-height: 300px;
+  max-height: 480px;
   overflow: hidden;
   animation: fadeIn 0.5s;
 }
@@ -62,7 +62,7 @@
 
 .tableContainer {
   overflow-y: auto;
-  max-height: 230px;
+  max-height: 410px;
   scrollbar-width: thin;
   scrollbar-color: #d0d0d0 transparent;
   padding-right: 4px;
@@ -110,6 +110,11 @@
 
 .positionHeader {
   width: 50px;
+  text-align: center;
+}
+
+.nameHeader {
+  text-align: left;
 }
 
 .scoreHeader {
@@ -123,9 +128,14 @@
   color: #555;
 }
 
-.whatsapp {
-  font-family: monospace;
-  color: #555;
+.name {
+  color: #333;
+  font-weight: 500;
+  /* nomes longos viram "..." em vez de quebrar o layout */
+  max-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .score {
@@ -212,21 +222,21 @@
 @media (max-width: 768px) {
   .leaderboardContainer {
     padding: 0.7rem;
-    max-height: 250px;
+    max-height: 420px;
   }
-  
+
   .leaderboardTitle {
     font-size: 1rem;
   }
-  
+
   .tableContainer {
-    max-height: 180px;
+    max-height: 360px;
   }
-  
+
   .leaderboardTable {
     font-size: 0.8rem;
   }
-  
+
   .leaderboardTable th,
   .leaderboardTable td {
     padding: 0.4rem;
@@ -236,26 +246,26 @@
 @media (max-width: 480px) {
   .leaderboardContainer {
     padding: 0.6rem;
-    max-height: 220px;
+    max-height: 380px;
   }
-  
+
   .leaderboardTitle {
     font-size: 0.9rem;
     margin-bottom: 0.6rem;
   }
-  
+
   .tableContainer {
-    max-height: 160px;
+    max-height: 320px;
   }
-  
+
   .leaderboardTable {
     font-size: 0.75rem;
   }
-  
+
   .positionHeader {
     width: 40px;
   }
-  
+
   .scoreHeader {
     width: 60px;
   }
