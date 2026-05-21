@@ -20,12 +20,8 @@ interface Question {
   Tema: string;
   Enunciado: string;
   Num_de_alternativas: string;
-  Alternativa_1: string;
-  Alternativa_2: string;
-  Alternativa_3: string;
-  Alternativa_4: string;
   Resposta_correta: string;
-  Alternativa_irreverente: string;
+  Resposta_incorreta: string;
 }
 
 // Interface para pontuação do jogador
@@ -119,7 +115,7 @@ export default function Home() {
       }
     }
     
-    fetch('/dados_mocados/perguntas_e_respostas.csv')
+    fetch('/dados_mocados/100_Perguntas_CEBS.csv')
       .then(response => response.text())
       .then(csvText => {
         Papa.parse(csvText, {
@@ -505,7 +501,7 @@ export default function Home() {
 
   return (
     <>
-      <AnnouncementBanner email="ugits.hc-ufu@ebserh.gov.br" />
+      <AnnouncementBanner email="centrosimulac.hc-ufu@ebserh.gov.br" />
       <main className={`${styles.main} ${styles.noTopPadding}`}>
         <div className={styles.container}>
           {/* Seção de temas só fica visível quando não estamos em game_over, completed, result ou welcome */}

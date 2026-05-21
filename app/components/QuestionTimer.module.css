@@ -49,7 +49,7 @@
 
 .scoreValue {
   font-size: 1.3rem;
-  color: var(--primary-color, #B02A78);
+  color: var(--primary-color, #17129D);
 }
 
 .progressContainer {
@@ -162,7 +162,7 @@
 
 .scoreTotal {
   font-size: 1.1rem;
-  color: var(--primary-color, #B02A78);
+  color: var(--primary-color, #17129D);
   font-weight: bold;
 }
 

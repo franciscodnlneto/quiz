@@ -52,9 +52,9 @@
 }
 
 .modalContent {
-  background: linear-gradient(135deg, #fff 0%, #f9f0f7 100%);
+  background: linear-gradient(135deg, #fff 0%, #eef0fb 100%);
   border-radius: 20px;
-  box-shadow: 0 10px 40px rgba(176, 42, 120, 0.4);
+  box-shadow: 0 10px 40px rgba(23, 18, 157, 0.4);
   width: 90%;
   max-width: 550px;
   padding: 2rem;
@@ -72,12 +72,12 @@
   left: 0;
   width: 100%;
   height: 6px;
-  background: linear-gradient(to right, var(--primary-color, #B02A78), var(--secondary-color, #9AC33C));
+  background: linear-gradient(to right, var(--primary-color, #17129D), var(--secondary-color, #9AC33C));
 }
 
 .modalTitle {
   text-align: center;
-  color: var(--primary-color, #B02A78);
+  color: var(--primary-color, #17129D);
   font-size: 1.8rem;
   margin-bottom: 1.5rem;
   font-weight: 700;
@@ -96,7 +96,7 @@
 
 .highlight {
   font-weight: bold;
-  color: var(--primary-color, #B02A78);
+  color: var(--primary-color, #17129D);
 }
 
 .instructionSection, 
@@ -111,7 +111,7 @@
 
 .instructionSection h3,
 .prizeSection h3 {
-  color: var(--primary-color, #B02A78);
+  color: var(--primary-color, #17129D);
   margin-bottom: 0.8rem;
   font-size: 1.3rem;
   display: flex;
@@ -146,7 +146,7 @@
 }
 
 .dateSection {
-  background-color: rgba(154, 195, 60, 0.2);
+  background-color: rgba(165, 214, 61, 0.2);
   text-align: center;
 }
 
@@ -156,7 +156,7 @@
 }
 
 .startButton {
-  background: linear-gradient(135deg, var(--primary-color, #B02A78), #d84b9c);
+  background: linear-gradient(135deg, var(--primary-color, #17129D), #4A44D5);
   color: white;
   border: none;
   border-radius: 50px;
@@ -166,7 +166,7 @@
   cursor: pointer;
   width: 100%;
   transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-  box-shadow: 0 8px 25px rgba(176, 42, 120, 0.4);
+  box-shadow: 0 8px 25px rgba(23, 18, 157, 0.4);
   margin-top: 1rem;
   margin-bottom: 0.5rem; /* Adicionado espaço após o botão */
   display: flex;
@@ -177,12 +177,12 @@
 
 .startButton:hover {
   transform: translateY(-5px);
-  box-shadow: 0 12px 30px rgba(176, 42, 120, 0.6);
+  box-shadow: 0 12px 30px rgba(23, 18, 157, 0.6);
 }
 
 .startButton:active {
   transform: translateY(0);
-  box-shadow: 0 4px 15px rgba(176, 42, 120, 0.4);
+  box-shadow: 0 4px 15px rgba(23, 18, 157, 0.4);
 }
 
 /* Responsividade */

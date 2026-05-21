@@ -26,7 +26,7 @@
 
 .leaderboardTitle {
   font-size: 1.1rem;
-  color: var(--primary-color, #B02A78);
+  color: var(--primary-color, #17129D);
   text-align: center;
   margin-bottom: 0.8rem;
   font-weight: 600;
@@ -130,7 +130,7 @@
 
 .score {
   font-weight: bold;
-  color: var(--primary-color, #B02A78);
+  color: var(--primary-color, #17129D);
   text-align: right;
 }
 
@@ -167,7 +167,7 @@
   width: 30px;
   height: 30px;
   border: 3px solid #f3f3f3;
-  border-top: 3px solid var(--primary-color, #B02A78);
+  border-top: 3px solid var(--primary-color, #17129D);
   border-radius: 50%;
   animation: spin 1s linear infinite;
   margin-bottom: 0.8rem;
@@ -180,7 +180,7 @@
 
 .retryButton {
   margin-top: 0.5rem;
-  background-color: var(--secondary-color, #9AC33C);
+  background-color: var(--secondary-color, #A5D63D);
   color: white;
   border: none;
   border-radius: 20px;
@@ -191,7 +191,7 @@
 }
 
 .retryButton:hover {
-  background-color: #88ae35;
+  background-color: #8FBF35;
   transform: translateY(-2px);
 }
 
@@ -260,7 +260,7 @@
 /* Ajuste opcional para o score */
 .score {
   font-weight: bold;
-  color: var(--primary-color, #B02A78);
+  color: var(--primary-color, #17129D);
   text-align: right;
   display: flex;
   align-items: center;

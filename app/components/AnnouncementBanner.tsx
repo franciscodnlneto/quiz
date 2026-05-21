@@ -31,15 +31,15 @@ const AnnouncementBanner: React.FC<AnnouncementBannerProps> = ({ email }) => {
   return (
     <div className={styles.banner}>
       <div className={styles.content}>
-        <span className={styles.icon}>💉🩺💊🎮</span>
+        <span className={styles.icon}>🎓🏥🩺🧪</span>
         <p>
-          <strong>Profissionais do HC-UFU/EBSERH:</strong> Gamifique seus eventos e treinamentos usando o Quizito.App gratuitamente! 
+          <strong>3º Aniversário do CEBS</strong> — Centro de Ensino Baseado em Simulação do HC-UFU/EBSERH. Teste seus conhecimentos sobre simulação clínica realística!
           <a href={`mailto:${email}`} className={styles.email}>
             <span className={styles.emailIcon}>✉️</span> {email}
           </a>
         </p>
-        <button 
-          className={styles.closeButton} 
+        <button
+          className={styles.closeButton}
           onClick={() => setDismissed(true)}
           aria-label="Fechar anúncio"
         >

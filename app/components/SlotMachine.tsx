@@ -11,61 +11,27 @@ interface SlotMachineProps {
   usedThemes?: string[]; // Nova prop para temas já usados
 }
 
-// Função atualizada para gerar cores baseadas na paleta do CPC
+// Função para gerar cores baseadas na identidade visual do CEBS
+// (azul institucional + verde lima tecnológico, com variações)
 export const generateColorFromText = (text: string): string => {
   let hash = 0;
   for (let i = 0; i < text.length; i++) {
     hash = text.charCodeAt(i) + ((hash << 5) - hash);
   }
-  
-  // Usar o hash para decidir entre variações das cores do CPC
-  const value = Math.abs(hash) % 100;
-  
-  // Definir as cores base do CPC
-  const magenta = { r: 176, g: 42, b: 120 }; // #B02A78
-  const verde = { r: 154, g: 195, b: 60 };   // #9AC33C
-  
-  // Variações das cores principais
-  const colors = [
-    { r: magenta.r, g: magenta.g, b: magenta.b },          // #B02A78
-    { r: magenta.r - 20, g: magenta.g + 10, b: magenta.b + 20 }, // #9D3488
-    { r: verde.r, g: verde.g, b: verde.b },                // #9AC33C
-    { r: verde.r - 10, g: verde.g + 10, b: verde.b - 10 }  // #90CD32
+
+  // Paleta de 6 cores derivadas da identidade CEBS — azul + verde lima
+  // mantém aspecto coeso e ainda dá distinção visual entre temas
+  const palette = [
+    'hsl(243, 79%, 34%)',  // Azul institucional principal #17129D
+    'hsl(245, 62%, 35%)',  // Azul escuro / hexágonos #2A228F
+    'hsl(78,  65%, 53%)',  // Verde lima CEBS #A5D63D
+    'hsl(235, 65%, 45%)',  // Azul royal intermediário
+    'hsl(85,  55%, 45%)',  // Verde lima mais escuro
+    'hsl(248, 55%, 48%)',  // Azul-violeta
   ];
-  
-  // Escolher uma cor baseada no hash
-  const colorIndex = Math.floor(value / 25); // 0-3
-  const selectedColor = colors[colorIndex];
-  
-  // Converter para HSL para permitir ajustes de luminosidade
-  const r = selectedColor.r / 255;
-  const g = selectedColor.g / 255;
-  const b = selectedColor.b / 255;
-  
-  const max = Math.max(r, g, b);
-  const min = Math.min(r, g, b);
-  let h, s, l = (max + min) / 2;
-  
-  if (max === min) {
-    h = s = 0; // acromático
-  } else {
-    const d = max - min;
-    s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
-    
-    switch (max) {
-      case r: h = (g - b) / d + (g < b ? 6 : 0); break;
-      case g: h = (b - r) / d + 2; break;
-      case b: h = (r - g) / d + 4; break;
-      default: h = 0;
-    }
-    
-    h = Math.round(h * 60);
-  }
-  
-  s = Math.round(s * 100);
-  l = Math.round(l * 100);
-  
-  return `hsl(${h}, ${s}%, ${l}%)`;
+
+  const index = Math.abs(hash) % palette.length;
+  return palette[index];
 };
 
 const SlotMachine: React.FC<SlotMachineProps> = ({ themes, onSelect, duration = 3000, usedThemes = [] }) => { // Duração padrão 3s

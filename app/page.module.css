@@ -5,7 +5,7 @@
   align-items: center;
   min-height: calc(100vh - 60px);
   padding: 1.2rem 0 0 0; /* Adicionado padding-top para criar espaço após o header */
-  background: linear-gradient(135deg, #fdf0f7 0%, #f8e0f0 100%);
+  background: linear-gradient(135deg, #eef0fb 0%, #dcdff5 100%);
 }
 
 .container {
@@ -14,7 +14,7 @@
   max-width: 1200px;
   background-color: white;
   border-radius: 15px;
-  box-shadow: 0 10px 30px rgba(176, 42, 120, 0.1);
+  box-shadow: 0 10px 30px rgba(23, 18, 157, 0.1);
   overflow: hidden;
   margin-top: 0;
 }
@@ -23,7 +23,7 @@
   font-size: 1.3rem;
   font-weight: bold;
   margin-bottom: 0.6rem;
-  color: #B02A78;
+  color: #17129D;
   text-align: center;
 }
 
@@ -78,7 +78,7 @@
   width: 50px;
   height: 50px;
   border: 5px solid #f3f3f3;
-  border-top: 5px solid #B02A78;
+  border-top: 5px solid #17129D;
   border-radius: 50%;
   animation: spin 1s linear infinite;
 }

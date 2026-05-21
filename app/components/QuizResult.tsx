@@ -178,7 +178,7 @@ const QuizResult: React.FC<QuizResultProps> = ({
             <span className={styles.emoji}>🎁</span> Concorra a prêmios!
           </h3>
           <p className={styles.formDescription}>
-            Parabéns por completar o desafio! Deixe seus dados para concorrer a prêmios especiais da equipe de Pesquisa Clínica.
+            Parabéns por completar o desafio! Deixe seus dados para concorrer a prêmios especiais da equipe do CEBS.
           </p>
           
           <form onSubmit={handleSubmit} className={styles.form}>

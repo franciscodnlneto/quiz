@@ -88,7 +88,7 @@
 }
 
 .tryAgainButton {
-  background: linear-gradient(to right, var(--secondary-color), #88ae35);
+  background: linear-gradient(to right, var(--secondary-color), #8FBF35);
   color: white;
   border: none;
   border-radius: 30px;
@@ -97,7 +97,7 @@
   font-weight: bold;
   cursor: pointer;
   transition: all 0.3s ease;
-  box-shadow: 0 5px 15px rgba(154, 195, 60, 0.3);
+  box-shadow: 0 5px 15px rgba(165, 214, 61, 0.3);
   display: flex;
   align-items: center;
   gap: 0.5rem;
@@ -105,7 +105,7 @@
 
 .tryAgainButton:hover {
   transform: translateY(-3px);
-  box-shadow: 0 8px 20px rgba(154, 195, 60, 0.5);
+  box-shadow: 0 8px 20px rgba(165, 214, 61, 0.5);
 }
 
 .tryAgainButton:active {

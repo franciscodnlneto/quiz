@@ -34,7 +34,7 @@
 }
 
 .spinButton {
-  background: linear-gradient(145deg, #9AC33C, #88AE35);
+  background: linear-gradient(145deg, #A5D63D, #8FBF35);
   color: white;
   border: none;
   border-radius: 50px;
@@ -46,7 +46,7 @@
   gap: 0.5rem;
   cursor: pointer;
   transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-  box-shadow: 0 8px 25px rgba(154, 195, 60, 0.4);
+  box-shadow: 0 8px 25px rgba(165, 214, 61, 0.4);
   width: 80%;
   max-width: 220px;
   justify-content: center;
@@ -58,13 +58,13 @@
 
 .spinButton:hover {
   transform: translateY(-5px);
-  box-shadow: 0 12px 30px rgba(154, 195, 60, 0.6);
-  background: linear-gradient(145deg, #A5CF45, #95BE3B);
+  box-shadow: 0 12px 30px rgba(165, 214, 61, 0.6);
+  background: linear-gradient(145deg, #B0E04A, #9FCC38);
 }
 
 .spinButton:active {
   transform: translateY(0);
-  box-shadow: 0 4px 15px rgba(154, 195, 60, 0.4);
+  box-shadow: 0 4px 15px rgba(165, 214, 61, 0.4);
 }
 
 .animating {
@@ -112,7 +112,7 @@
 }
 
 .themeHeader {
-  color: #B02A78;
+  color: #17129D;
   font-size: 1rem;
   margin: 0;
   text-align: center;
@@ -174,7 +174,7 @@
 }
 
 .newThemeButton {
-  background: #B02A78;
+  background: #17129D;
   color: white;
   border: none;
   border-radius: 30px;
@@ -183,19 +183,19 @@
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
-  box-shadow: 0 4px 10px rgba(176, 42, 120, 0.3);
+  box-shadow: 0 4px 10px rgba(23, 18, 157, 0.3);
   margin-top: 0.3rem;
 }
 
 .newThemeButton:hover {
-  background: #C53087;
+  background: #2A228F;
   transform: translateY(-2px);
-  box-shadow: 0 6px 15px rgba(176, 42, 120, 0.4);
+  box-shadow: 0 6px 15px rgba(23, 18, 157, 0.4);
 }
 
 .newThemeButton:active {
   transform: translateY(0);
-  box-shadow: 0 2px 5px rgba(176, 42, 120, 0.3);
+  box-shadow: 0 2px 5px rgba(23, 18, 157, 0.3);
 }
 
 /* Responsividade */

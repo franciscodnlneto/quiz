@@ -32,11 +32,11 @@
   z-index: 1;
   opacity: 0.6;
   background-image: 
-    radial-gradient(circle, var(--primary-color, #B02A78) 8px, transparent 8px),
-    radial-gradient(circle, var(--secondary-color, #9AC33C) 6px, transparent 6px),
-    radial-gradient(circle, var(--primary-color, #B02A78) 4px, transparent 4px),
-    radial-gradient(circle, var(--secondary-color, #9AC33C) 3px, transparent 3px),
-    radial-gradient(circle, var(--primary-color, #B02A78) 5px, transparent 5px);
+    radial-gradient(circle, var(--primary-color, #17129D) 8px, transparent 8px),
+    radial-gradient(circle, var(--secondary-color, #A5D63D) 6px, transparent 6px),
+    radial-gradient(circle, var(--primary-color, #17129D) 4px, transparent 4px),
+    radial-gradient(circle, var(--secondary-color, #A5D63D) 3px, transparent 3px),
+    radial-gradient(circle, var(--primary-color, #17129D) 5px, transparent 5px);
   background-size: 10% 10%, 15% 15%, 20% 20%, 18% 18%, 12% 12%;
   background-position: 
     0% 0%, 20% 30%, 40% 50%, 60% 70%, 80% 90%;
@@ -57,7 +57,7 @@
 .congratsTitle {
   text-align: center;
   font-size: 1.8rem;
-  color: var(--primary-color, #B02A78);
+  color: var(--primary-color, #17129D);
   margin-bottom: 1.5rem;
   position: relative;
   z-index: 2;
@@ -102,10 +102,10 @@
   text-align: center;
   font-size: 5rem;
   font-weight: bold;
-  color: var(--primary-color, #B02A78);
+  color: var(--primary-color, #17129D);
   line-height: 1;
   margin-bottom: 1rem;
-  text-shadow: 0 3px 10px rgba(176, 42, 120, 0.3);
+  text-shadow: 0 3px 10px rgba(23, 18, 157, 0.3);
   animation: scoreReveal 1.2s;
 }
 
@@ -160,7 +160,7 @@
 
 .formTitle {
   text-align: center;
-  color: var(--primary-color, #B02A78);
+  color: var(--primary-color, #17129D);
   font-size: 1.3rem;
   margin-bottom: 0.5rem;
   display: flex;
@@ -204,8 +204,8 @@
 }
 
 .input:focus {
-  border-color: var(--primary-color, #B02A78);
-  box-shadow: 0 0 0 2px rgba(176, 42, 120, 0.2);
+  border-color: var(--primary-color, #17129D);
+  box-shadow: 0 0 0 2px rgba(23, 18, 157, 0.2);
   outline: none;
 }
 
@@ -241,7 +241,7 @@
 }
 
 .submitButton {
-  background: linear-gradient(to right, var(--primary-color, #B02A78), #d84b9c);
+  background: linear-gradient(to right, var(--primary-color, #17129D), #4A44D5);
   color: white;
   border: none;
   border-radius: 30px;
@@ -251,12 +251,12 @@
   cursor: pointer;
   margin-top: 0.5rem;
   transition: all 0.3s ease;
-  box-shadow: 0 5px 15px rgba(176, 42, 120, 0.3);
+  box-shadow: 0 5px 15px rgba(23, 18, 157, 0.3);
 }
 
 .submitButton:hover {
   transform: translateY(-3px);
-  box-shadow: 0 8px 20px rgba(176, 42, 120, 0.5);
+  box-shadow: 0 8px 20px rgba(23, 18, 157, 0.5);
 }
 
 .submitButton:active {
@@ -310,7 +310,7 @@
 .resetButton {
   display: block;
   width: 100%;
-  background: linear-gradient(to right, #9AC33C, #88ae35);
+  background: linear-gradient(to right, #A5D63D, #8FBF35);
   color: white;
   border: none;
   border-radius: 30px;
@@ -321,14 +321,14 @@
   margin-top: 1.5rem;
   margin-bottom: 1rem; /* Adicionado espaço inferior */
   transition: all 0.3s ease;
-  box-shadow: 0 5px 15px rgba(154, 195, 60, 0.3);
+  box-shadow: 0 5px 15px rgba(165, 214, 61, 0.3);
   position: relative;
   z-index: 2;
 }
 
 .resetButton:hover {
   transform: translateY(-3px);
-  box-shadow: 0 8px 20px rgba(154, 195, 60, 0.5);
+  box-shadow: 0 8px 20px rgba(165, 214, 61, 0.5);
 }
 
 .resetButton:active {

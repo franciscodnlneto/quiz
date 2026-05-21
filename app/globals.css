@@ -1,8 +1,12 @@
 :root {
-  --primary-color: #B02A78;
-  --secondary-color: #9AC33C;
+  --primary-color: #17129D;        /* Azul institucional CEBS */
+  --primary-dark: #2A228F;         /* Azul mais escuro (hexágonos) */
+  --primary-light: #4A44D5;        /* Variante mais clara para gradientes */
+  --secondary-color: #A5D63D;      /* Verde lima tecnológico CEBS */
+  --secondary-dark: #8FBF35;       /* Verde mais escuro */
+  --accent-soft: #F5F5F5;          /* Off-white técnico */
   --error-color: #F44336;
-  --background-color: #fdf0f7;
+  --background-color: #f3f4fb;     /* Fundo azulado bem claro */
   --text-color: #333333;
   --border-color: #eaeaea;
 }
@@ -34,11 +38,11 @@ button {
 }
 
 .main-header {
-  background: linear-gradient(135deg, #fff 0%, #fcf5f9 50%, #fff 100%);
+  background: linear-gradient(135deg, #fff 0%, #eef0fb 50%, #fff 100%);
   color: var(--primary-color);
   padding: 0.6rem 1rem;
   text-align: center;
-  box-shadow: 0 2px 10px rgba(176, 42, 120, 0.1);
+  box-shadow: 0 2px 10px rgba(23, 18, 157, 0.12);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -72,7 +76,7 @@ button {
   font-weight: 700;
   margin: 0;
   font-family: 'Poppins', sans-serif;
-  background-image: linear-gradient(45deg, var(--primary-color), #d84b9c);
+  background-image: linear-gradient(45deg, var(--primary-color), var(--primary-light));
   background-clip: text;
   -webkit-background-clip: text;
   color: transparent;
@@ -82,23 +86,23 @@ button {
 
 @keyframes titlePulse {
   0% {
-    text-shadow: 0 0 5px rgba(176, 42, 120, 0.1);
+    text-shadow: 0 0 5px rgba(23, 18, 157, 0.12);
     transform: scale(1);
   }
   100% {
-    text-shadow: 0 0 15px rgba(176, 42, 120, 0.25);
+    text-shadow: 0 0 15px rgba(23, 18, 157, 0.28);
     transform: scale(1.02);
   }
 }
 
 .app-subtitle {
   font-size: 0.95rem;
-  color: #666;
+  color: #555;
   margin-top: 0.3rem;
   padding: 0.2rem 0.8rem;
-  background-color: rgba(255, 255, 255, 0.6);
+  background-color: rgba(255, 255, 255, 0.7);
   border-radius: 20px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
   animation: subtitleSlide 0.6s ease-out;
 }
 
@@ -118,7 +122,7 @@ button {
   font-size: 1.5rem;
   color: var(--secondary-color);
   animation: decorationSpin 5s linear infinite;
-  opacity: 0.8;
+  opacity: 0.85;
 }
 
 @keyframes decorationSpin {
@@ -131,7 +135,7 @@ button {
   width: 250px;
   height: 250px;
   border-radius: 50%;
-  background: radial-gradient(circle, rgba(176, 42, 120, 0.05) 0%, transparent 70%);
+  background: radial-gradient(circle, rgba(23, 18, 157, 0.06) 0%, transparent 70%);
   z-index: 1;
   pointer-events: none;
 }
@@ -144,7 +148,7 @@ button {
 .header-bg-decoration.right {
   bottom: -100px;
   right: -80px;
-  background: radial-gradient(circle, rgba(154, 195, 60, 0.05) 0%, transparent 70%);
+  background: radial-gradient(circle, rgba(165, 214, 61, 0.08) 0%, transparent 70%);
 }
 
 .floating-dots {
@@ -205,27 +209,27 @@ button {
   .app-title {
     font-size: 2.2rem;
   }
-  
+
   .app-subtitle {
     font-size: 1rem;
     max-width: 90%;
   }
-  
+
   .title-decoration {
     font-size: 1.5rem;
     margin: 0 10px;
   }
-  
+
   .header-bg-decoration {
     width: 200px;
     height: 200px;
   }
-  
+
   .header-bg-decoration.left {
     top: -100px;
     left: -70px;
   }
-  
+
   .header-bg-decoration.right {
     bottom: -100px;
     right: -70px;
@@ -236,37 +240,37 @@ button {
   .main-header {
     padding: 1rem 0.8rem;
   }
-  
+
   .app-title {
     font-size: 1.8rem;
   }
-  
+
   .app-subtitle {
     font-size: 0.9rem;
     max-width: 95%;
     padding: 0.2rem 0.8rem;
   }
-  
+
   .title-decoration {
     font-size: 1.3rem;
     margin: 0 8px;
   }
-  
+
   .dot {
     width: 4px;
     height: 4px;
   }
 }
-/* Responsive adjustments */
+
 @media (max-width: 768px) {
   .app-title {
     font-size: 2rem;
   }
-  
+
   .app-subtitle {
     font-size: 0.9rem;
   }
-  
+
   .title-decoration {
     font-size: 1.4rem;
     margin: 0 8px;
@@ -277,162 +281,257 @@ button {
   .app-title {
     font-size: 1.8rem;
   }
-  
+
   .app-subtitle {
     font-size: 0.8rem;
     max-width: 95%;
   }
-  
+
   .title-decoration {
     font-size: 1.2rem;
     margin: 0 6px;
   }
-  
+
   .main-header {
     padding: 0.8rem 0.5rem;
   }
 }
-/* Improved Footer Styles */
+
+/* ====================================================== */
+/*  FOOTER — Identidade CEBS                                */
+/* ====================================================== */
+
 .main-footer {
   text-align: center;
   margin-top: 40px;
-  padding: 30px;
-  background: linear-gradient(135deg, #f9f0f7 0%, #f0e6f5 100%);
-  border-top: 1px solid #eaeaea;
-  color: #333;
+  padding: 0;
+  background: linear-gradient(135deg, #f5f6fb 0%, #eaecf6 100%);
+  border-top: 3px solid var(--primary-color);
+  color: var(--text-color);
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen,
     Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
 }
 
-.footer-container {
-  max-width: 800px;
+/* Faixa superior — Contatos do CEBS */
+.cebs-section {
+  background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+  color: white;
+  padding: 2.2rem 1.2rem 2rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.cebs-section::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(to right, var(--secondary-color), #fff, var(--secondary-color));
+}
+
+.cebs-container {
+  max-width: 1000px;
   margin: 0 auto;
 }
 
-.footer-title {
-  color: var(--primary-color);
-  margin-bottom: 20px;
-  font-size: 1.5rem;
-  font-weight: bold;
-}
-
-.footer-subtitle {
-  color: #6c757d;
-  display: block;
-  margin-top: 8px;
-  font-size: 0.9em;
-}
-
-.footer-tagline {
-  font-size: 1.1em;
-  margin-bottom: 20px;
-}
-
-.footer-divider {
-  margin: 20px 0;
-  border: 0;
-  height: 1px;
-  background-image: linear-gradient(to right, rgba(176, 42, 120, 0), rgba(176, 42, 120, 0.2), rgba(176, 42, 120, 0));
-}
-
-.footer-info-container {
-  display: flex;
-  justify-content: center;
-  flex-wrap: wrap;
-  gap: 40px;
-  margin: 30px 0;
-}
-
-.footer-info-item {
-  min-width: 200px;
-}
-
-.footer-info-title {
-  font-size: 1.1em;
+.cebs-title {
+  font-size: 1.6rem;
+  font-weight: 700;
+  margin-bottom: 0.25rem;
   display: flex;
   align-items: center;
-  margin-bottom: 5px;
+  justify-content: center;
+  gap: 0.5rem;
+  color: white;
+  letter-spacing: 0.5px;
 }
 
-.footer-info-title strong {
-  margin-right: 5px;
+.cebs-title .accent {
+  color: var(--secondary-color);
 }
 
-.footer-info-subtitle {
-  color: #6c757d;
-  font-size: 0.9em;
-  margin-top: -5px;
+.cebs-subtitle {
+  font-size: 0.95rem;
+  color: rgba(255, 255, 255, 0.85);
+  margin-bottom: 1.6rem;
+  max-width: 700px;
+  margin-left: auto;
+  margin-right: auto;
+  line-height: 1.45;
 }
 
-.footer-copyright {
-  color: #555;
-  font-size: 0.95em;
+.cebs-info-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1.2rem;
+  margin: 0 auto 1.6rem;
+  max-width: 900px;
 }
 
-.footer-link {
-  color: var(--primary-color);
+.cebs-info-item {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 12px;
+  padding: 1rem 0.9rem;
+  text-align: left;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(6px);
+}
+
+.cebs-info-item:hover {
+  background: rgba(255, 255, 255, 0.14);
+  border-color: var(--secondary-color);
+  transform: translateY(-3px);
+}
+
+.cebs-info-title {
+  font-size: 0.95rem;
+  color: var(--secondary-color);
+  font-weight: 700;
+  margin-bottom: 0.3rem;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.cebs-info-content {
+  font-size: 0.92rem;
+  color: rgba(255, 255, 255, 0.95);
+  line-height: 1.4;
+  word-break: break-word;
+}
+
+.cebs-info-content a {
+  color: #fff;
+  border-bottom: 1px dashed rgba(255, 255, 255, 0.4);
+  transition: all 0.2s ease;
+}
+
+.cebs-info-content a:hover {
+  color: var(--secondary-color);
+  border-bottom-color: var(--secondary-color);
+}
+
+/* Botão piscante "Como chegar" */
+.cebs-map-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: var(--secondary-color);
+  color: var(--primary-dark) !important;
+  font-weight: 700;
+  padding: 0.7rem 1.4rem;
+  border-radius: 50px;
   text-decoration: none;
-  transition: color 0.3s;
+  margin-top: 0.6rem;
+  box-shadow: 0 5px 18px rgba(165, 214, 61, 0.4);
+  animation: mapBlink 1.4s ease-in-out infinite;
+  border: 2px solid rgba(255, 255, 255, 0.4);
+  text-shadow: none;
+  font-size: 0.98rem;
+  transition: transform 0.2s ease;
 }
 
-.footer-link:hover {
-  color: var(--secondary-color);
-  text-decoration: underline;
+.cebs-map-link:hover {
+  transform: translateY(-2px) scale(1.03);
+  border-color: white;
 }
 
-.footer-icon {
-  display: inline-block;
-  width: 20px;
-  height: 20px;
-  margin-right: 8px;
-  vertical-align: middle;
-}
-
-.footer-icon.map {
-  color: #dc3545;
-}
-
-.footer-icon.clock {
-  color: #ffc107;
-}
-
-.footer-icon.email {
-  color: var(--primary-color);
-}
-
-.footer-icon.phone {
-  color: var(--secondary-color);
-}
-
-/* Responsive adjustments */
-@media (max-width: 768px) {
-  .footer-info-container {
-    gap: 20px;
+@keyframes mapBlink {
+  0%, 100% {
+    box-shadow: 0 5px 18px rgba(165, 214, 61, 0.4), 0 0 0 0 rgba(165, 214, 61, 0.5);
+    transform: scale(1);
   }
-  
-  .footer-info-item {
-    min-width: 150px;
+  50% {
+    box-shadow: 0 5px 24px rgba(165, 214, 61, 0.75), 0 0 0 12px rgba(165, 214, 61, 0);
+    transform: scale(1.04);
+  }
+}
+
+/* Faixa inferior — Créditos UGITS */
+.ugits-section {
+  background: #ffffff;
+  padding: 1.6rem 1.2rem;
+  border-top: 1px solid #e5e7f1;
+}
+
+.ugits-container {
+  max-width: 900px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.ugits-tagline {
+  font-size: 0.95rem;
+  color: #555;
+  margin-bottom: 0.4rem;
+  line-height: 1.5;
+}
+
+.ugits-brand {
+  color: var(--primary-color);
+  font-weight: 700;
+}
+
+.ugits-copyright {
+  color: #888;
+  font-size: 0.8rem;
+  margin-top: 0.6rem;
+}
+
+.ugits-link {
+  color: var(--primary-color);
+  font-weight: 600;
+  border-bottom: 1px dashed transparent;
+  transition: border-color 0.2s ease;
+}
+
+.ugits-link:hover {
+  border-bottom-color: var(--primary-color);
+}
+
+/* Responsive adjustments — footer */
+@media (max-width: 768px) {
+  .cebs-info-grid {
+    gap: 1rem;
+  }
+
+  .cebs-title {
+    font-size: 1.4rem;
+  }
+
+  .cebs-subtitle {
+    font-size: 0.9rem;
   }
 }
 
 @media (max-width: 480px) {
-  .main-footer {
-    padding: 20px 15px;
-    margin-top: 20px;
+  .cebs-section {
+    padding: 1.8rem 1rem 1.6rem;
   }
-  
-  .footer-info-container {
-    flex-direction: column;
-    gap: 15px;
-    align-items: center;
+
+  .cebs-title {
+    font-size: 1.2rem;
+    flex-wrap: wrap;
   }
-  
-  .footer-info-item {
-    width: 100%;
-    text-align: center;
+
+  .cebs-info-grid {
+    grid-template-columns: 1fr;
+    gap: 0.8rem;
   }
-  
-  .footer-info-title {
-    justify-content: center;
+
+  .cebs-info-item {
+    padding: 0.9rem;
   }
-} 
+
+  .cebs-map-link {
+    font-size: 0.9rem;
+    padding: 0.6rem 1.2rem;
+  }
+
+  .ugits-tagline {
+    font-size: 0.85rem;
+  }
+}

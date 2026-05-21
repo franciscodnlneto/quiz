@@ -77,12 +77,8 @@ export interface Question {
   Tema: string;
   Enunciado: string;
   Num_de_alternativas: string;
-  Alternativa_1: string;
-  Alternativa_2: string;
-  Alternativa_3: string;
-  Alternativa_4: string;
   Resposta_correta: string;
-  Alternativa_irreverente: string;
+  Resposta_incorreta: string;
 }
 
 /**

@@ -163,14 +163,14 @@
 }
 
 .questionTitle {
-  font-size: 1.4rem;
-  margin-bottom: 1rem;
+  font-size: 2rem;
+  margin-bottom: 1.5rem;
   margin-top: 0;
   line-height: 1.3;
   color: #333;
-  font-weight: 600;
+  font-weight: 700;
   text-align: center;
-  padding-bottom: 0.5rem;
+  padding-bottom: 0.8rem;
   border-bottom: 1px dashed #ddd;
   position: relative;
   z-index: 2;
@@ -179,8 +179,8 @@
 .alternatives {
   display: flex;
   flex-direction: column;
-  gap: 0.6rem;
-  margin-bottom: 0.6rem;
+  gap: 1.2rem;
+  margin-bottom: 1rem;
   position: relative;
   z-index: 2;
 }
@@ -189,20 +189,21 @@
   display: flex;
   align-items: center;
   width: 100%;
+  min-height: 6.5rem;
   text-align: left;
-  padding: 0.7rem 1rem;
+  padding: 1.5rem 1.8rem;
   background-color: white;
-  border: 2px solid #eaeaea;
-  border-radius: 12px;
+  border: 3px solid #eaeaea;
+  border-radius: 18px;
   cursor: pointer;
   transition: all 0.3s ease;
 }
 
 .alternative:hover:not(:disabled) {
-  border-color: #9AC33C;
+  border-color: #A5D63D;
   background-color: #f7f7f7;
-  transform: translateY(-3px);
-  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.05);
+  transform: translateY(-4px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
 }
 
 .alternative:active:not(:disabled) {
@@ -218,25 +219,27 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  width: 2.2rem;
-  height: 2.2rem;
-  min-width: 2.2rem;
+  width: 3.5rem;
+  height: 3.5rem;
+  min-width: 3.5rem;
   border-radius: 50%;
   background-color: #eaeaea;
-  margin-right: 0.8rem;
+  margin-right: 1.2rem;
   font-weight: bold;
+  font-size: 1.6rem;
   color: #333;
   transition: all 0.3s ease;
 }
 
 .content {
-  font-size: 1rem;
+  font-size: 1.35rem;
   line-height: 1.4;
+  font-weight: 500;
 }
 
 .correct {
   background-color: #f2f8e8;
-  border-color: #9AC33C;
+  border-color: #A5D63D;
   animation: correctAnswer 0.5s;
 }
 
@@ -262,13 +265,13 @@
 }
 
 .correct .letter {
-  background-color: #9AC33C;
+  background-color: #A5D63D;
   color: white;
 }
 
 .incorrect {
   background-color: #fde8f2;
-  border-color: #B02A78;
+  border-color: #17129D;
   animation: shake 0.5s;
 }
 
@@ -294,12 +297,12 @@
 }
 
 .incorrect .letter {
-  background-color: #B02A78;
+  background-color: #17129D;
   color: white;
 }
 
 .correctAnswer {
-  border-color: #9AC33C;
+  border-color: #A5D63D;
   border-style: dashed;
   animation: pulse 1.5s infinite alternate;
 }
@@ -328,7 +331,7 @@
 }
 
 .correctFeedback {
-  color: #9AC33C;
+  color: #A5D63D;
   font-weight: bold;
   font-size: 1.3rem;
   margin-bottom: 0.5rem;
@@ -336,7 +339,7 @@
 }
 
 .incorrectFeedback {
-  color: #B02A78;
+  color: #17129D;
   font-weight: bold;
   font-size: 1.3rem;
   margin-bottom: 0.5rem;
@@ -366,7 +369,7 @@
 
 .scoreAmount {
   font-weight: bold;
-  color: var(--primary-color, #B02A78);
+  color: var(--primary-color, #17129D);
   font-size: 1.1rem;
 }
 
@@ -390,11 +393,11 @@
   pointer-events: none;
   z-index: 5;
   background-image: 
-    radial-gradient(circle, #B02A78 8px, transparent 8px),
-    radial-gradient(circle, #9AC33C 6px, transparent 6px),
-    radial-gradient(circle, #B02A78 4px, transparent 4px),
-    radial-gradient(circle, #9AC33C 3px, transparent 3px),
-    radial-gradient(circle, #B02A78 5px, transparent 5px);
+    radial-gradient(circle, #17129D 8px, transparent 8px),
+    radial-gradient(circle, #A5D63D 6px, transparent 6px),
+    radial-gradient(circle, #17129D 4px, transparent 4px),
+    radial-gradient(circle, #A5D63D 3px, transparent 3px),
+    radial-gradient(circle, #17129D 5px, transparent 5px);
   background-size: 10% 10%, 15% 15%, 20% 20%, 18% 18%, 12% 12%;
   background-position: 
     0% 0%, 20% 30%, 40% 50%, 60% 70%, 80% 90%;
@@ -423,26 +426,34 @@
   .questionContainer {
     padding: 0.8rem;
   }
-  
+
   .questionTitle {
-    font-size: 1.2rem;
-    margin-bottom: 0.8rem;
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
   }
-  
+
+  .alternative {
+    min-height: 5rem;
+    padding: 1.1rem 1.2rem;
+    border-radius: 14px;
+  }
+
   .letter {
-    width: 1.8rem;
-    height: 1.8rem;
-    min-width: 1.8rem;
+    width: 2.6rem;
+    height: 2.6rem;
+    min-width: 2.6rem;
+    font-size: 1.2rem;
+    margin-right: 0.9rem;
   }
-  
+
   .content {
-    font-size: 0.9rem;
+    font-size: 1.1rem;
   }
-  
+
   .progressText {
     font-size: 0.8rem;
   }
-  
+
   .progressBar {
     height: 5px;
   }
@@ -450,7 +461,7 @@
   .pointsInfo {
     font-size: 0.9rem;
   }
-  
+
   .scoreAmount {
     font-size: 1rem;
   }
@@ -460,28 +471,35 @@
   .questionContainer {
     padding: 0.7rem;
   }
-  
+
   .questionTitle {
-    font-size: 1.1rem;
-    margin-bottom: 0.7rem;
-    padding-bottom: 0.4rem;
+    font-size: 1.25rem;
+    margin-bottom: 0.8rem;
+    padding-bottom: 0.5rem;
   }
-  
+
   .alternative {
-    padding: 0.6rem 0.7rem;
+    min-height: 4.5rem;
+    padding: 0.9rem 1rem;
+    border-radius: 12px;
   }
-  
+
+  .alternatives {
+    gap: 0.8rem;
+  }
+
   .letter {
-    width: 1.6rem;
-    height: 1.6rem;
-    min-width: 1.6rem;
-    margin-right: 0.6rem;
+    width: 2.2rem;
+    height: 2.2rem;
+    min-width: 2.2rem;
+    font-size: 1.05rem;
+    margin-right: 0.7rem;
   }
-  
+
   .content {
-    font-size: 0.85rem;
+    font-size: 1rem;
   }
-  
+
   .timeInfo {
     font-size: 0.9rem;
   }
@@ -489,7 +507,7 @@
   .pointsInfo {
     font-size: 0.85rem;
   }
-  
+
   .scoreAmount {
     font-size: 0.95rem;
   }
