@@ -109,7 +109,7 @@
 }
 
 .positionHeader {
-  width: 50px;
+  width: 44px;
   text-align: center;
 }
 
@@ -117,8 +117,13 @@
   text-align: left;
 }
 
+.whatsappHeader {
+  width: 110px;
+  text-align: left;
+}
+
 .scoreHeader {
-  width: 70px;
+  width: 64px;
   text-align: right;
 }
 
@@ -136,6 +141,13 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+.whatsapp {
+  font-family: 'Menlo', 'Consolas', 'Courier New', monospace;
+  font-size: 0.78rem;
+  color: #555;
+  white-space: nowrap;
 }
 
 .score {
@@ -263,11 +275,19 @@
   }
 
   .positionHeader {
-    width: 40px;
+    width: 36px;
+  }
+
+  .whatsappHeader {
+    width: 95px;
   }
 
   .scoreHeader {
-    width: 60px;
+    width: 54px;
+  }
+
+  .whatsapp {
+    font-size: 0.7rem;
   }
 }
 

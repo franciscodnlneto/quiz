@@ -3,16 +3,13 @@ import { NextResponse } from 'next/server';
 import { clientPromise, dbName } from '../../lib/db';
 
 // Mascara o nome para exibição pública no ranking:
-// "Francisco Negrão Lopes Neto" -> "Francisco N. L. N."
+// "Maria Aparecida Santos" -> "Maria ***"
+// "Maria"                  -> "Maria"
 function maskName(fullName: string): string {
   const parts = (fullName || '').trim().split(/\s+/).filter(p => p.length > 0);
   if (parts.length === 0) return 'Anônimo';
   if (parts.length === 1) return parts[0];
-  const first = parts[0];
-  const initials = parts.slice(1)
-    .map(p => p.charAt(0).toUpperCase() + '.')
-    .join(' ');
-  return `${first} ${initials}`;
+  return `${parts[0]} ***`;
 }
 
 // Função para formatar a data no padrão brasileiro
