@@ -5,8 +5,8 @@ import "./globals.css";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Quiz do CEBS - 3º Aniversário | HC-UFU/EBSERH",
-  description: "Participe do Quiz do 3º Aniversário do CEBS — Centro de Ensino Baseado em Simulação do HC-UFU/EBSERH. Teste seus conhecimentos sobre simulação clínica realística! 🎓",
+  title: "Quiz do CEBS - 3º Aniversário | HC-UFU/HUBRASIL",
+  description: "Participe do Quiz do 3º Aniversário do CEBS — Centro de Ensino Baseado em Simulação do HC-UFU/HUBRASIL. Teste seus conhecimentos sobre simulação clínica realística! 🎓",
 };
 
 export default function RootLayout({
@@ -20,11 +20,11 @@ export default function RootLayout({
         {/* SEO e Social */}
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <meta name="description" content="Participe do Quiz do 3º Aniversário do CEBS — Centro de Ensino Baseado em Simulação do HC-UFU/EBSERH. Teste seus conhecimentos sobre simulação clínica realística! 🎓" />
+        <meta name="description" content="Participe do Quiz do 3º Aniversário do CEBS — Centro de Ensino Baseado em Simulação do HC-UFU/HUBRASIL. Teste seus conhecimentos sobre simulação clínica realística! 🎓" />
 
         {/* Open Graph (Facebook, LinkedIn, WhatsApp) */}
         <meta property="og:title" content="🎓 Quiz do CEBS - 3º Aniversário do Centro de Ensino Baseado em Simulação" />
-        <meta property="og:description" content="Teste seus conhecimentos sobre simulação clínica realística! Quiz do 3º Aniversário do CEBS - HC-UFU/EBSERH." />
+        <meta property="og:description" content="Teste seus conhecimentos sobre simulação clínica realística! Quiz do 3º Aniversário do CEBS - HC-UFU/HUBRASIL." />
         <meta property="og:image" content="/dados_mocados/Quizito-FB-1200X630.png" />
         <meta property="og:image:width" content="1200" />
         <meta property="og:image:height" content="630" />
@@ -80,7 +80,7 @@ export default function RootLayout({
               Quizito.App
               <span className="title-decoration right">✦</span>
             </h1>
-            <p className="app-subtitle">🎓 Quiz do 3º Aniversário do CEBS — HC-UFU/EBSERH</p>
+            <p className="app-subtitle">🎓 Quiz do 3º Aniversário do CEBS — HC-UFU/HUBRASIL</p>
           </div>
         </header>
 
@@ -94,7 +94,7 @@ export default function RootLayout({
                 <span>🏥</span> CEBS <span className="accent">— Centro de Ensino Baseado em Simulação</span> <span>🎓</span>
               </h3>
               <p className="cebs-subtitle">
-                Centro de simulação clínica realística do <strong>HC-UFU/EBSERH</strong>, dedicado ao treinamento e capacitação de profissionais e estudantes da área da saúde.
+                Centro de simulação clínica realística do <strong>HC-UFU/HUBRASIL</strong>, dedicado ao treinamento e capacitação de profissionais e estudantes da área da saúde.
               </p>
 
               <div className="cebs-info-grid">
@@ -160,10 +160,10 @@ export default function RootLayout({
               <p className="ugits-tagline">
                 Desenvolvido pela{' '}
                 <span className="ugits-brand">🧪 UGITS</span>
-                {' '}— Unidade de Gestão da Inovação Tecnológica em Saúde do HC-UFU/EBSERH
+                {' '}— Unidade de Gestão da Inovação Tecnológica em Saúde do HC-UFU/HUBRASIL
               </p>
               <p className="ugits-copyright">
-                © 2026 HC-UFU/EBSERH. Todos os direitos reservados.{' '}
+                © 2026 HC-UFU/HUBRASIL. Todos os direitos reservados.{' '}
                 <a className="ugits-link" href="mailto:ugits.hc-ufu@ebserh.gov.br">
                   ugits.hc-ufu@ebserh.gov.br
                 </a>
