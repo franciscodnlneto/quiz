@@ -45,7 +45,7 @@ export async function POST(request: Request) {
       // Conectar ao MongoDB e salvar os dados
       const client = await clientPromise;
       const db = client.db(dbName);
-      const result = await db.collection('scores').insertOne(scoreData);
+      const result = await db.collection('cebs_ranking_3anos').insertOne(scoreData);
 
       console.log(`Pontuação salva com sucesso. ID: ${result.insertedId}`);
       
@@ -84,8 +84,8 @@ export async function GET() {
       throw new Error('Falha ao acessar o banco de dados');
     }
     
-    console.log('Buscando coleção scores...');
-    const collection = db.collection('scores');
+    console.log('Buscando coleção cebs_ranking_3anos...');
+    const collection = db.collection('cebs_ranking_3anos');
     
     // Buscar TODAS as pontuações em ordem decrescente (sem limite)
     console.log('Executando consulta ao banco de dados...');
