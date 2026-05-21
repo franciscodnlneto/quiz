@@ -34,8 +34,16 @@ const AnnouncementBanner: React.FC<AnnouncementBannerProps> = ({ email }) => {
         <span className={styles.icon}>🎓🏥🩺🧪</span>
         <p>
           <strong>3º Aniversário do CEBS</strong> — Centro de Ensino Baseado em Simulação do HC-UFU/HUBRASIL. Teste seus conhecimentos sobre simulação clínica realística!
-          <a href={`mailto:${email}`} className={styles.email}>
-            <span className={styles.emailIcon}>✉️</span> {email}
+          <a href={`mailto:${email}`} className={styles.contactLink}>
+            <span className={styles.contactIcon}>✉️</span> {email}
+          </a>
+          <a
+            href="https://wa.me/553432182081"
+            target="_blank"
+            rel="noopener noreferrer"
+            className={styles.contactLink}
+          >
+            <span className={styles.contactIcon}>📞</span> (34) 3218-2081
           </a>
         </p>
         <button
