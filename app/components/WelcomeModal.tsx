@@ -23,7 +23,7 @@ const handleClose = () => {
     <div className={`${styles.modalOverlay} ${modalOpen ? styles.open : styles.closing}`}>
       <div className={styles.modalContent}>
         <h2 className={styles.modalTitle}>
-          <span className={styles.emoji}>🔬</span> Desafio da Pesquisa Clínica <span className={styles.emoji}>🏆</span>
+          <span className={styles.emoji}>🔬</span> 3º Aniversário do CEBS <span className={styles.emoji}>🏆</span>
         </h2>
         
         <div className={styles.modalBody}>
