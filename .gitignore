@@ -55,3 +55,7 @@ credentials.json
 # dados locais/temporários
 .temp/
 .cache/
+
+# backups locais — nunca vao para o repositorio
+/OUTRAS_VERSOES/
+/imagens_quizito_tema_pesquisa/
