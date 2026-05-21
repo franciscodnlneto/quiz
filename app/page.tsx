@@ -68,7 +68,7 @@ export default function Home() {
   const [showModal, setShowModal] = useState(true); // Garantir que o modal sempre apareça
   
   // Constantes do jogo
-  const TOTAL_QUESTIONS = 4;
+  const TOTAL_QUESTIONS = 5;
   const MAX_TIME_POINTS = 100; // Pontos máximos por resposta rápida
   const BASE_POINTS = 250;     // Pontos base por pergunta correta
   

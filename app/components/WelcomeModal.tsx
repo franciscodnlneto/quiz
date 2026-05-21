@@ -32,19 +32,27 @@ const handleClose = () => {
           </p>
 
           <div className={styles.instructionSection}>
-            <h3><span className={styles.emoji}>🎯</span> Como Funciona:</h3>
+            <h3><span className={styles.emoji}>🎯</span> O desafio:</h3>
+            <p className={styles.challengeText}>
+              Você precisa <strong>acertar 5 perguntas seguidas</strong> sobre o CEBS e simulação clínica para concluir o quiz e entrar para o ranking! 🏆
+            </p>
+          </div>
+
+          <div className={styles.instructionSection}>
+            <h3><span className={styles.emoji}>📋</span> Como funciona:</h3>
             <ol className={styles.instructionList}>
-              <li><span className={styles.emoji}>🎲</span> Um tema será sorteado aleatoriamente</li>
-              <li><span className={styles.emoji}>⏱️</span> Você terá <strong>30 segundos</strong> para escolher entre <strong>duas alternativas</strong></li>
-              <li><span className={styles.emoji}>🚀</span> Quanto <strong>mais rápido</strong> você responder corretamente, melhor será sua pontuação</li>
-              <li><span className={styles.emoji}>❌</span> Se errar uma pergunta, você será eliminado (mas poderá tentar novamente!)</li>
-              <li><span className={styles.emoji}>🏁</span> Complete <strong>4 perguntas</strong> para finalizar o desafio</li>
+              <li><span className={styles.emoji}>🎲</span> Um <strong>tema</strong> é sorteado aleatoriamente a cada pergunta</li>
+              <li><span className={styles.emoji}>🅰️🅱️</span> Cada pergunta tem <strong>duas alternativas</strong> — escolha a correta</li>
+              <li><span className={styles.emoji}>⏱️</span> Você tem <strong>30 segundos</strong> para responder cada uma</li>
+              <li><span className={styles.emoji}>🚀</span> Quanto <strong>mais rápido</strong> acertar, mais pontos ganha</li>
+              <li><span className={styles.emoji}>❌</span> Errou ou tempo esgotou? <strong>Game over</strong> e o contador volta a zero — mas pode tentar quantas vezes quiser!</li>
+              <li><span className={styles.emoji}>🏁</span> Conseguiu acertar <strong>5 seguidas</strong>? Parabéns! Você completa o desafio e seu nome vai para o ranking.</li>
             </ol>
           </div>
 
           <div className={styles.prizeSection}>
             <h3><span className={styles.emoji}>🎁</span> Prêmios:</h3>
-            <p>Os participantes com as melhores pontuações ganharão brindes especiais da equipe do CEBS!</p>
+            <p>Ao final do evento, as <strong>melhores pontuações</strong> ganharão brindes especiais da equipe do CEBS! Deixe seu WhatsApp ao terminar para sermos capazes de entrar em contato. 📞</p>
           </div>
 
           <div className={styles.dateSection}>

@@ -119,6 +119,18 @@
   gap: 0.5rem;
 }
 
+.challengeText {
+  font-size: 1.05rem;
+  line-height: 1.5;
+  color: #333;
+  text-align: center;
+  padding: 0.3rem 0.2rem;
+}
+
+.challengeText strong {
+  color: var(--primary-color, #17129D);
+}
+
 .instructionList {
   padding-left: 1.5rem;
 }

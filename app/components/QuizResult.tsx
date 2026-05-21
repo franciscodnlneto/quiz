@@ -158,7 +158,7 @@ const QuizResult: React.FC<QuizResultProps> = ({
       <div className={styles.confetti}></div>
       
       <h2 className={styles.congratsTitle}>
-        <span className={styles.emoji}>🏆</span> Parabéns! Você completou o desafio! <span className={styles.emoji}>🎉</span>
+        <span className={styles.emoji}>🏆</span> Parabéns! Você acertou as 5 perguntas! <span className={styles.emoji}>🎉</span>
       </h2>
       
       <div className={styles.scoreCard}>
@@ -175,10 +175,10 @@ const QuizResult: React.FC<QuizResultProps> = ({
       {!submitted ? (
         <div className={styles.formContainer}>
           <h3 className={styles.formTitle}>
-            <span className={styles.emoji}>🎁</span> Concorra a prêmios!
+            <span className={styles.emoji}>🎁</span> Concorra a brindes do CEBS!
           </h3>
           <p className={styles.formDescription}>
-            Parabéns por completar o desafio! Deixe seus dados para concorrer a prêmios especiais da equipe do CEBS.
+            Deixe seu <strong>nome</strong> e <strong>WhatsApp</strong> abaixo para a <strong>equipe do CEBS</strong> entrar em contato caso sua pontuação fique entre as melhores ao final do evento. 🎓
           </p>
           
           <form onSubmit={handleSubmit} className={styles.form}>
@@ -237,10 +237,10 @@ const QuizResult: React.FC<QuizResultProps> = ({
       ) : (
         <div className={styles.successMessage}>
           <div className={styles.successIcon}>✓</div>
-          <h3 className={styles.successTitle}>Dados enviados com sucesso!</h3>
+          <h3 className={styles.successTitle}>Tudo certo! Você está no ranking!</h3>
           <p className={styles.successText}>
-            Obrigado pela participação! Se sua pontuação estiver entre as melhores, 
-            entraremos em contato pelo WhatsApp para a entrega do seu prêmio.
+            Obrigado pela participação no 3º Aniversário do CEBS! 🎉<br />
+            Se sua pontuação ficar entre as melhores ao final do evento, a <strong>equipe do CEBS</strong> vai entrar em contato pelo WhatsApp para a entrega do seu brinde. 🎁
           </p>
         </div>
       )}
